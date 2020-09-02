@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Infrastructure
 {
     public interface IRepository<T> where T : class
     {
-        //T GetById(string id);
+        Task<T> GetById(string id);
         //T Get(Expression<Func<T, bool>> where);
-        IEnumerable<T> GetAll();
-        IEnumerable<T> GetMany(Expression<Func<T, bool>> where);
-        IEnumerable<T> GetWithStoredProcedure(string spName, params object[] prms);
-        //void Add(T entity);
-        //void Update(T entity);
-        //void Delete(object id);
+        Task<IEnumerable<T>> GetAllAsync();
+        Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> where);
+        Task<IEnumerable<T>> GetWithStoredProcedureAsync(string spName, params object[] prms);
+        Task AddAsync(T entity);
+        Task UpdateAsync(T entity);
+        Task RemoveAsync(object id);
     }
 }

@@ -23,17 +23,17 @@ namespace BalanceGlobal.Api.Controllers
         }
         // GET: api/<SubSistemasController>
         [HttpGet]
-        public IEnumerable<Subsistemas> GetAll()
+        public async Task<IEnumerable<Subsistemas>> GetAll()
         {
-            return _service.GetSubSistemas();
+            return await _service.GetSubSistemas();
         }
 
         // GET api/<SubSistemasController>/5
-        [HttpGet("{id}")]
-        public IEnumerable<Subsistemas> Get(int id)
-        {
-            return _service.GetSubSistemas();
-        }
+        // [HttpGet("{id}")]
+        // public IEnumerable<Subsistemas> Get(int id)
+        // {
+        //     return _service.GetSubSistemas();
+        // }
 
         // POST api/<SubSistemasController>
         [HttpPost]

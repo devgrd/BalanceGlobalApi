@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using BalanceGlobal.Database.Context;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Infrastructure
 {
@@ -35,39 +36,49 @@ namespace BalanceGlobal.Infrastructure
             }
         }
 
-        public virtual IEnumerable<T> GetWithStoredProcedure(string spName, params object[] prms)
+        public virtual async Task<IEnumerable<T>> GetWithStoredProcedureAsync(string spName, params object[] prms)
         {
-            try
-            {
-                var result = dbset.FromSqlRaw<T>(spName, prms);
-                return result;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            var result = await dbset.FromSqlRaw<T>(spName, prms).ToListAsync();
+            return result;
         }
 
-        public virtual T GetById(string id)
+        public virtual async Task<T> GetById(string id)
         {
-            return dbset.Find(id);
+            return await dbset.FindAsync(id);
         }
 
-        public virtual IEnumerable<T> GetAll()
+        public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
-            return dbset.AsNoTracking().ToList();
+            return await dbset.ToListAsync();
         }
 
-
-        public virtual IEnumerable<T> GetMany(Expression<Func<T, bool>> where)
+        public virtual async Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> where)
         {
-            return dbset.Where(where).AsNoTracking().ToList();
+            return await dbset.Where(where).ToListAsync();
         }
 
-        public virtual T Get(Expression<Func<T, bool>> where)
+        public virtual async Task<T> Get(Expression<Func<T, bool>> where)
         {
-            return dbset.Where(where).FirstOrDefault<T>();
+            return await dbset.Where(where).FirstOrDefaultAsync<T>();
+        }
+
+        public async Task AddAsync(T entity)
+        {
+            await dbset.AddAsync(entity);
+            await dataContext.SaveChangesAsync();
+        }
+
+        public async Task RemoveAsync(object id)
+        {
+            var entity = await dbset.FindAsync(id);
+            dbset.Remove(entity);
+            await dataContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(T entity)
+        {
+            dbset.Update(entity);
+            await dataContext.SaveChangesAsync();
         }
     }
 }

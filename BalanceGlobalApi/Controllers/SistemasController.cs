@@ -22,9 +22,9 @@ namespace BalanceGlobal.Api.Controllers
 
         // GET: api/<SistemasController>
         [HttpGet]
-        public IEnumerable<Sistemas> Get()
+        public async Task<IEnumerable<Sistemas>> Get()
         {
-            return _service.GetSistemas();
+            return await _service.GetSistemas();
         }
 
         // GET api/<SistemasController>/5

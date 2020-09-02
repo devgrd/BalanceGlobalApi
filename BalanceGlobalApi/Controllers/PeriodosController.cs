@@ -23,9 +23,10 @@ namespace BalanceGlobal.Api.Controllers
 
         // GET: api/<PeriodosController>
         [HttpGet]
-        public IEnumerable<Periodos> Get()
+        public async Task<IEnumerable<Periodos>> Get()
         {
-            return _service.GetPeriodos();
+            var result = await _service.GetPeriodos();
+            return result;
         }
 
         // GET api/<PeriodosController>/5

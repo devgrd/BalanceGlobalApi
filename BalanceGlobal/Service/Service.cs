@@ -1,16 +1,15 @@
 ﻿using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Repository;
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
 {
     public interface IService 
     {
-        IEnumerable<Periodos> GetPeriodos();
-        IEnumerable<Sistemas> GetSistemas();
-        IEnumerable<Subsistemas> GetSubSistemas();
+        Task<IEnumerable<Periodos>> GetPeriodos();
+        Task<IEnumerable<Sistemas>> GetSistemas();
+        Task<IEnumerable<Subsistemas>> GetSubSistemas();
 
 
     }
@@ -31,19 +30,19 @@ namespace BalanceGlobal.Service
             _subSistemasRepository = subSistemasRepository;
         }
 
-        public IEnumerable<Periodos> GetPeriodos()
+        public async Task<IEnumerable<Periodos>> GetPeriodos()
         {
-            return _periodoRepository.GetAll();
+            return await _periodoRepository.GetAllAsync();
         }
 
-        public IEnumerable<Sistemas> GetSistemas()
+        public async Task<IEnumerable<Sistemas>> GetSistemas()
         {
-            return _sistemasRepository.GetAll();
+            return await _sistemasRepository.GetAllAsync();
         }
 
-        public IEnumerable<Subsistemas> GetSubSistemas()
+        public async Task<IEnumerable<Subsistemas>> GetSubSistemas()
         {
-            return _subSistemasRepository.GetAll();
+            return await _subSistemasRepository.GetAllAsync();
         }
     }
 }
