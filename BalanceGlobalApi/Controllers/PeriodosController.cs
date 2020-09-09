@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Service;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.EntityFrameworkCore;
+using BalanceGlobal.Database.Context;
+using BalanceGlobal.Database.Tables;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -15,43 +14,97 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class PeriodosController : ControllerBase
     {
-        private readonly IService _service;
-        public PeriodosController(IService service)
+        private readonly BalanceGlobalContext _context;
+
+        public PeriodosController(BalanceGlobalContext context)
         {
-            _service = service;
+            _context = context;
         }
 
-        // GET: api/<PeriodosController>
+        // GET: api/Periodos
         [HttpGet]
-        public async Task<IEnumerable<Periodos>> Get()
+        public async Task<ActionResult<IEnumerable<Periodos>>> GetPeriodos()
         {
-            var result = await _service.GetPeriodos();
-            return result;
+            return await _context.Periodos.ToListAsync();
         }
 
-        // GET api/<PeriodosController>/5
+        // GET: api/Periodos/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<Periodos>> GetPeriodos(int id)
         {
-            return "value";
+            var periodos = await _context.Periodos.FindAsync(id);
+
+            if (periodos == null)
+            {
+                return NotFound();
+            }
+
+            return periodos;
         }
 
-        // POST api/<PeriodosController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<PeriodosController>/5
+        // PUT: api/Periodos/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> PutPeriodos(int id, Periodos periodos)
         {
+            if (id != periodos.IdPeriodos)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(periodos).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PeriodosExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
-        // DELETE api/<PeriodosController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // POST: api/Periodos
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPost]
+        public async Task<ActionResult<Periodos>> PostPeriodos(Periodos periodos)
         {
+            _context.Periodos.Add(periodos);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetPeriodos", new { id = periodos.IdPeriodos }, periodos);
+        }
+
+        // DELETE: api/Periodos/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Periodos>> DeletePeriodos(int id)
+        {
+            var periodos = await _context.Periodos.FindAsync(id);
+            if (periodos == null)
+            {
+                return NotFound();
+            }
+
+            _context.Periodos.Remove(periodos);
+            await _context.SaveChangesAsync();
+
+            return periodos;
+        }
+
+        private bool PeriodosExists(int id)
+        {
+            return _context.Periodos.Any(e => e.IdPeriodos == id);
         }
     }
 }

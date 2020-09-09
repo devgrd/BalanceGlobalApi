@@ -12,48 +12,48 @@ namespace BalanceGlobal.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SubsistemasController : ControllerBase
+    public class ReservoriosController : ControllerBase
     {
         private readonly BalanceGlobalContext _context;
 
-        public SubsistemasController(BalanceGlobalContext context)
+        public ReservoriosController(BalanceGlobalContext context)
         {
             _context = context;
         }
 
-        // GET: api/Subsistemas
+        // GET: api/Reservorios
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Subsistemas>>> GetSubsistemas()
+        public async Task<ActionResult<IEnumerable<Reservorios>>> GetReservorios()
         {
-            return await _context.Subsistemas.ToListAsync();
+            return await _context.Reservorios.ToListAsync();
         }
 
-        // GET: api/Subsistemas/5
+        // GET: api/Reservorios/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Subsistemas>> GetSubsistemas(int id)
+        public async Task<ActionResult<Reservorios>> GetReservorios(int id)
         {
-            var subsistemas = await _context.Subsistemas.FindAsync(id);
+            var reservorios = await _context.Reservorios.FindAsync(id);
 
-            if (subsistemas == null)
+            if (reservorios == null)
             {
                 return NotFound();
             }
 
-            return subsistemas;
+            return reservorios;
         }
 
-        // PUT: api/Subsistemas/5
+        // PUT: api/Reservorios/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubsistemas(int id, Subsistemas subsistemas)
+        public async Task<IActionResult> PutReservorios(int id, Reservorios reservorios)
         {
-            if (id != subsistemas.IdSubsistemas)
+            if (id != reservorios.IdReservorios)
             {
                 return BadRequest();
             }
 
-            _context.Entry(subsistemas).State = EntityState.Modified;
+            _context.Entry(reservorios).State = EntityState.Modified;
 
             try
             {
@@ -61,7 +61,7 @@ namespace BalanceGlobal.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SubsistemasExists(id))
+                if (!ReservoriosExists(id))
                 {
                     return NotFound();
                 }
@@ -74,37 +74,37 @@ namespace BalanceGlobal.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/Subsistemas
+        // POST: api/Reservorios
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Subsistemas>> PostSubsistemas(Subsistemas subsistemas)
+        public async Task<ActionResult<Reservorios>> PostReservorios(Reservorios reservorios)
         {
-            _context.Subsistemas.Add(subsistemas);
+            _context.Reservorios.Add(reservorios);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSubsistemas", new { id = subsistemas.IdSubsistemas }, subsistemas);
+            return CreatedAtAction("GetReservorios", new { id = reservorios.IdReservorios }, reservorios);
         }
 
-        // DELETE: api/Subsistemas/5
+        // DELETE: api/Reservorios/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Subsistemas>> DeleteSubsistemas(int id)
+        public async Task<ActionResult<Reservorios>> DeleteReservorios(int id)
         {
-            var subsistemas = await _context.Subsistemas.FindAsync(id);
-            if (subsistemas == null)
+            var reservorios = await _context.Reservorios.FindAsync(id);
+            if (reservorios == null)
             {
                 return NotFound();
             }
 
-            _context.Subsistemas.Remove(subsistemas);
+            _context.Reservorios.Remove(reservorios);
             await _context.SaveChangesAsync();
 
-            return subsistemas;
+            return reservorios;
         }
 
-        private bool SubsistemasExists(int id)
+        private bool ReservoriosExists(int id)
         {
-            return _context.Subsistemas.Any(e => e.IdSubsistemas == id);
+            return _context.Reservorios.Any(e => e.IdReservorios == id);
         }
     }
 }

@@ -12,48 +12,48 @@ namespace BalanceGlobal.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SubsistemasController : ControllerBase
+    public class ExtraccionsController : ControllerBase
     {
         private readonly BalanceGlobalContext _context;
 
-        public SubsistemasController(BalanceGlobalContext context)
+        public ExtraccionsController(BalanceGlobalContext context)
         {
             _context = context;
         }
 
-        // GET: api/Subsistemas
+        // GET: api/Extraccions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Subsistemas>>> GetSubsistemas()
+        public async Task<ActionResult<IEnumerable<Extraccion>>> GetExtraccion()
         {
-            return await _context.Subsistemas.ToListAsync();
+            return await _context.Extraccion.ToListAsync();
         }
 
-        // GET: api/Subsistemas/5
+        // GET: api/Extraccions/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Subsistemas>> GetSubsistemas(int id)
+        public async Task<ActionResult<Extraccion>> GetExtraccion(int id)
         {
-            var subsistemas = await _context.Subsistemas.FindAsync(id);
+            var extraccion = await _context.Extraccion.FindAsync(id);
 
-            if (subsistemas == null)
+            if (extraccion == null)
             {
                 return NotFound();
             }
 
-            return subsistemas;
+            return extraccion;
         }
 
-        // PUT: api/Subsistemas/5
+        // PUT: api/Extraccions/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubsistemas(int id, Subsistemas subsistemas)
+        public async Task<IActionResult> PutExtraccion(int id, Extraccion extraccion)
         {
-            if (id != subsistemas.IdSubsistemas)
+            if (id != extraccion.IdExtraccion)
             {
                 return BadRequest();
             }
 
-            _context.Entry(subsistemas).State = EntityState.Modified;
+            _context.Entry(extraccion).State = EntityState.Modified;
 
             try
             {
@@ -61,7 +61,7 @@ namespace BalanceGlobal.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SubsistemasExists(id))
+                if (!ExtraccionExists(id))
                 {
                     return NotFound();
                 }
@@ -74,37 +74,37 @@ namespace BalanceGlobal.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/Subsistemas
+        // POST: api/Extraccions
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Subsistemas>> PostSubsistemas(Subsistemas subsistemas)
+        public async Task<ActionResult<Extraccion>> PostExtraccion(Extraccion extraccion)
         {
-            _context.Subsistemas.Add(subsistemas);
+            _context.Extraccion.Add(extraccion);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSubsistemas", new { id = subsistemas.IdSubsistemas }, subsistemas);
+            return CreatedAtAction("GetExtraccion", new { id = extraccion.IdExtraccion }, extraccion);
         }
 
-        // DELETE: api/Subsistemas/5
+        // DELETE: api/Extraccions/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Subsistemas>> DeleteSubsistemas(int id)
+        public async Task<ActionResult<Extraccion>> DeleteExtraccion(int id)
         {
-            var subsistemas = await _context.Subsistemas.FindAsync(id);
-            if (subsistemas == null)
+            var extraccion = await _context.Extraccion.FindAsync(id);
+            if (extraccion == null)
             {
                 return NotFound();
             }
 
-            _context.Subsistemas.Remove(subsistemas);
+            _context.Extraccion.Remove(extraccion);
             await _context.SaveChangesAsync();
 
-            return subsistemas;
+            return extraccion;
         }
 
-        private bool SubsistemasExists(int id)
+        private bool ExtraccionExists(int id)
         {
-            return _context.Subsistemas.Any(e => e.IdSubsistemas == id);
+            return _context.Extraccion.Any(e => e.IdExtraccion == id);
         }
     }
 }

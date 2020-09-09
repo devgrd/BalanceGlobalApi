@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Service;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.EntityFrameworkCore;
+using BalanceGlobal.Database.Context;
+using BalanceGlobal.Database.Tables;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -14,42 +14,97 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class SistemasController : ControllerBase
     {
-        private readonly IService _service;
-        public SistemasController(IService service)
+        private readonly BalanceGlobalContext _context;
+
+        public SistemasController(BalanceGlobalContext context)
         {
-            _service = service;
+            _context = context;
         }
 
-        // GET: api/<SistemasController>
+        // GET: api/Sistemas
         [HttpGet]
-        public async Task<IEnumerable<Sistemas>> Get()
+        public async Task<ActionResult<IEnumerable<Sistemas>>> GetSistemas()
         {
-            return await _service.GetSistemas();
+            return await _context.Sistemas.ToListAsync();
         }
 
-        // GET api/<SistemasController>/5
+        // GET: api/Sistemas/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<Sistemas>> GetSistemas(int id)
         {
-            return "value";
+            var sistemas = await _context.Sistemas.FindAsync(id);
+
+            if (sistemas == null)
+            {
+                return NotFound();
+            }
+
+            return sistemas;
         }
 
-        // POST api/<SistemasController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<SistemasController>/5
+        // PUT: api/Sistemas/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> PutSistemas(int id, Sistemas sistemas)
         {
+            if (id != sistemas.IdSistemas)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(sistemas).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!SistemasExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
-        // DELETE api/<SistemasController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // POST: api/Sistemas
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPost]
+        public async Task<ActionResult<Sistemas>> PostSistemas(Sistemas sistemas)
         {
+            _context.Sistemas.Add(sistemas);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetSistemas", new { id = sistemas.IdSistemas }, sistemas);
+        }
+
+        // DELETE: api/Sistemas/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Sistemas>> DeleteSistemas(int id)
+        {
+            var sistemas = await _context.Sistemas.FindAsync(id);
+            if (sistemas == null)
+            {
+                return NotFound();
+            }
+
+            _context.Sistemas.Remove(sistemas);
+            await _context.SaveChangesAsync();
+
+            return sistemas;
+        }
+
+        private bool SistemasExists(int id)
+        {
+            return _context.Sistemas.Any(e => e.IdSistemas == id);
         }
     }
 }

@@ -12,48 +12,48 @@ namespace BalanceGlobal.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SubsistemasController : ControllerBase
+    public class CosechasController : ControllerBase
     {
         private readonly BalanceGlobalContext _context;
 
-        public SubsistemasController(BalanceGlobalContext context)
+        public CosechasController(BalanceGlobalContext context)
         {
             _context = context;
         }
 
-        // GET: api/Subsistemas
+        // GET: api/Cosechas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Subsistemas>>> GetSubsistemas()
+        public async Task<ActionResult<IEnumerable<Cosechas>>> GetCosechas()
         {
-            return await _context.Subsistemas.ToListAsync();
+            return await _context.Cosechas.ToListAsync();
         }
 
-        // GET: api/Subsistemas/5
+        // GET: api/Cosechas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Subsistemas>> GetSubsistemas(int id)
+        public async Task<ActionResult<Cosechas>> GetCosechas(int id)
         {
-            var subsistemas = await _context.Subsistemas.FindAsync(id);
+            var cosechas = await _context.Cosechas.FindAsync(id);
 
-            if (subsistemas == null)
+            if (cosechas == null)
             {
                 return NotFound();
             }
 
-            return subsistemas;
+            return cosechas;
         }
 
-        // PUT: api/Subsistemas/5
+        // PUT: api/Cosechas/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubsistemas(int id, Subsistemas subsistemas)
+        public async Task<IActionResult> PutCosechas(int id, Cosechas cosechas)
         {
-            if (id != subsistemas.IdSubsistemas)
+            if (id != cosechas.IdCosechas)
             {
                 return BadRequest();
             }
 
-            _context.Entry(subsistemas).State = EntityState.Modified;
+            _context.Entry(cosechas).State = EntityState.Modified;
 
             try
             {
@@ -61,7 +61,7 @@ namespace BalanceGlobal.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SubsistemasExists(id))
+                if (!CosechasExists(id))
                 {
                     return NotFound();
                 }
@@ -74,37 +74,37 @@ namespace BalanceGlobal.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/Subsistemas
+        // POST: api/Cosechas
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Subsistemas>> PostSubsistemas(Subsistemas subsistemas)
+        public async Task<ActionResult<Cosechas>> PostCosechas(Cosechas cosechas)
         {
-            _context.Subsistemas.Add(subsistemas);
+            _context.Cosechas.Add(cosechas);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSubsistemas", new { id = subsistemas.IdSubsistemas }, subsistemas);
+            return CreatedAtAction("GetCosechas", new { id = cosechas.IdCosechas }, cosechas);
         }
 
-        // DELETE: api/Subsistemas/5
+        // DELETE: api/Cosechas/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Subsistemas>> DeleteSubsistemas(int id)
+        public async Task<ActionResult<Cosechas>> DeleteCosechas(int id)
         {
-            var subsistemas = await _context.Subsistemas.FindAsync(id);
-            if (subsistemas == null)
+            var cosechas = await _context.Cosechas.FindAsync(id);
+            if (cosechas == null)
             {
                 return NotFound();
             }
 
-            _context.Subsistemas.Remove(subsistemas);
+            _context.Cosechas.Remove(cosechas);
             await _context.SaveChangesAsync();
 
-            return subsistemas;
+            return cosechas;
         }
 
-        private bool SubsistemasExists(int id)
+        private bool CosechasExists(int id)
         {
-            return _context.Subsistemas.Any(e => e.IdSubsistemas == id);
+            return _context.Cosechas.Any(e => e.IdCosechas == id);
         }
     }
 }
