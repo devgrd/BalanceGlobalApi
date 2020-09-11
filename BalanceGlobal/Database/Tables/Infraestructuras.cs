@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace BalanceGlobal.Database.Tables
@@ -18,7 +19,9 @@ namespace BalanceGlobal.Database.Tables
         public bool? Activa { get; set; }
         public bool? ReportarAgrupada { get; set; }
 
+        [JsonIgnore]
         public virtual Infraestructuras IdInfraestructuraPadreNavigation { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Infraestructuras> InverseIdInfraestructuraPadreNavigation { get; set; }
     }
 }

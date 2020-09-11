@@ -16,6 +16,10 @@ namespace BalanceGlobal.Database.Context
         {
         }
 
+        public virtual DbSet<ConsInvCarmen> ConsInvCarmen { get; set; }
+        public virtual DbSet<ConsumoEnergetico> ConsumoEnergetico { get; set; }
+        public virtual DbSet<Faenas> Faenas { get; set; }
+        public virtual DbSet<FaenasSistemas> FaenasSistemas { get; set; }
         public virtual DbSet<Cosechas> Cosechas { get; set; }
         public virtual DbSet<Periodos> Periodos { get; set; }
         public virtual DbSet<Porteos> Porteos { get; set; }
@@ -40,6 +44,124 @@ namespace BalanceGlobal.Database.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ConsInvCarmen>(entity =>
+            {
+                entity.HasKey(e => e.IdConsInvCarmen)
+                    .HasName("PK_IdConsInvCarmen");
+
+                entity.HasIndex(e => new { e.Fecha, e.IdSistemasSubSistemas, e.IdInfraestructuras })
+                    .HasName("UK_ConsInvCarmen")
+                    .IsUnique();
+
+                entity.Property(e => e.DensidadTomm3)
+                    .HasColumnName("Densidad_tomm3")
+                    .HasColumnType("decimal(19, 3)");
+
+                entity.Property(e => e.Fecha).HasColumnType("date");
+
+                entity.Property(e => e.IdSistemasSubSistemas).HasColumnName("IdSistemas_SubSistemas");
+
+                entity.Property(e => e.KPct)
+                    .HasColumnName("K_pct")
+                    .HasColumnType("decimal(19, 3)");
+
+                entity.Property(e => e.MasaBalanceLceTon)
+                    .HasColumnName("MasaBalanceLCE_ton")
+                    .HasColumnType("decimal(19, 3)");
+
+                entity.Property(e => e.MasaLceTon)
+                    .HasColumnName("MasaLCE_ton")
+                    .HasColumnType("decimal(19, 3)");
+
+                entity.Property(e => e.MasaTon)
+                    .HasColumnName("Masa_ton")
+                    .HasColumnType("decimal(19, 3)");
+
+                entity.Property(e => e.VolumenM3)
+                    .HasColumnName("Volumen_m3")
+                    .HasColumnType("decimal(19, 2)");
+            });
+
+            modelBuilder.Entity<ConsumoEnergetico>(entity =>
+            {
+                entity.HasKey(e => e.IdConsumoEnergetico)
+                    .HasName("PK_ConsumoEnergetico_IdConsumoEnergetico");
+
+                entity.HasIndex(e => new { e.IdPeriodos, e.Up, e.Concepto })
+                    .HasName("UK_ConsumoEnergetico")
+                    .IsUnique();
+
+                entity.Property(e => e.Concepto)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ConceptoD)
+                    .HasColumnName("Concepto_D")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Um)
+                    .HasColumnName("UM")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Up)
+                    .IsRequired()
+                    .HasColumnName("UP")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UpD)
+                    .HasColumnName("UP_D")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Valor).HasColumnType("decimal(19, 7)");
+            });
+
+            modelBuilder.Entity<Faenas>(entity =>
+            {
+                entity.HasKey(e => e.IdFaenas)
+                    .HasName("PK_Faenas_IdFaenas");
+
+                entity.HasIndex(e => e.Faena)
+                    .HasName("UK_Faenas_Faena")
+                    .IsUnique();
+
+                entity.Property(e => e.Activa)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(254)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Faena)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<FaenasSistemas>(entity =>
+            {
+                entity.HasKey(e => e.IdFaenasSistemas)
+                    .HasName("PK_Faenas_sistemas_IdFaenas_Sistemas");
+
+                entity.ToTable("Faenas_Sistemas");
+
+                entity.HasIndex(e => new { e.IdFaenas, e.IdSistemas })
+                    .HasName("UK_Faenas_sistemas")
+                    .IsUnique();
+
+                entity.Property(e => e.IdFaenasSistemas).HasColumnName("IdFaenas_Sistemas");
+
+                entity.HasOne(d => d.IdFaenasNavigation)
+                    .WithMany(p => p.FaenasSistemas)
+                    .HasForeignKey(d => d.IdFaenas)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
             modelBuilder.Entity<Cosechas>(entity =>
             {
                 entity.HasKey(e => e.IdCosechas)

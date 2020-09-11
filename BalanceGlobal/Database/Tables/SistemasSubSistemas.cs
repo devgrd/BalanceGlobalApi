@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace BalanceGlobal.Database.Tables
@@ -9,7 +10,9 @@ namespace BalanceGlobal.Database.Tables
         public int IdSistemas { get; set; }
         public int? IdSubsistemas { get; set; }
 
+        [JsonIgnore]
         public virtual Sistemas IdSistemasNavigation { get; set; }
+        [JsonIgnore]
         public virtual Subsistemas IdSubsistemasNavigation { get; set; }
     }
 }

@@ -33,6 +33,8 @@ namespace BalanceGlobalApi
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Balance Global API", Version = "v1" });
             });
 
+            services.AddSwaggerGenNewtonsoftSupport();
+
             services.AddDbContext<BalanceGlobalContext>(opts => opts.UseSqlServer(Configuration.GetConnectionString("BalanceGlobalContext")));
 
             services.AddTransient<IService, Service>();
