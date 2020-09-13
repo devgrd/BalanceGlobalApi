@@ -1,4 +1,5 @@
-﻿using BalanceGlobal.Database.Tables;
+﻿using BalanceGlobal.Database.Context;
+using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Infrastructure;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace BalanceGlobal.Repository
     }
     public class SubSistemasRepository : RepositoryBase<Subsistemas>, ISubSistemasRepository
     {
-        public SubSistemasRepository(IDatabaseFactory databaseFactory) : base(databaseFactory)
+        public SubSistemasRepository(BalanceGlobalContext balanceGlobalContext) : base(balanceGlobalContext)
         {
 
         }

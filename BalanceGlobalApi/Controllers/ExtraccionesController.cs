@@ -12,11 +12,11 @@ namespace BalanceGlobal.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ExtraccionsController : ControllerBase
+    public class ExtraccionesController : ControllerBase
     {
         private readonly BalanceGlobalContext _context;
 
-        public ExtraccionsController(BalanceGlobalContext context)
+        public ExtraccionesController(BalanceGlobalContext context)
         {
             _context = context;
         }

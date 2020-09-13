@@ -42,6 +42,69 @@ namespace BalanceGlobal.Api.Controllers
             return faenasSistemas;
         }
 
-      
+        // PUT: api/FaenasSistemas/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutFaenasSistemas(int id, FaenasSistemas faenasSistemas)
+        {
+            if (id != faenasSistemas.IdFaenasSistemas)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(faenasSistemas).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!FaenasSistemasExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // POST: api/FaenasSistemas
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPost]
+        public async Task<ActionResult<FaenasSistemas>> PostFaenasSistemas(FaenasSistemas faenasSistemas)
+        {
+            _context.FaenasSistemas.Add(faenasSistemas);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetFaenasSistemas", new { id = faenasSistemas.IdFaenasSistemas }, faenasSistemas);
+        }
+
+        // DELETE: api/FaenasSistemas/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<FaenasSistemas>> DeleteFaenasSistemas(int id)
+        {
+            var faenasSistemas = await _context.FaenasSistemas.FindAsync(id);
+            if (faenasSistemas == null)
+            {
+                return NotFound();
+            }
+
+            _context.FaenasSistemas.Remove(faenasSistemas);
+            await _context.SaveChangesAsync();
+
+            return faenasSistemas;
+        }
+
+        private bool FaenasSistemasExists(int id)
+        {
+            return _context.FaenasSistemas.Any(e => e.IdFaenasSistemas == id);
+        }
     }
 }

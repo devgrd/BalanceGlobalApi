@@ -12,11 +12,11 @@ namespace BalanceGlobal.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ConsumoEnergeticoesController : ControllerBase
+    public class ConsumoEnergeticoController : ControllerBase
     {
         private readonly BalanceGlobalContext _context;
 
-        public ConsumoEnergeticoesController(BalanceGlobalContext context)
+        public ConsumoEnergeticoController(BalanceGlobalContext context)
         {
             _context = context;
         }

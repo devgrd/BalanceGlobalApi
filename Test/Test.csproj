@@ -5,4 +5,9 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BalanceGlobalApi\BalanceGlobal.Api.csproj" />
+    <ProjectReference Include="..\BalanceGlobal\BalanceGlobal.csproj" />
+  </ItemGroup>
+
 </Project>

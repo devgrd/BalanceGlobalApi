@@ -1,3 +1,4 @@
+using BalanceGlobal.Api.Extensions;
 using BalanceGlobal.Api.Middleware;
 using BalanceGlobal.Api.Settings;
 using BalanceGlobal.Database.Context;
@@ -26,7 +27,13 @@ namespace BalanceGlobalApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers()
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+            });
+
 
             services.AddSwaggerGen(c =>
             {
@@ -35,14 +42,15 @@ namespace BalanceGlobalApi
 
             services.AddSwaggerGenNewtonsoftSupport();
 
-            services.AddDbContext<BalanceGlobalContext>(opts => opts.UseSqlServer(Configuration.GetConnectionString("BalanceGlobalContext")));
+            services.AddContext<BalanceGlobalContext>(Configuration, "BalanceGlobalContext");
+            services.AddServices();
 
-            services.AddTransient<IService, Service>();
+            //services.AddTransient<IService, Service>();
 
-            services.AddTransient<IDatabaseFactory, DatabaseFactory>();
-            services.AddTransient<IPeriodoRepository, PeriodoReposirory>();
-            services.AddTransient<ISistemasRepository, SistemasRepository>();
-            services.AddTransient<ISubSistemasRepository, SubSistemasRepository>();
+            //services.AddTransient<IDatabaseFactory, DatabaseFactory>();
+            //services.AddTransient<IPeriodoRepository, PeriodoReposirory>();
+            //services.AddTransient<ISistemasRepository, SistemasRepository>();
+            //services.AddTransient<ISubSistemasRepository, SubSistemasRepository>();
 
             services.AddMvc();
         }

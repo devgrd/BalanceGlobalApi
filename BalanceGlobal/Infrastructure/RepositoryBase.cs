@@ -10,31 +10,16 @@ namespace BalanceGlobal.Infrastructure
 {
     public abstract class RepositoryBase<T> : IRepository<T> where T : class
     {
-        private BalanceGlobalContext dataContext;
+        private BalanceGlobalContext _dataContext;
         //private readonly DbQuery<T> dbquery;
         private readonly DbSet<T> dbset;
 
-        protected RepositoryBase(IDatabaseFactory databaseFactory)
+        protected RepositoryBase(BalanceGlobalContext dataContext)
         {
-            DatabaseFactory = databaseFactory;
-            dbset = DataContext.Set<T>();
+            _dataContext = dataContext;
+            dbset = _dataContext.Set<T>();
         }
 
-        protected IDatabaseFactory DatabaseFactory
-        {
-            get;
-            private set;
-        }
-
-        protected BalanceGlobalContext DataContext
-        {
-            get
-            {
-                var db = dataContext ?? (dataContext = DatabaseFactory.GetContext<BalanceGlobalContext>());
-                db.Database.SetCommandTimeout(600);
-                return db;
-            }
-        }
 
         public virtual async Task<IEnumerable<T>> GetWithStoredProcedureAsync(string spName, params object[] prms)
         {
@@ -65,20 +50,20 @@ namespace BalanceGlobal.Infrastructure
         public async Task AddAsync(T entity)
         {
             await dbset.AddAsync(entity);
-            await dataContext.SaveChangesAsync();
+            await _dataContext.SaveChangesAsync();
         }
 
         public async Task RemoveAsync(object id)
         {
             var entity = await dbset.FindAsync(id);
             dbset.Remove(entity);
-            await dataContext.SaveChangesAsync();
+            await _dataContext.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(T entity)
         {
             dbset.Update(entity);
-            await dataContext.SaveChangesAsync();
+            await _dataContext.SaveChangesAsync();
         }
     }
 }
