@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace BalanceGlobal.Entities
 {
-    public partial class Sistemas
+    public partial class SistemasEntity : EntityBase
     {
 
         public int IdSistemas { get; set; }

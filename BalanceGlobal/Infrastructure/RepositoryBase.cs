@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using BalanceGlobal.Database.Context;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 
 namespace BalanceGlobal.Infrastructure
 {
@@ -64,6 +65,22 @@ namespace BalanceGlobal.Infrastructure
         {
             dbset.Update(entity);
             await _dataContext.SaveChangesAsync();
+        }
+
+        public async Task SaveChangesAsync(string valorSesion)
+        {
+            using (var scope = await _dataContext.Database.BeginTransactionAsync())
+            {
+                await SetUserContext(valorSesion);
+                await _dataContext.SaveChangesAsync();
+                await scope.CommitAsync();
+            }
+        }
+
+        private async Task SetUserContext(string valorSesion)
+        {
+            var idParam = new SqlParameter("@valor_sesion ", valorSesion);
+            await _dataContext.Database.ExecuteSqlRawAsync("dbo.spSistema_ConfiguracionDeSesion_SetContextInfo @valor_sesion", idParam);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BalanceGlobal.Entities
 {
-    public class ConsumoEnergetico
+    public class ConsumoEnergeticoEntity
     {
         public int IdConsumoEnergetico { get; set; }
         public int IdPeriodos { get; set; }

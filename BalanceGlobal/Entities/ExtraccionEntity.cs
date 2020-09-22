@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BalanceGlobal.Entities
 {
-    public class Extraccion
+    public class ExtraccionEntity
     {
         public int IdExtraccion { get; set; }
         public int IdPeriodos { get; set; }

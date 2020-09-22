@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BalanceGlobal.Database.Context;
 using BalanceGlobal.Database.Tables;
+using AutoMapper;
+using BalanceGlobal.Entities;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -15,17 +17,22 @@ namespace BalanceGlobal.Api.Controllers
     public class SistemasController : ControllerBase
     {
         private readonly BalanceGlobalContext _context;
+        private readonly IMapper _mapper;
 
-        public SistemasController(BalanceGlobalContext context)
+        public SistemasController(BalanceGlobalContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Sistemas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Sistemas>>> GetSistemas()
+        public async Task<ActionResult<IEnumerable<SistemasEntity>>> GetSistemas()
         {
-            return await _context.Sistemas.ToListAsync();
+            var sistemas = await _context.Sistemas.ToListAsync();
+            var result = _mapper.Map<List<SistemasEntity>>(sistemas);
+
+            return result;
         }
 
         // GET: api/Sistemas/5

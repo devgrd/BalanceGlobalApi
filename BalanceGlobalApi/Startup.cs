@@ -1,13 +1,10 @@
+using System;
+using AutoMapper;
 using BalanceGlobal.Api.Extensions;
 using BalanceGlobal.Api.Middleware;
-using BalanceGlobal.Api.Settings;
 using BalanceGlobal.Database.Context;
-using BalanceGlobal.Infrastructure;
-using BalanceGlobal.Repository;
-using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,6 +31,7 @@ namespace BalanceGlobalApi
                 options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
             });
 
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddSwaggerGen(c =>
             {

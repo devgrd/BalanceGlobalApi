@@ -1,22 +1,19 @@
-﻿using BalanceGlobal.Database.Context;
+using BalanceGlobal.Database.Context;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BalanceGlobal.Repository
 {
-
-    public interface ISubSistemasRepository : IRepository<Subsistemas>
+    public interface ISubsistemasRepository : IRepository<Subsistemas>
     {
 
     }
-    public class SubSistemasRepository : RepositoryBase<Subsistemas>, ISubSistemasRepository
+    public class SubsistemasRepository : RepositoryBase<Subsistemas>, ISubsistemasRepository
     {
-        public SubSistemasRepository(BalanceGlobalContext balanceGlobalContext) : base(balanceGlobalContext)
+        public SubsistemasRepository(BalanceGlobalContext balanceGlobalContext) : base(balanceGlobalContext)
         {
 
         }
     }
+
 }

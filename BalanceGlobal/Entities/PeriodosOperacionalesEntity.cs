@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BalanceGlobal.Entities
 {
-    public partial class PeriodosOperacionales
+    public partial class PeriodosOperacionalesEntity : EntityBase
     {
         public int IdPeriodosOpercionales { get; set; }
         public int IdSistemas { get; set; }

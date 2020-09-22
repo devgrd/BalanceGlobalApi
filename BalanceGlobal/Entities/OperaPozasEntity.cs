@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BalanceGlobal.Entities
 {
-    public class OperaPozas
+    public class OperaPozasEntity
     {
         public int IdOperaPozas { get; set; }
         public int IdSistemas { get; set; }

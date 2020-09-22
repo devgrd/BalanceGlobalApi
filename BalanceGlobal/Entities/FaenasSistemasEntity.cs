@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BalanceGlobal.Entities
 {
-    public class FaenasSistemas
+    public class FaenasSistemasEntity : EntityBase
     {
         public int IdFaenasSistemas { get; set; }
         public int IdFaenas { get; set; }

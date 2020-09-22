@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BalanceGlobal.Database.Context;
 using BalanceGlobal.Database.Tables;
+using AutoMapper;
+using BalanceGlobal.Entities;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -15,17 +17,22 @@ namespace BalanceGlobal.Api.Controllers
     public class ReservoriosController : ControllerBase
     {
         private readonly BalanceGlobalContext _context;
+        private readonly IMapper _mapper;
 
-        public ReservoriosController(BalanceGlobalContext context)
+        public ReservoriosController(BalanceGlobalContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Reservorios
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Reservorios>>> GetReservorios()
+        public async Task<ActionResult<IEnumerable<ReservoriosEntity>>> GetReservorios()
         {
-            return await _context.Reservorios.ToListAsync();
+            var reservorios = await _context.Reservorios.ToListAsync();
+            var result = _mapper.Map<List<ReservoriosEntity>>(reservorios);
+
+            return result;
         }
 
         // GET: api/Reservorios/5

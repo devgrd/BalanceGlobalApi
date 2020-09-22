@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace BalanceGlobal.Entities
 {
-    public class ConsInvCarmen
+    public class ConsInvCarmenEntity
     {
         public int IdConsInvCarmen { get; set; }
         public int IdSistemasSubSistemas { get; set; }

@@ -32,6 +32,17 @@ namespace BalanceGlobal.Database.Context
         public virtual DbSet<OperaPozas> OperaPozas { get; set; }
         public virtual DbSet<Reservorios> Reservorios { get; set; }
         public virtual DbSet<TransSistemasCosechas> TransSistemasCosechas { get; set; }
+        public virtual DbSet<ImportDestino> ImportDestino { get; set; }
+        public virtual DbSet<Importaciones> Importaciones { get; set; }
+        public virtual DbSet<ImportacionesUserParValues> ImportacionesUserParValues { get; set; }
+        public virtual DbSet<Importadores> Importadores { get; set; }
+        public virtual DbSet<MensajesImportacion> MensajesImportacion { get; set; }
+        public virtual DbSet<OrigenesDatos> OrigenesDatos { get; set; }
+        public virtual DbSet<SchemaColumns> SchemaColumns { get; set; }
+        public virtual DbSet<SchemaColumnsWarning> SchemaColumnsWarning { get; set; }
+        public virtual DbSet<SchemaDef> SchemaDef { get; set; }
+        public virtual DbSet<Bombas> Bombas { get; set; }
+        public virtual DbSet<TipoInfraestructuras> TipoInfraestructuras { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -44,6 +55,276 @@ namespace BalanceGlobal.Database.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<ImportDestino>(entity =>
+            {
+                entity.HasKey(e => e.IdImportDestino)
+                    .HasName("PK_Destination_IdDestination");
+
+                entity.ToTable("ImportDestino", "imports");
+
+                entity.HasIndex(e => new { e.ImportJobNombre, e.ImportJobSeq, e.IdSchemaDef })
+                    .HasName("UK_Destination")
+                    .IsUnique();
+
+                entity.Property(e => e.Activa).HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.Comentario).IsUnicode(false);
+
+                entity.Property(e => e.ImportJobNombre)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PyRef).IsUnicode(false);
+
+                entity.Property(e => e.Sqlref)
+                    .IsRequired()
+                    .HasColumnName("SQLRef")
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.IdSchemaDefNavigation)
+                    .WithMany(p => p.ImportDestino)
+                    .HasForeignKey(d => d.IdSchemaDef)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<Importaciones>(entity =>
+            {
+                entity.HasKey(e => e.IdImportaciones);
+
+                entity.ToTable("Importaciones", "imports");
+
+                entity.Property(e => e.IdImportaciones).ValueGeneratedNever();
+
+                entity.Property(e => e.Fecha)
+                    .HasColumnType("datetime2(3)")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(d => d.IdImportadoresNavigation)
+                    .WithMany(p => p.Importaciones)
+                    .HasForeignKey(d => d.IdImportadores)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.IdMensagesImportacionNavigation)
+                    .WithMany(p => p.Importaciones)
+                    .HasForeignKey(d => d.IdMensagesImportacion)
+                    .HasConstraintName("FK_Importaciones_MensajesImportacion_IdMensajesImportacion");
+            });
+
+            modelBuilder.Entity<ImportacionesUserParValues>(entity =>
+            {
+                entity.HasKey(e => e.IdImportacionesUserParValues)
+                    .HasName("PK_ImportUserPar_IdImportUserPar");
+
+                entity.ToTable("ImportacionesUserParValues", "imports");
+
+                entity.HasIndex(e => new { e.IdImportadoresUserPar, e.IdImportaciones })
+                    .HasName("UK_ImportUserPar")
+                    .IsUnique();
+
+                entity.Property(e => e.Fecha)
+                    .HasColumnType("datetime2(3)")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Value)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.IdImportacionesNavigation)
+                    .WithMany(p => p.ImportacionesUserParValues)
+                    .HasForeignKey(d => d.IdImportaciones)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<Importadores>(entity =>
+            {
+                entity.HasKey(e => e.IdImportadores);
+
+                entity.ToTable("Importadores", "imports");
+
+                entity.HasIndex(e => e.Nombre)
+                    .HasName("UQ_NOMBRE")
+                    .IsUnique();
+
+                entity.Property(e => e.Activa)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.Nombre)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<MensajesImportacion>(entity =>
+            {
+                entity.HasKey(e => e.IdMensajesImportacion)
+                    .HasName("PK_MensajesImportacion_IdMensajesImportacion");
+
+                entity.ToTable("MensajesImportacion", "imports");
+
+                entity.HasIndex(e => new { e.IdOrigenesDatos, e.IdTipoMensaje, e.ErrorCounter })
+                    .HasName("IDX_MensajesImportacion");
+
+                entity.Property(e => e.Fecha)
+                    .HasColumnType("datetime2(3)")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Fila)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Mensaje)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.IdOrigenesDatosNavigation)
+                    .WithMany(p => p.MensajesImportacion)
+                    .HasForeignKey(d => d.IdOrigenesDatos)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<OrigenesDatos>(entity =>
+            {
+                entity.HasKey(e => e.IdOrigenesDatos)
+                    .HasName("PK_OrigenesDatos_IdOrigenesDatos");
+
+                entity.ToTable("OrigenesDatos", "imports");
+
+                entity.HasIndex(e => new { e.OrigenDatos, e.Tab })
+                    .HasName("IDX_OrigenesDatos")
+                    .IsUnique();
+
+                entity.Property(e => e.Activa)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.OrigenDatos)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Password)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Tab)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Usuario)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.IdImportadoresNavigation)
+                    .WithMany(p => p.OrigenesDatos)
+                    .HasForeignKey(d => d.IdImportadores)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<SchemaColumns>(entity =>
+            {
+                entity.HasKey(e => e.IdSchemaColumns)
+                    .HasName("PK_SchemaDefErrors_IdSchemaDefErrors");
+
+                entity.ToTable("SchemaColumns", "imports");
+
+                entity.HasIndex(e => new { e.IdSchemaDef, e.NombreCol })
+                    .HasName("UK_SchemaColumns")
+                    .IsUnique();
+
+                entity.Property(e => e.FormatoFechaRegex)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FormatoTextoRegex)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.NombreCol)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RangoFechaFin).HasColumnType("datetime2(3)");
+
+                entity.Property(e => e.RangoFechaInicio).HasColumnType("datetime2(3)");
+
+                entity.Property(e => e.RangoNumFin).HasColumnType("decimal(19, 7)");
+
+                entity.Property(e => e.RangoNumInicio).HasColumnType("decimal(19, 7)");
+
+                entity.Property(e => e.Requerido).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.Unico).HasDefaultValueSql("((0))");
+
+                entity.HasOne(d => d.IdSchemaDefNavigation)
+                    .WithMany(p => p.SchemaColumns)
+                    .HasForeignKey(d => d.IdSchemaDef)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<SchemaColumnsWarning>(entity =>
+            {
+                entity.HasKey(e => e.IdSchemaColumnsWarning)
+                    .HasName("PK_SchemaColumnsWarning_IdSchemaColumns");
+
+                entity.ToTable("SchemaColumnsWarning", "imports");
+
+                entity.HasIndex(e => new { e.IdSchemaDef, e.NombreCol })
+                    .HasName("UK_SchemaColumns")
+                    .IsUnique();
+
+                entity.Property(e => e.FormatoFechaRegex)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FormatoTextoRegex)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.NombreCol)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RangoFechaFin).HasColumnType("datetime2(3)");
+
+                entity.Property(e => e.RangoFechaInicio).HasColumnType("datetime2(3)");
+
+                entity.Property(e => e.RangoNumFin).HasColumnType("decimal(19, 7)");
+
+                entity.Property(e => e.RangoNumInicio).HasColumnType("decimal(19, 7)");
+
+                entity.Property(e => e.Requerido).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.Unico).HasDefaultValueSql("((0))");
+
+                entity.HasOne(d => d.IdSchemaDefNavigation)
+                    .WithMany(p => p.SchemaColumnsWarning)
+                    .HasForeignKey(d => d.IdSchemaDef)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SchemaColumnsWarning_IdSchemaDef");
+            });
+
+            modelBuilder.Entity<SchemaDef>(entity =>
+            {
+                entity.HasKey(e => e.IdSchemaDef)
+                    .HasName("PK_SchemaPar_IdSchemaPar");
+
+                entity.ToTable("SchemaDef", "imports");
+
+                entity.Property(e => e.SkiprowsList).IsUnicode(false);
+
+                entity.Property(e => e.UniqueKeyList).IsUnicode(false);
+
+                entity.HasOne(d => d.IdOrigenesDatosNavigation)
+                    .WithMany(p => p.SchemaDef)
+                    .HasForeignKey(d => d.IdOrigenesDatos)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
             modelBuilder.Entity<ConsInvCarmen>(entity =>
             {
                 entity.HasKey(e => e.IdConsInvCarmen)
@@ -636,6 +917,65 @@ namespace BalanceGlobal.Database.Context
                 entity.Property(e => e.SubsistemaOrigen)
                     .IsRequired()
                     .HasMaxLength(254)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Bombas>(entity =>
+            {
+                entity.HasKey(e => e.IdBombas)
+                    .HasName("PK_Bombas_IdBombas");
+
+                entity.HasIndex(e => e.Bomba)
+                    .HasName("UK_Bombas_Bomba")
+                    .IsUnique();
+
+                entity.Property(e => e.Bomba)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(254)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime2(3)")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.UsuarioActualizacion)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TipoInfraestructuras>(entity =>
+            {
+                entity.HasKey(e => e.IdTipoInfraestructuras)
+                    .HasName("PK_TipoInfraestructuras_IdTipoInfraestructuras");
+
+                entity.HasIndex(e => e.TipoInfraestructuras1)
+                    .HasName("UK_TipoInfraestructuras_TipoInfraestructuras")
+                    .IsUnique();
+
+                entity.Property(e => e.Activa)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(254)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime2(3)")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.TipoInfraestructuras1)
+                    .IsRequired()
+                    .HasColumnName("TipoInfraestructuras")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UsuarioActualizacion)
+                    .HasMaxLength(50)
                     .IsUnicode(false);
             });
 

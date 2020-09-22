@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BalanceGlobal.Entities
 {
-    public partial class TransSistemasCosechas
+    public partial class TransSistemasCosechasEntity : EntityBase
     {
         public int IdTransSistemasCosechas { get; set; }
         public string SistemaOrigen { get; set; }

@@ -10,4 +10,9 @@
     <ProjectReference Include="..\BalanceGlobal\BalanceGlobal.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Service\" />
+    <Folder Include="Repo\" />
+  </ItemGroup>
+
 </Project>
