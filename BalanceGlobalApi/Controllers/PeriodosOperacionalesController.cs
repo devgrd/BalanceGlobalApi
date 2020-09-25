@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
+using BalanceGlobal.Models;
+using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BalanceGlobal.Database.Context;
-using BalanceGlobal.Database.Tables;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -14,54 +12,47 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class PeriodosOperacionalesController : ControllerBase
     {
-        private readonly BalanceGlobalContext _context;
+        private readonly IPeriodosOperacionalesService _service;
 
-        public PeriodosOperacionalesController(BalanceGlobalContext context)
+        public PeriodosOperacionalesController(IPeriodosOperacionalesService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/PeriodosOperacionales
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PeriodosOperacionales>>> GetPeriodosOperacionales()
+        public async Task<ActionResult<IEnumerable<PeriodosOperacionalesModel>>> GetPeriodosOperacionales()
         {
-            return await _context.PeriodosOperacionales.ToListAsync();
+            return await _service.ReadPeriodosOperacionales();
         }
 
-        // GET: api/PeriodosOperacionales/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PeriodosOperacionales>> GetPeriodosOperacionales(int id)
+        public async Task<ActionResult<PeriodosOperacionalesModel>> GetPeriodosOperacionales(int id)
         {
-            var periodosOperacionales = await _context.PeriodosOperacionales.FindAsync(id);
+            var _model = await _service.ReadPeriodosOperacionales(id.ToString());
 
-            if (periodosOperacionales == null)
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            return periodosOperacionales;
+            return _model;
         }
 
-        // PUT: api/PeriodosOperacionales/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPeriodosOperacionales(int id, PeriodosOperacionales periodosOperacionales)
+        public async Task<IActionResult> PutPeriodosOperacionales(int id, PeriodosOperacionalesModel model)
         {
-            if (id != periodosOperacionales.IdPeriodosOpercionales)
+            if (id != model.IdPeriodosOperacionales)
             {
                 return BadRequest();
             }
 
-            _context.Entry(periodosOperacionales).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _service.UpdatePeriodosOperacionales(model);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PeriodosOperacionalesExists(id))
+                if (_service.ReadPeriodosOperacionales(id.ToString()) == null)
                 {
                     return NotFound();
                 }
@@ -74,37 +65,26 @@ namespace BalanceGlobal.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/PeriodosOperacionales
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<PeriodosOperacionales>> PostPeriodosOperacionales(PeriodosOperacionales periodosOperacionales)
+        public async Task<ActionResult<PeriodosOperacionalesModel>> PostPeriodosOperacionales(PeriodosOperacionalesModel model)
         {
-            _context.PeriodosOperacionales.Add(periodosOperacionales);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPeriodosOperacionales", new { id = periodosOperacionales.IdPeriodosOpercionales }, periodosOperacionales);
+            var _model = await _service.CreatePeriodosOperacionales(model);
+            return CreatedAtAction("GetPeriodosOperacionales", new { id = _model.IdPeriodosOperacionales }, _model);
         }
 
-        // DELETE: api/PeriodosOperacionales/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<PeriodosOperacionales>> DeletePeriodosOperacionales(int id)
+        public async Task<ActionResult<PeriodosOperacionalesModel>> DeletePeriodosOperacionales(int id)
         {
-            var periodosOperacionales = await _context.PeriodosOperacionales.FindAsync(id);
-            if (periodosOperacionales == null)
+            var _model = await _service.ReadPeriodosOperacionales(id.ToString());
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            _context.PeriodosOperacionales.Remove(periodosOperacionales);
-            await _context.SaveChangesAsync();
+            await _service.DeletePeriodosOperacionales(id.ToString());
 
-            return periodosOperacionales;
+            return _model;
         }
 
-        private bool PeriodosOperacionalesExists(int id)
-        {
-            return _context.PeriodosOperacionales.Any(e => e.IdPeriodosOpercionales == id);
-        }
     }
 }

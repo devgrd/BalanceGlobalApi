@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,8 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface ICosechasService
     {
-        Task<List<CosechasEntity>> ReadCosechas();
-        Task<CosechasEntity> ReadCosechas(string id);
+        Task<CosechasModel> CreateCosechas(CosechasModel CosechasModel);
+        Task<List<CosechasModel>> ReadCosechas();
+        Task UpdateCosechas(CosechasModel CosechasModel);
+        Task DeleteCosechas(string id);
+        Task<CosechasModel> ReadCosechas(string id);
     }
     public class CosechasService : ICosechasService
     {
@@ -26,18 +30,37 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<List<CosechasEntity>> ReadCosechas()
+        public async Task<CosechasModel> CreateCosechas(CosechasModel model)
+        {
+            var result = _mapper.Map<Cosechas>(model);
+            await _repository.AddAsync(result);
+            model.IdCosechas = result.IdCosechas;
+            return model;
+        }
+
+        public async Task<List<CosechasModel>> ReadCosechas()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<CosechasEntity>>(data);
+            var result = _mapper.Map<List<CosechasModel>>(data);
 
             return result;
         }
 
-        public async Task<CosechasEntity> ReadCosechas(string id)
+        public async Task UpdateCosechas(CosechasModel model)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<CosechasEntity>(entity);
+            var result = _mapper.Map<Cosechas>(model);
+            await _repository.UpdateAsync(result);
+        }
+
+        public async Task DeleteCosechas(string id)
+        {
+            await _repository.RemoveAsync(id);
+        }
+
+        public async Task<CosechasModel> ReadCosechas(string id)
+        {
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<CosechasModel>(model);
             return result;
         }
 

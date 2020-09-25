@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
+using BalanceGlobal.Models;
+using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BalanceGlobal.Database.Context;
-using BalanceGlobal.Database.Tables;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -14,34 +12,79 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class OperaPozasController : ControllerBase
     {
-        private readonly BalanceGlobalContext _context;
+        private readonly IOperaPozasService _service;
 
-        public OperaPozasController(BalanceGlobalContext context)
+        public OperaPozasController(IOperaPozasService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/OperaPozas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OperaPozas>>> GetOperaPozas()
+        public async Task<ActionResult<IEnumerable<OperaPozasModel>>> GetOperaPozas()
         {
-            return await _context.OperaPozas.ToListAsync();
+            return await _service.ReadOperaPozas();
         }
 
-        // GET: api/OperaPozas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<OperaPozas>> GetOperaPozas(int id)
+        public async Task<ActionResult<OperaPozasModel>> GetOperaPozas(int id)
         {
-            var operaPozas = await _context.OperaPozas.FindAsync(id);
+            var _model = await _service.ReadOperaPozas(id.ToString());
 
-            if (operaPozas == null)
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            return operaPozas;
+            return _model;
         }
 
-      
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutOperaPozas(int id, OperaPozasModel model)
+        {
+            if (id != model.IdOperaPozas)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _service.UpdateOperaPozas(model);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (_service.ReadOperaPozas(id.ToString()) == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<OperaPozasModel>> PostOperaPozas(OperaPozasModel model)
+        {
+            var _model = await _service.CreateOperaPozas(model);
+            return CreatedAtAction("GetOperaPozas", new { id = _model.IdOperaPozas }, _model);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<OperaPozasModel>> DeleteOperaPozas(int id)
+        {
+            var _model = await _service.ReadOperaPozas(id.ToString());
+            if (_model == null)
+            {
+                return NotFound();
+            }
+
+            await _service.DeleteOperaPozas(id.ToString());
+
+            return _model;
+        }
+
     }
 }

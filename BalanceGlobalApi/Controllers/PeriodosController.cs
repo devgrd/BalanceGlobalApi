@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
+using BalanceGlobal.Models;
+using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BalanceGlobal.Database.Context;
-using BalanceGlobal.Database.Tables;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -14,54 +12,47 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class PeriodosController : ControllerBase
     {
-        private readonly BalanceGlobalContext _context;
+        private readonly IPeriodosService _service;
 
-        public PeriodosController(BalanceGlobalContext context)
+        public PeriodosController(IPeriodosService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/Periodos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Periodos>>> GetPeriodos()
+        public async Task<ActionResult<IEnumerable<PeriodosModel>>> GetPeriodos()
         {
-            return await _context.Periodos.ToListAsync();
+            return await _service.ReadPeriodos();
         }
 
-        // GET: api/Periodos/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Periodos>> GetPeriodos(int id)
+        public async Task<ActionResult<PeriodosModel>> GetPeriodos(int id)
         {
-            var periodos = await _context.Periodos.FindAsync(id);
+            var _model = await _service.ReadPeriodos(id.ToString());
 
-            if (periodos == null)
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            return periodos;
+            return _model;
         }
 
-        // PUT: api/Periodos/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPeriodos(int id, Periodos periodos)
+        public async Task<IActionResult> PutPeriodos(int id, PeriodosModel model)
         {
-            if (id != periodos.IdPeriodos)
+            if (id != model.IdPeriodos)
             {
                 return BadRequest();
             }
 
-            _context.Entry(periodos).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _service.UpdatePeriodos(model);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PeriodosExists(id))
+                if (_service.ReadPeriodos(id.ToString()) == null)
                 {
                     return NotFound();
                 }
@@ -74,37 +65,26 @@ namespace BalanceGlobal.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/Periodos
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Periodos>> PostPeriodos(Periodos periodos)
+        public async Task<ActionResult<PeriodosModel>> PostPeriodos(PeriodosModel model)
         {
-            _context.Periodos.Add(periodos);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPeriodos", new { id = periodos.IdPeriodos }, periodos);
+            var _model = await _service.CreatePeriodos(model);
+            return CreatedAtAction("GetPeriodos", new { id = _model.IdPeriodos }, _model);
         }
 
-        // DELETE: api/Periodos/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Periodos>> DeletePeriodos(int id)
+        public async Task<ActionResult<PeriodosModel>> DeletePeriodos(int id)
         {
-            var periodos = await _context.Periodos.FindAsync(id);
-            if (periodos == null)
+            var _model = await _service.ReadPeriodos(id.ToString());
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            _context.Periodos.Remove(periodos);
-            await _context.SaveChangesAsync();
+            await _service.DeletePeriodos(id.ToString());
 
-            return periodos;
+            return _model;
         }
 
-        private bool PeriodosExists(int id)
-        {
-            return _context.Periodos.Any(e => e.IdPeriodos == id);
-        }
     }
 }

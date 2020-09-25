@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
+using BalanceGlobal.Models;
+using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BalanceGlobal.Database.Context;
-using BalanceGlobal.Database.Tables;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -14,54 +12,47 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class FaenasController : ControllerBase
     {
-        private readonly BalanceGlobalContext _context;
+        private readonly IFaenasService _service;
 
-        public FaenasController(BalanceGlobalContext context)
+        public FaenasController(IFaenasService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/Faenas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Faenas>>> GetFaenas()
+        public async Task<ActionResult<IEnumerable<FaenasModel>>> GetFaenas()
         {
-            return await _context.Faenas.ToListAsync();
+            return await _service.ReadFaenas();
         }
 
-        // GET: api/Faenas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Faenas>> GetFaenas(int id)
+        public async Task<ActionResult<FaenasModel>> GetFaenas(int id)
         {
-            var faenas = await _context.Faenas.FindAsync(id);
+            var _model = await _service.ReadFaenas(id.ToString());
 
-            if (faenas == null)
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            return faenas;
+            return _model;
         }
 
-        // PUT: api/Faenas/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFaenas(int id, Faenas faenas)
+        public async Task<IActionResult> PutFaenas(int id, FaenasModel model)
         {
-            if (id != faenas.IdFaenas)
+            if (id != model.IdFaenas)
             {
                 return BadRequest();
             }
 
-            _context.Entry(faenas).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _service.UpdateFaenas(model);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!FaenasExists(id))
+                if (_service.ReadFaenas(id.ToString()) == null)
                 {
                     return NotFound();
                 }
@@ -74,37 +65,26 @@ namespace BalanceGlobal.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/Faenas
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Faenas>> PostFaenas(Faenas faenas)
+        public async Task<ActionResult<FaenasModel>> PostFaenas(FaenasModel model)
         {
-            _context.Faenas.Add(faenas);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetFaenas", new { id = faenas.IdFaenas }, faenas);
+            var _model = await _service.CreateFaenas(model);
+            return CreatedAtAction("GetFaenas", new { id = _model.IdFaenas }, _model);
         }
 
-        // DELETE: api/Faenas/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Faenas>> DeleteFaenas(int id)
+        public async Task<ActionResult<FaenasModel>> DeleteFaenas(int id)
         {
-            var faenas = await _context.Faenas.FindAsync(id);
-            if (faenas == null)
+            var _model = await _service.ReadFaenas(id.ToString());
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            _context.Faenas.Remove(faenas);
-            await _context.SaveChangesAsync();
+            await _service.DeleteFaenas(id.ToString());
 
-            return faenas;
+            return _model;
         }
 
-        private bool FaenasExists(int id)
-        {
-            return _context.Faenas.Any(e => e.IdFaenas == id);
-        }
     }
 }

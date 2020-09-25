@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IConsInvCarmenService
     {
-        Task CreateConsInvCarmen(ConsInvCarmenEntity ConsInvCarmenEntity);
-        Task<List<ConsInvCarmenEntity>> ReadConsInvCarmen();
-        Task UpdateConsInvCarmen(ConsInvCarmenEntity ConsInvCarmenEntity);
+        Task<ConsInvCarmenModel> CreateConsInvCarmen(ConsInvCarmenModel ConsInvCarmenModel);
+        Task<List<ConsInvCarmenModel>> ReadConsInvCarmen();
+        Task UpdateConsInvCarmen(ConsInvCarmenModel ConsInvCarmenModel);
         Task DeleteConsInvCarmen(string id);
-        Task<ConsInvCarmenEntity> ReadConsInvCarmen(string id);
+        Task<ConsInvCarmenModel> ReadConsInvCarmen(string id);
     }
     public class ConsInvCarmenService : IConsInvCarmenService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateConsInvCarmen(ConsInvCarmenEntity entity)
+        public async Task<ConsInvCarmenModel> CreateConsInvCarmen(ConsInvCarmenModel model)
         {
-            var result = _mapper.Map<ConsInvCarmen>(entity);
+            var result = _mapper.Map<ConsInvCarmen>(model);
             await _repository.AddAsync(result);
+            model.IdConsInvCarmen = result.IdConsInvCarmen;
+            return model;
         }
 
-        public async Task<List<ConsInvCarmenEntity>> ReadConsInvCarmen()
+        public async Task<List<ConsInvCarmenModel>> ReadConsInvCarmen()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<ConsInvCarmenEntity>>(data);
+            var result = _mapper.Map<List<ConsInvCarmenModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateConsInvCarmen(ConsInvCarmenEntity entity)
+        public async Task UpdateConsInvCarmen(ConsInvCarmenModel model)
         {
-            var result = _mapper.Map<ConsInvCarmen>(entity);
+            var result = _mapper.Map<ConsInvCarmen>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<ConsInvCarmenEntity> ReadConsInvCarmen(string id)
+        public async Task<ConsInvCarmenModel> ReadConsInvCarmen(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<ConsInvCarmenEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<ConsInvCarmenModel>(model);
             return result;
         }
 

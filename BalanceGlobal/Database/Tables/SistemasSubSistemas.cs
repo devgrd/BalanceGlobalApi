@@ -1,18 +1,16 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace BalanceGlobal.Database.Tables
 {
     public partial class SistemasSubSistemas
     {
-        public int IdSistemasSubsistemas { get; set; }
+        public int IdSistemasSubSistemas { get; set; }
         public int IdSistemas { get; set; }
-        public int? IdSubsistemas { get; set; }
+        public int? IdSubSistemas { get; set; }
+        public string UsuarioActualizacion { get; set; }
+        public DateTime? FechaActualizacion { get; set; }
 
-        [JsonIgnore]
-        public virtual Sistemas IdSistemasNavigation { get; set; }
-        [JsonIgnore]
-        public virtual Subsistemas IdSubsistemasNavigation { get; set; }
+        public virtual SubSistemas IdSubSistemasNavigation { get; set; }
     }
 }

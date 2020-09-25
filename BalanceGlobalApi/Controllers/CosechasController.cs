@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
+using BalanceGlobal.Models;
+using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BalanceGlobal.Database.Context;
-using BalanceGlobal.Database.Tables;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -14,34 +12,79 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class CosechasController : ControllerBase
     {
-        private readonly BalanceGlobalContext _context;
+        private readonly ICosechasService _service;
 
-        public CosechasController(BalanceGlobalContext context)
+        public CosechasController(ICosechasService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/Cosechas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cosechas>>> GetCosechas()
+        public async Task<ActionResult<IEnumerable<CosechasModel>>> GetCosechas()
         {
-            return await _context.Cosechas.ToListAsync();
+            return await _service.ReadCosechas();
         }
 
-        // GET: api/Cosechas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Cosechas>> GetCosechas(int id)
+        public async Task<ActionResult<CosechasModel>> GetCosechas(int id)
         {
-            var cosechas = await _context.Cosechas.FindAsync(id);
+            var _model = await _service.ReadCosechas(id.ToString());
 
-            if (cosechas == null)
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            return cosechas;
+            return _model;
         }
 
-      
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutCosechas(int id, CosechasModel model)
+        {
+            if (id != model.IdCosechas)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _service.UpdateCosechas(model);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (_service.ReadCosechas(id.ToString()) == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CosechasModel>> PostCosechas(CosechasModel model)
+        {
+            var _model = await _service.CreateCosechas(model);
+            return CreatedAtAction("GetCosechas", new { id = _model.IdCosechas }, _model);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<CosechasModel>> DeleteCosechas(int id)
+        {
+            var _model = await _service.ReadCosechas(id.ToString());
+            if (_model == null)
+            {
+                return NotFound();
+            }
+
+            await _service.DeleteCosechas(id.ToString());
+
+            return _model;
+        }
+
     }
 }

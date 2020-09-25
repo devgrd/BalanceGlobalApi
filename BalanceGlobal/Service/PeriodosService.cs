@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IPeriodosService
     {
-        Task CreatePeriodos(PeriodosEntity PeriodosEntity);
-        Task<List<PeriodosEntity>> ReadPeriodos();
-        Task UpdatePeriodos(PeriodosEntity PeriodosEntity);
+        Task<PeriodosModel> CreatePeriodos(PeriodosModel PeriodosModel);
+        Task<List<PeriodosModel>> ReadPeriodos();
+        Task UpdatePeriodos(PeriodosModel PeriodosModel);
         Task DeletePeriodos(string id);
-        Task<PeriodosEntity> ReadPeriodos(string id);
+        Task<PeriodosModel> ReadPeriodos(string id);
     }
     public class PeriodosService : IPeriodosService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreatePeriodos(PeriodosEntity entity)
+        public async Task<PeriodosModel> CreatePeriodos(PeriodosModel model)
         {
-            var result = _mapper.Map<Periodos>(entity);
+            var result = _mapper.Map<Periodos>(model);
             await _repository.AddAsync(result);
+            model.IdPeriodos = result.IdPeriodos;
+            return model;
         }
 
-        public async Task<List<PeriodosEntity>> ReadPeriodos()
+        public async Task<List<PeriodosModel>> ReadPeriodos()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<PeriodosEntity>>(data);
+            var result = _mapper.Map<List<PeriodosModel>>(data);
 
             return result;
         }
 
-        public async Task UpdatePeriodos(PeriodosEntity entity)
+        public async Task UpdatePeriodos(PeriodosModel model)
         {
-            var result = _mapper.Map<Periodos>(entity);
+            var result = _mapper.Map<Periodos>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<PeriodosEntity> ReadPeriodos(string id)
+        public async Task<PeriodosModel> ReadPeriodos(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<PeriodosEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<PeriodosModel>(model);
             return result;
         }
 

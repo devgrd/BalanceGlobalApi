@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
+using BalanceGlobal.Models;
+using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BalanceGlobal.Database.Context;
-using BalanceGlobal.Database.Tables;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -14,34 +12,79 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class ConsumoEnergeticoController : ControllerBase
     {
-        private readonly BalanceGlobalContext _context;
+        private readonly IConsumoEnergeticoService _service;
 
-        public ConsumoEnergeticoController(BalanceGlobalContext context)
+        public ConsumoEnergeticoController(IConsumoEnergeticoService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/ConsumoEnergeticoes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ConsumoEnergetico>>> GetConsumoEnergetico()
+        public async Task<ActionResult<IEnumerable<ConsumoEnergeticoModel>>> GetConsumoEnergetico()
         {
-            return await _context.ConsumoEnergetico.ToListAsync();
+            return await _service.ReadConsumoEnergetico();
         }
 
-        // GET: api/ConsumoEnergeticoes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ConsumoEnergetico>> GetConsumoEnergetico(int id)
+        public async Task<ActionResult<ConsumoEnergeticoModel>> GetConsumoEnergetico(int id)
         {
-            var consumoEnergetico = await _context.ConsumoEnergetico.FindAsync(id);
+            var _model = await _service.ReadConsumoEnergetico(id.ToString());
 
-            if (consumoEnergetico == null)
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            return consumoEnergetico;
+            return _model;
         }
 
-      
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutConsumoEnergetico(int id, ConsumoEnergeticoModel model)
+        {
+            if (id != model.IdConsumoEnergetico)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _service.UpdateConsumoEnergetico(model);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (_service.ReadConsumoEnergetico(id.ToString()) == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ConsumoEnergeticoModel>> PostConsumoEnergetico(ConsumoEnergeticoModel model)
+        {
+            var _model = await _service.CreateConsumoEnergetico(model);
+            return CreatedAtAction("GetConsumoEnergetico", new { id = _model.IdConsumoEnergetico }, _model);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ConsumoEnergeticoModel>> DeleteConsumoEnergetico(int id)
+        {
+            var _model = await _service.ReadConsumoEnergetico(id.ToString());
+            if (_model == null)
+            {
+                return NotFound();
+            }
+
+            await _service.DeleteConsumoEnergetico(id.ToString());
+
+            return _model;
+        }
+
     }
 }

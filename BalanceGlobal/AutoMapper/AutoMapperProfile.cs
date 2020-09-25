@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 
 namespace BalanceGlobal.AutoMapper
 {
@@ -8,56 +8,92 @@ namespace BalanceGlobal.AutoMapper
     {
         public AutoMapperProfile()
         {
-            CreateMap<ConsInvCarmen, ConsInvCarmenEntity>();
-            CreateMap<ConsInvCarmenEntity, ConsInvCarmen>();
+            CreateMap<Bombas, BombasModel>();
+            CreateMap<BombasModel, Bombas>();
+            
+            CreateMap<Flujos, FlujosModel>();
+            CreateMap<FlujosModel, Flujos>();            
+            
+            CreateMap<Importaciones, ImportacionesModel>();
+            CreateMap<ImportacionesModel, Importaciones>();            
+            
+            CreateMap<ImportacionesUserParValues, ImportacionesUserParValuesModel>();
+            CreateMap<ImportacionesUserParValuesModel, ImportacionesUserParValues>();
 
-            CreateMap<ConsumoEnergetico, ConsumoEnergeticoEntity>();
-            CreateMap<ConsumoEnergeticoEntity, ConsumoEnergetico>();
+            CreateMap<Importadores, ImportadoresModel>();
+            CreateMap<ImportadoresModel, Importadores>();            
+            
+            CreateMap<ImportDestino, ImportDestinoModel>();
+            CreateMap<ImportDestinoModel, ImportDestino>();            
+            
+            CreateMap<MensajesImportacion, MensajesImportacionModel>();
+            CreateMap<MensajesImportacionModel, MensajesImportacion>();            
+            
+            CreateMap<OrigenesDatos, OrigenesDatosModel>();
+            CreateMap<OrigenesDatosModel, OrigenesDatos>();            
+            
+            CreateMap<Reinyeccion, ReinyeccionModel>();
+            CreateMap<ReinyeccionModel, Reinyeccion>();            
+            
+            CreateMap<SchemaColumns, SchemaColumnsModel>();
+            CreateMap<SchemaColumnsModel, SchemaColumns>();            
+            
+            CreateMap<SchemaColumnsWarning, SchemaColumnsWarningModel>();
+            CreateMap<SchemaColumnsWarningModel, SchemaColumnsWarning>();            
+            
+            CreateMap<SchemaDef, SchemaDefModel>();
+            CreateMap<SchemaDefModel, SchemaDef>(); 
+            
+            CreateMap<TipoInfraestructuras, TipoInfraestructurasModel>();
+            CreateMap<TipoInfraestructurasModel, TipoInfraestructuras>();
 
-            CreateMap<Cosechas, CosechasEntity>();
-            CreateMap<CosechasEntity, Cosechas>();
+            CreateMap<ConsInvCarmen, ConsInvCarmenModel>();
+            CreateMap<ConsInvCarmenModel, ConsInvCarmen>();
 
-            CreateMap<Extraccion, ExtraccionEntity>();
-            CreateMap<ExtraccionEntity, Extraccion>();
+            CreateMap<ConsumoEnergetico, ConsumoEnergeticoModel>();
+            CreateMap<ConsumoEnergeticoModel, ConsumoEnergetico>();
 
-            CreateMap<Faenas, FaenasEntity>();
-            CreateMap<FaenasEntity, Faenas>();
+            CreateMap<Cosechas, CosechasModel>();
+            CreateMap<CosechasModel, Cosechas>();
 
-            CreateMap<FaenasSistemas, FaenasSistemasEntity>();
-            CreateMap<FaenasSistemasEntity, FaenasSistemas>();
+            CreateMap<Extraccion, ExtraccionModel>();
+            CreateMap<ExtraccionModel, Extraccion>();
 
-            CreateMap<Infraestructuras, InfraestructurasEntity>();
-            CreateMap<InfraestructurasEntity, Infraestructuras>();
+            CreateMap<Faenas, FaenasModel>();
+            CreateMap<FaenasModel, Faenas>();
 
-            CreateMap<OperaPozas, OperaPozasEntity>();
-            CreateMap<OperaPozasEntity, OperaPozas>();
+            CreateMap<FaenasSistemas, FaenasSistemasModel>();
+            CreateMap<FaenasSistemasModel, FaenasSistemas>();
 
-            CreateMap<InfraestructurasEntity, Infraestructuras>();
-            CreateMap<InfraestructurasEntity, Infraestructuras>();
+            CreateMap<Infraestructuras, InfraestructurasModel>();
+            CreateMap<InfraestructurasModel, Infraestructuras>();
 
-            CreateMap<Periodos, PeriodosEntity>();
-            CreateMap<PeriodosEntity, Periodos>();
+            CreateMap<OperaPozas, OperaPozasModel>();
+            CreateMap<OperaPozasModel, OperaPozas>();
 
-            CreateMap<PeriodosOperacionales, PeriodosOperacionalesEntity>();
-            CreateMap<PeriodosOperacionalesEntity, PeriodosOperacionales>();
+            CreateMap<Periodos, PeriodosModel>();
+            CreateMap<PeriodosModel, Periodos>();
 
-            CreateMap<Porteos, PorteosEntity>();
-            CreateMap<PorteosEntity, Porteos>();
+            CreateMap<PeriodosOperacionales, PeriodosOperacionalesModel>();
+            CreateMap<PeriodosOperacionalesModel, PeriodosOperacionales>();
 
-            CreateMap<Reservorios, ReservoriosEntity>();
-            CreateMap<ReservoriosEntity, Reservorios>();
+            CreateMap<Porteos, PorteosModel>();
+            CreateMap<PorteosModel, Porteos>();
 
-            CreateMap<Sistemas, SistemasEntity>();
-            CreateMap<SistemasEntity, Sistemas>();
+            CreateMap<Reservorios, ReservoriosModel>();
+            CreateMap<ReservoriosModel, Reservorios>();
 
-            CreateMap<SistemasSubSistemas, SistemasSubSistemasEntity>();
-            CreateMap<SistemasSubSistemasEntity, SistemasSubSistemas>();
+            CreateMap<Sistemas, SistemasModel>();
+            CreateMap<SistemasModel, Sistemas>();
 
-            CreateMap<Subsistemas, SubsistemasEntity>();
-            CreateMap<SubsistemasEntity, Subsistemas>();
+            CreateMap<SistemasSubSistemas, SistemasSubSistemasModel>();
+            CreateMap<SistemasSubSistemasModel, SistemasSubSistemas>();
 
-            CreateMap<TransSistemasCosechas, TransSistemasCosechasEntity>();
-            CreateMap<TransSistemasCosechasEntity, TransSistemasCosechas>();
+            CreateMap<SubSistemas, SubSistemasModel>();
+            CreateMap<SubSistemasModel, SubSistemas>();
+
+            CreateMap<TransSistemasCosechas, TransSistemasCosechasModel>();
+            CreateMap<TransSistemasCosechasModel, TransSistemasCosechas>();
 
         }
     }

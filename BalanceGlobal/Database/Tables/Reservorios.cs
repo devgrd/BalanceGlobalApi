@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BalanceGlobal.Database.Tables
+﻿namespace BalanceGlobal.Database.Tables
 {
     public partial class Reservorios
     {

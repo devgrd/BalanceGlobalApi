@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IMensajesImportacionService
     {
-        Task CreateMensajesImportacion(MensajesImportacionEntity MensajesImportacionEntity);
-        Task<List<MensajesImportacionEntity>> ReadMensajesImportacion();
-        Task UpdateMensajesImportacion(MensajesImportacionEntity MensajesImportacionEntity);
+        Task<MensajesImportacionModel> CreateMensajesImportacion(MensajesImportacionModel MensajesImportacionModel);
+        Task<List<MensajesImportacionModel>> ReadMensajesImportacion();
+        Task UpdateMensajesImportacion(MensajesImportacionModel MensajesImportacionModel);
         Task DeleteMensajesImportacion(string id);
-        Task<MensajesImportacionEntity> ReadMensajesImportacion(string id);
+        Task<MensajesImportacionModel> ReadMensajesImportacion(string id);
     }
     public class MensajesImportacionService : IMensajesImportacionService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateMensajesImportacion(MensajesImportacionEntity entity)
+        public async Task<MensajesImportacionModel> CreateMensajesImportacion(MensajesImportacionModel model)
         {
-            var result = _mapper.Map<MensajesImportacion>(entity);
+            var result = _mapper.Map<MensajesImportacion>(model);
             await _repository.AddAsync(result);
+            model.IdMensajesImportacion = result.IdMensajesImportacion;
+            return model;
         }
 
-        public async Task<List<MensajesImportacionEntity>> ReadMensajesImportacion()
+        public async Task<List<MensajesImportacionModel>> ReadMensajesImportacion()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<MensajesImportacionEntity>>(data);
+            var result = _mapper.Map<List<MensajesImportacionModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateMensajesImportacion(MensajesImportacionEntity entity)
+        public async Task UpdateMensajesImportacion(MensajesImportacionModel model)
         {
-            var result = _mapper.Map<MensajesImportacion>(entity);
+            var result = _mapper.Map<MensajesImportacion>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<MensajesImportacionEntity> ReadMensajesImportacion(string id)
+        public async Task<MensajesImportacionModel> ReadMensajesImportacion(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<MensajesImportacionEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<MensajesImportacionModel>(model);
             return result;
         }
 

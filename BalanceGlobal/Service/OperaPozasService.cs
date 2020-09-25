@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IOperaPozasService
     {
-        Task CreateOperaPozas(OperaPozasEntity OperaPozasEntity);
-        Task<List<OperaPozasEntity>> ReadOperaPozas();
-        Task UpdateOperaPozas(OperaPozasEntity OperaPozasEntity);
+        Task<OperaPozasModel> CreateOperaPozas(OperaPozasModel OperaPozasModel);
+        Task<List<OperaPozasModel>> ReadOperaPozas();
+        Task UpdateOperaPozas(OperaPozasModel OperaPozasModel);
         Task DeleteOperaPozas(string id);
-        Task<OperaPozasEntity> ReadOperaPozas(string id);
+        Task<OperaPozasModel> ReadOperaPozas(string id);
     }
     public class OperaPozasService : IOperaPozasService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateOperaPozas(OperaPozasEntity entity)
+        public async Task<OperaPozasModel> CreateOperaPozas(OperaPozasModel model)
         {
-            var result = _mapper.Map<OperaPozas>(entity);
+            var result = _mapper.Map<OperaPozas>(model);
             await _repository.AddAsync(result);
+            model.IdOperaPozas = result.IdOperaPozas;
+            return model;
         }
 
-        public async Task<List<OperaPozasEntity>> ReadOperaPozas()
+        public async Task<List<OperaPozasModel>> ReadOperaPozas()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<OperaPozasEntity>>(data);
+            var result = _mapper.Map<List<OperaPozasModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateOperaPozas(OperaPozasEntity entity)
+        public async Task UpdateOperaPozas(OperaPozasModel model)
         {
-            var result = _mapper.Map<OperaPozas>(entity);
+            var result = _mapper.Map<OperaPozas>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<OperaPozasEntity> ReadOperaPozas(string id)
+        public async Task<OperaPozasModel> ReadOperaPozas(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<OperaPozasEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<OperaPozasModel>(model);
             return result;
         }
 

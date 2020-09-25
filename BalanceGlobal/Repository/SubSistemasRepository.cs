@@ -4,13 +4,13 @@ using BalanceGlobal.Infrastructure;
 
 namespace BalanceGlobal.Repository
 {
-    public interface ISubsistemasRepository : IRepository<Subsistemas>
+    public interface ISubSistemasRepository : IRepository<SubSistemas>
     {
 
     }
-    public class SubsistemasRepository : RepositoryBase<Subsistemas>, ISubsistemasRepository
+    public class SubSistemasRepository : RepositoryBase<SubSistemas>, ISubSistemasRepository
     {
-        public SubsistemasRepository(BalanceGlobalContext balanceGlobalContext) : base(balanceGlobalContext)
+        public SubSistemasRepository(BalanceGlobalContext balanceGlobalContext) : base(balanceGlobalContext)
         {
 
         }

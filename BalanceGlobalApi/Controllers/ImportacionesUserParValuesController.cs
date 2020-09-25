@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
+using BalanceGlobal.Models;
+using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BalanceGlobal.Database.Context;
-using BalanceGlobal.Database.Tables;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -14,54 +12,47 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class ImportacionesUserParValuesController : ControllerBase
     {
-        private readonly BalanceGlobalContext _context;
+        private readonly IImportacionesUserParValuesService _service;
 
-        public ImportacionesUserParValuesController(BalanceGlobalContext context)
+        public ImportacionesUserParValuesController(IImportacionesUserParValuesService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/ImportacionesUserParValues
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ImportacionesUserParValues>>> GetImportacionesUserParValues()
+        public async Task<ActionResult<IEnumerable<ImportacionesUserParValuesModel>>> GetImportacionesUserParValues()
         {
-            return await _context.ImportacionesUserParValues.ToListAsync();
+            return await _service.ReadImportacionesUserParValues();
         }
 
-        // GET: api/ImportacionesUserParValues/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ImportacionesUserParValues>> GetImportacionesUserParValues(int id)
+        public async Task<ActionResult<ImportacionesUserParValuesModel>> GetImportacionesUserParValues(int id)
         {
-            var importacionesUserParValues = await _context.ImportacionesUserParValues.FindAsync(id);
+            var _model = await _service.ReadImportacionesUserParValues(id.ToString());
 
-            if (importacionesUserParValues == null)
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            return importacionesUserParValues;
+            return _model;
         }
 
-        // PUT: api/ImportacionesUserParValues/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutImportacionesUserParValues(int id, ImportacionesUserParValues importacionesUserParValues)
+        public async Task<IActionResult> PutImportacionesUserParValues(int id, ImportacionesUserParValuesModel model)
         {
-            if (id != importacionesUserParValues.IdImportacionesUserParValues)
+            if (id != model.IdImportacionesUserParValues)
             {
                 return BadRequest();
             }
 
-            _context.Entry(importacionesUserParValues).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _service.UpdateImportacionesUserParValues(model);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ImportacionesUserParValuesExists(id))
+                if (_service.ReadImportacionesUserParValues(id.ToString()) == null)
                 {
                     return NotFound();
                 }
@@ -74,37 +65,26 @@ namespace BalanceGlobal.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/ImportacionesUserParValues
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<ImportacionesUserParValues>> PostImportacionesUserParValues(ImportacionesUserParValues importacionesUserParValues)
+        public async Task<ActionResult<ImportacionesUserParValuesModel>> PostImportacionesUserParValues(ImportacionesUserParValuesModel model)
         {
-            _context.ImportacionesUserParValues.Add(importacionesUserParValues);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetImportacionesUserParValues", new { id = importacionesUserParValues.IdImportacionesUserParValues }, importacionesUserParValues);
+            var _model = await _service.CreateImportacionesUserParValues(model);
+            return CreatedAtAction("GetImportacionesUserParValues", new { id = _model.IdImportacionesUserParValues }, _model);
         }
 
-        // DELETE: api/ImportacionesUserParValues/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ImportacionesUserParValues>> DeleteImportacionesUserParValues(int id)
+        public async Task<ActionResult<ImportacionesUserParValuesModel>> DeleteImportacionesUserParValues(int id)
         {
-            var importacionesUserParValues = await _context.ImportacionesUserParValues.FindAsync(id);
-            if (importacionesUserParValues == null)
+            var _model = await _service.ReadImportacionesUserParValues(id.ToString());
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            _context.ImportacionesUserParValues.Remove(importacionesUserParValues);
-            await _context.SaveChangesAsync();
+            await _service.DeleteImportacionesUserParValues(id.ToString());
 
-            return importacionesUserParValues;
+            return _model;
         }
 
-        private bool ImportacionesUserParValuesExists(int id)
-        {
-            return _context.ImportacionesUserParValues.Any(e => e.IdImportacionesUserParValues == id);
-        }
     }
 }

@@ -1,67 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
+using BalanceGlobal.Models;
+using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BalanceGlobal.Database.Context;
-using BalanceGlobal.Database.Tables;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SubsistemasController : ControllerBase
+    public class SubSistemasController : ControllerBase
     {
-        private readonly BalanceGlobalContext _context;
+        private readonly ISubSistemasService _service;
 
-        public SubsistemasController(BalanceGlobalContext context)
+        public SubSistemasController(ISubSistemasService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/Subsistemas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Subsistemas>>> GetSubsistemas()
+        public async Task<ActionResult<IEnumerable<SubSistemasModel>>> GetSubSistemas()
         {
-            return await _context.Subsistemas.ToListAsync();
+            return await _service.ReadSubSistemas();
         }
 
-        // GET: api/Subsistemas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Subsistemas>> GetSubsistemas(int id)
+        public async Task<ActionResult<SubSistemasModel>> GetSubSistemas(int id)
         {
-            var subsistemas = await _context.Subsistemas.FindAsync(id);
+            var _model = await _service.ReadSubSistemas(id.ToString());
 
-            if (subsistemas == null)
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            return subsistemas;
+            return _model;
         }
 
-        // PUT: api/Subsistemas/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubsistemas(int id, Subsistemas subsistemas)
+        public async Task<IActionResult> PutSubSistemas(int id, SubSistemasModel model)
         {
-            if (id != subsistemas.IdSubsistemas)
+            if (id != model.IdSubSistemas)
             {
                 return BadRequest();
             }
 
-            _context.Entry(subsistemas).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _service.UpdateSubSistemas(model);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SubsistemasExists(id))
+                if (_service.ReadSubSistemas(id.ToString()) == null)
                 {
                     return NotFound();
                 }
@@ -74,37 +65,26 @@ namespace BalanceGlobal.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/Subsistemas
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Subsistemas>> PostSubsistemas(Subsistemas subsistemas)
+        public async Task<ActionResult<SubSistemasModel>> PostSubSistemas(SubSistemasModel model)
         {
-            _context.Subsistemas.Add(subsistemas);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetSubsistemas", new { id = subsistemas.IdSubsistemas }, subsistemas);
+            var _model = await _service.CreateSubSistemas(model);
+            return CreatedAtAction("GetSubSistemas", new { id = _model.IdSubSistemas }, _model);
         }
 
-        // DELETE: api/Subsistemas/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Subsistemas>> DeleteSubsistemas(int id)
+        public async Task<ActionResult<SubSistemasModel>> DeleteSubSistemas(int id)
         {
-            var subsistemas = await _context.Subsistemas.FindAsync(id);
-            if (subsistemas == null)
+            var _model = await _service.ReadSubSistemas(id.ToString());
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            _context.Subsistemas.Remove(subsistemas);
-            await _context.SaveChangesAsync();
+            await _service.DeleteSubSistemas(id.ToString());
 
-            return subsistemas;
+            return _model;
         }
 
-        private bool SubsistemasExists(int id)
-        {
-            return _context.Subsistemas.Any(e => e.IdSubsistemas == id);
-        }
     }
 }

@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IFaenasSistemasService
     {
-        Task CreateFaenasSistemas(FaenasSistemasEntity FaenasSistemasEntity);
-        Task<List<FaenasSistemasEntity>> ReadFaenasSistemas();
-        Task UpdateFaenasSistemas(FaenasSistemasEntity FaenasSistemasEntity);
+        Task<FaenasSistemasModel> CreateFaenasSistemas(FaenasSistemasModel FaenasSistemasModel);
+        Task<List<FaenasSistemasModel>> ReadFaenasSistemas();
+        Task UpdateFaenasSistemas(FaenasSistemasModel FaenasSistemasModel);
         Task DeleteFaenasSistemas(string id);
-        Task<FaenasSistemasEntity> ReadFaenasSistemas(string id);
+        Task<FaenasSistemasModel> ReadFaenasSistemas(string id);
     }
     public class FaenasSistemasService : IFaenasSistemasService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateFaenasSistemas(FaenasSistemasEntity entity)
+        public async Task<FaenasSistemasModel> CreateFaenasSistemas(FaenasSistemasModel model)
         {
-            var result = _mapper.Map<FaenasSistemas>(entity);
+            var result = _mapper.Map<FaenasSistemas>(model);
             await _repository.AddAsync(result);
+            model.IdFaenasSistemas = result.IdFaenasSistemas;
+            return model;
         }
 
-        public async Task<List<FaenasSistemasEntity>> ReadFaenasSistemas()
+        public async Task<List<FaenasSistemasModel>> ReadFaenasSistemas()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<FaenasSistemasEntity>>(data);
+            var result = _mapper.Map<List<FaenasSistemasModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateFaenasSistemas(FaenasSistemasEntity entity)
+        public async Task UpdateFaenasSistemas(FaenasSistemasModel model)
         {
-            var result = _mapper.Map<FaenasSistemas>(entity);
+            var result = _mapper.Map<FaenasSistemas>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<FaenasSistemasEntity> ReadFaenasSistemas(string id)
+        public async Task<FaenasSistemasModel> ReadFaenasSistemas(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<FaenasSistemasEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<FaenasSistemasModel>(model);
             return result;
         }
 

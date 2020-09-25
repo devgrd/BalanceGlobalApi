@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
+using BalanceGlobal.Models;
+using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BalanceGlobal.Database.Context;
-using BalanceGlobal.Database.Tables;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -14,54 +12,47 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class InfraestructurasController : ControllerBase
     {
-        private readonly BalanceGlobalContext _context;
+        private readonly IInfraestructurasService _service;
 
-        public InfraestructurasController(BalanceGlobalContext context)
+        public InfraestructurasController(IInfraestructurasService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/Infraestructuras
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Infraestructuras>>> GetInfraestructuras()
+        public async Task<ActionResult<IEnumerable<InfraestructurasModel>>> GetInfraestructuras()
         {
-            return await _context.Infraestructuras.ToListAsync();
+            return await _service.ReadInfraestructuras();
         }
 
-        // GET: api/Infraestructuras/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Infraestructuras>> GetInfraestructuras(int id)
+        public async Task<ActionResult<InfraestructurasModel>> GetInfraestructuras(int id)
         {
-            var infraestructuras = await _context.Infraestructuras.FindAsync(id);
+            var _model = await _service.ReadInfraestructuras(id.ToString());
 
-            if (infraestructuras == null)
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            return infraestructuras;
+            return _model;
         }
 
-        // PUT: api/Infraestructuras/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutInfraestructuras(int id, Infraestructuras infraestructuras)
+        public async Task<IActionResult> PutInfraestructuras(int id, InfraestructurasModel model)
         {
-            if (id != infraestructuras.IdInfraestructuras)
+            if (id != model.IdInfraestructuras)
             {
                 return BadRequest();
             }
 
-            _context.Entry(infraestructuras).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _service.UpdateInfraestructuras(model);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!InfraestructurasExists(id))
+                if (_service.ReadInfraestructuras(id.ToString()) == null)
                 {
                     return NotFound();
                 }
@@ -74,37 +65,26 @@ namespace BalanceGlobal.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/Infraestructuras
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Infraestructuras>> PostInfraestructuras(Infraestructuras infraestructuras)
+        public async Task<ActionResult<InfraestructurasModel>> PostInfraestructuras(InfraestructurasModel model)
         {
-            _context.Infraestructuras.Add(infraestructuras);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetInfraestructuras", new { id = infraestructuras.IdInfraestructuras }, infraestructuras);
+            var _model = await _service.CreateInfraestructuras(model);
+            return CreatedAtAction("GetInfraestructuras", new { id = _model.IdInfraestructuras }, _model);
         }
 
-        // DELETE: api/Infraestructuras/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Infraestructuras>> DeleteInfraestructuras(int id)
+        public async Task<ActionResult<InfraestructurasModel>> DeleteInfraestructuras(int id)
         {
-            var infraestructuras = await _context.Infraestructuras.FindAsync(id);
-            if (infraestructuras == null)
+            var _model = await _service.ReadInfraestructuras(id.ToString());
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            _context.Infraestructuras.Remove(infraestructuras);
-            await _context.SaveChangesAsync();
+            await _service.DeleteInfraestructuras(id.ToString());
 
-            return infraestructuras;
+            return _model;
         }
 
-        private bool InfraestructurasExists(int id)
-        {
-            return _context.Infraestructuras.Any(e => e.IdInfraestructuras == id);
-        }
     }
 }

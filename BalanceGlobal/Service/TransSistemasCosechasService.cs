@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface ITransSistemasCosechasService
     {
-        Task CreateTransSistemasCosechas(TransSistemasCosechasEntity TransSistemasCosechasEntity);
-        Task<List<TransSistemasCosechasEntity>> ReadTransSistemasCosechas();
-        Task UpdateTransSistemasCosechas(TransSistemasCosechasEntity TransSistemasCosechasEntity);
+        Task<TransSistemasCosechasModel> CreateTransSistemasCosechas(TransSistemasCosechasModel TransSistemasCosechasModel);
+        Task<List<TransSistemasCosechasModel>> ReadTransSistemasCosechas();
+        Task UpdateTransSistemasCosechas(TransSistemasCosechasModel TransSistemasCosechasModel);
         Task DeleteTransSistemasCosechas(string id);
-        Task<TransSistemasCosechasEntity> ReadTransSistemasCosechas(string id);
+        Task<TransSistemasCosechasModel> ReadTransSistemasCosechas(string id);
     }
     public class TransSistemasCosechasService : ITransSistemasCosechasService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateTransSistemasCosechas(TransSistemasCosechasEntity entity)
+        public async Task<TransSistemasCosechasModel> CreateTransSistemasCosechas(TransSistemasCosechasModel model)
         {
-            var result = _mapper.Map<TransSistemasCosechas>(entity);
+            var result = _mapper.Map<TransSistemasCosechas>(model);
             await _repository.AddAsync(result);
+            model.IdTransSistemasCosechas = result.IdTransSistemasCosechas;
+            return model;
         }
 
-        public async Task<List<TransSistemasCosechasEntity>> ReadTransSistemasCosechas()
+        public async Task<List<TransSistemasCosechasModel>> ReadTransSistemasCosechas()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<TransSistemasCosechasEntity>>(data);
+            var result = _mapper.Map<List<TransSistemasCosechasModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateTransSistemasCosechas(TransSistemasCosechasEntity entity)
+        public async Task UpdateTransSistemasCosechas(TransSistemasCosechasModel model)
         {
-            var result = _mapper.Map<TransSistemasCosechas>(entity);
+            var result = _mapper.Map<TransSistemasCosechas>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<TransSistemasCosechasEntity> ReadTransSistemasCosechas(string id)
+        public async Task<TransSistemasCosechasModel> ReadTransSistemasCosechas(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<TransSistemasCosechasEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<TransSistemasCosechasModel>(model);
             return result;
         }
 

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
+using BalanceGlobal.Models;
+using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BalanceGlobal.Database.Context;
-using BalanceGlobal.Database.Tables;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -14,54 +12,47 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class ImportadoresController : ControllerBase
     {
-        private readonly BalanceGlobalContext _context;
+        private readonly IImportadoresService _service;
 
-        public ImportadoresController(BalanceGlobalContext context)
+        public ImportadoresController(IImportadoresService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/Importadores
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Importadores>>> GetImportadores()
+        public async Task<ActionResult<IEnumerable<ImportadoresModel>>> GetImportadores()
         {
-            return await _context.Importadores.ToListAsync();
+            return await _service.ReadImportadores();
         }
 
-        // GET: api/Importadores/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Importadores>> GetImportadores(int id)
+        public async Task<ActionResult<ImportadoresModel>> GetImportadores(int id)
         {
-            var importadores = await _context.Importadores.FindAsync(id);
+            var _model = await _service.ReadImportadores(id.ToString());
 
-            if (importadores == null)
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            return importadores;
+            return _model;
         }
 
-        // PUT: api/Importadores/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutImportadores(int id, Importadores importadores)
+        public async Task<IActionResult> PutImportadores(int id, ImportadoresModel model)
         {
-            if (id != importadores.IdImportadores)
+            if (id != model.IdImportadores)
             {
                 return BadRequest();
             }
 
-            _context.Entry(importadores).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _service.UpdateImportadores(model);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ImportadoresExists(id))
+                if (_service.ReadImportadores(id.ToString()) == null)
                 {
                     return NotFound();
                 }
@@ -74,37 +65,26 @@ namespace BalanceGlobal.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/Importadores
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Importadores>> PostImportadores(Importadores importadores)
+        public async Task<ActionResult<ImportadoresModel>> PostImportadores(ImportadoresModel model)
         {
-            _context.Importadores.Add(importadores);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetImportadores", new { id = importadores.IdImportadores }, importadores);
+            var _model = await _service.CreateImportadores(model);
+            return CreatedAtAction("GetImportadores", new { id = _model.IdImportadores }, _model);
         }
 
-        // DELETE: api/Importadores/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Importadores>> DeleteImportadores(int id)
+        public async Task<ActionResult<ImportadoresModel>> DeleteImportadores(int id)
         {
-            var importadores = await _context.Importadores.FindAsync(id);
-            if (importadores == null)
+            var _model = await _service.ReadImportadores(id.ToString());
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            _context.Importadores.Remove(importadores);
-            await _context.SaveChangesAsync();
+            await _service.DeleteImportadores(id.ToString());
 
-            return importadores;
+            return _model;
         }
 
-        private bool ImportadoresExists(int id)
-        {
-            return _context.Importadores.Any(e => e.IdImportadores == id);
-        }
     }
 }

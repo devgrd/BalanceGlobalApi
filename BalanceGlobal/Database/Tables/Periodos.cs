@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace BalanceGlobal.Database.Tables
 {
@@ -16,7 +14,6 @@ namespace BalanceGlobal.Database.Tables
         public int? IdTipoPeriodo { get; set; }
         public bool? Activa { get; set; }
 
-        [JsonIgnore]
         public virtual ICollection<Porteos> Porteos { get; set; }
     }
 }

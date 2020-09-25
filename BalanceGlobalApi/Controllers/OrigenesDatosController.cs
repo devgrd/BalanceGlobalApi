@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
+using BalanceGlobal.Models;
+using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BalanceGlobal.Database.Context;
-using BalanceGlobal.Database.Tables;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -14,54 +12,47 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class OrigenesDatosController : ControllerBase
     {
-        private readonly BalanceGlobalContext _context;
+        private readonly IOrigenesDatosService _service;
 
-        public OrigenesDatosController(BalanceGlobalContext context)
+        public OrigenesDatosController(IOrigenesDatosService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/OrigenesDatos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrigenesDatos>>> GetOrigenesDatos()
+        public async Task<ActionResult<IEnumerable<OrigenesDatosModel>>> GetOrigenesDatos()
         {
-            return await _context.OrigenesDatos.ToListAsync();
+            return await _service.ReadOrigenesDatos();
         }
 
-        // GET: api/OrigenesDatos/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<OrigenesDatos>> GetOrigenesDatos(int id)
+        public async Task<ActionResult<OrigenesDatosModel>> GetOrigenesDatos(int id)
         {
-            var origenesDatos = await _context.OrigenesDatos.FindAsync(id);
+            var _model = await _service.ReadOrigenesDatos(id.ToString());
 
-            if (origenesDatos == null)
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            return origenesDatos;
+            return _model;
         }
 
-        // PUT: api/OrigenesDatos/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrigenesDatos(int id, OrigenesDatos origenesDatos)
+        public async Task<IActionResult> PutOrigenesDatos(int id, OrigenesDatosModel model)
         {
-            if (id != origenesDatos.IdOrigenesDatos)
+            if (id != model.IdOrigenesDatos)
             {
                 return BadRequest();
             }
 
-            _context.Entry(origenesDatos).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _service.UpdateOrigenesDatos(model);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OrigenesDatosExists(id))
+                if (_service.ReadOrigenesDatos(id.ToString()) == null)
                 {
                     return NotFound();
                 }
@@ -74,37 +65,26 @@ namespace BalanceGlobal.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/OrigenesDatos
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<OrigenesDatos>> PostOrigenesDatos(OrigenesDatos origenesDatos)
+        public async Task<ActionResult<OrigenesDatosModel>> PostOrigenesDatos(OrigenesDatosModel model)
         {
-            _context.OrigenesDatos.Add(origenesDatos);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetOrigenesDatos", new { id = origenesDatos.IdOrigenesDatos }, origenesDatos);
+            var _model = await _service.CreateOrigenesDatos(model);
+            return CreatedAtAction("GetOrigenesDatos", new { id = _model.IdOrigenesDatos }, _model);
         }
 
-        // DELETE: api/OrigenesDatos/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<OrigenesDatos>> DeleteOrigenesDatos(int id)
+        public async Task<ActionResult<OrigenesDatosModel>> DeleteOrigenesDatos(int id)
         {
-            var origenesDatos = await _context.OrigenesDatos.FindAsync(id);
-            if (origenesDatos == null)
+            var _model = await _service.ReadOrigenesDatos(id.ToString());
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            _context.OrigenesDatos.Remove(origenesDatos);
-            await _context.SaveChangesAsync();
+            await _service.DeleteOrigenesDatos(id.ToString());
 
-            return origenesDatos;
+            return _model;
         }
 
-        private bool OrigenesDatosExists(int id)
-        {
-            return _context.OrigenesDatos.Any(e => e.IdOrigenesDatos == id);
-        }
     }
 }

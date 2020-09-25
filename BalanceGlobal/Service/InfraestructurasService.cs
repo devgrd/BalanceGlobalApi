@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IInfraestructurasService
     {
-        Task CreateInfraestructuras(InfraestructurasEntity InfraestructurasEntity);
-        Task<List<InfraestructurasEntity>> ReadInfraestructuras();
-        Task UpdateInfraestructuras(InfraestructurasEntity InfraestructurasEntity);
+        Task<InfraestructurasModel> CreateInfraestructuras(InfraestructurasModel InfraestructurasModel);
+        Task<List<InfraestructurasModel>> ReadInfraestructuras();
+        Task UpdateInfraestructuras(InfraestructurasModel InfraestructurasModel);
         Task DeleteInfraestructuras(string id);
-        Task<InfraestructurasEntity> ReadInfraestructuras(string id);
+        Task<InfraestructurasModel> ReadInfraestructuras(string id);
     }
     public class InfraestructurasService : IInfraestructurasService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateInfraestructuras(InfraestructurasEntity entity)
+        public async Task<InfraestructurasModel> CreateInfraestructuras(InfraestructurasModel model)
         {
-            var result = _mapper.Map<Infraestructuras>(entity);
+            var result = _mapper.Map<Infraestructuras>(model);
             await _repository.AddAsync(result);
+            model.IdInfraestructuras = result.IdInfraestructuras;
+            return model;
         }
 
-        public async Task<List<InfraestructurasEntity>> ReadInfraestructuras()
+        public async Task<List<InfraestructurasModel>> ReadInfraestructuras()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<InfraestructurasEntity>>(data);
+            var result = _mapper.Map<List<InfraestructurasModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateInfraestructuras(InfraestructurasEntity entity)
+        public async Task UpdateInfraestructuras(InfraestructurasModel model)
         {
-            var result = _mapper.Map<Infraestructuras>(entity);
+            var result = _mapper.Map<Infraestructuras>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<InfraestructurasEntity> ReadInfraestructuras(string id)
+        public async Task<InfraestructurasModel> ReadInfraestructuras(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<InfraestructurasEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<InfraestructurasModel>(model);
             return result;
         }
 

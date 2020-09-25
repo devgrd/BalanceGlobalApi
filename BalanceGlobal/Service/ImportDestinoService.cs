@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IImportDestinoService
     {
-        Task CreateImportDestino(ImportDestinoEntity ImportDestinoEntity);
-        Task<List<ImportDestinoEntity>> ReadImportDestino();
-        Task UpdateImportDestino(ImportDestinoEntity ImportDestinoEntity);
+        Task<ImportDestinoModel> CreateImportDestino(ImportDestinoModel ImportDestinoModel);
+        Task<List<ImportDestinoModel>> ReadImportDestino();
+        Task UpdateImportDestino(ImportDestinoModel ImportDestinoModel);
         Task DeleteImportDestino(string id);
-        Task<ImportDestinoEntity> ReadImportDestino(string id);
+        Task<ImportDestinoModel> ReadImportDestino(string id);
     }
     public class ImportDestinoService : IImportDestinoService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateImportDestino(ImportDestinoEntity entity)
+        public async Task<ImportDestinoModel> CreateImportDestino(ImportDestinoModel model)
         {
-            var result = _mapper.Map<ImportDestino>(entity);
+            var result = _mapper.Map<ImportDestino>(model);
             await _repository.AddAsync(result);
+            model.IdImportDestino = result.IdImportDestino;
+            return model;
         }
 
-        public async Task<List<ImportDestinoEntity>> ReadImportDestino()
+        public async Task<List<ImportDestinoModel>> ReadImportDestino()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<ImportDestinoEntity>>(data);
+            var result = _mapper.Map<List<ImportDestinoModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateImportDestino(ImportDestinoEntity entity)
+        public async Task UpdateImportDestino(ImportDestinoModel model)
         {
-            var result = _mapper.Map<ImportDestino>(entity);
+            var result = _mapper.Map<ImportDestino>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<ImportDestinoEntity> ReadImportDestino(string id)
+        public async Task<ImportDestinoModel> ReadImportDestino(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<ImportDestinoEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<ImportDestinoModel>(model);
             return result;
         }
 

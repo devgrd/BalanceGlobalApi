@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IImportadoresService
     {
-        Task CreateImportadores(ImportadoresEntity ImportadoresEntity);
-        Task<List<ImportadoresEntity>> ReadImportadores();
-        Task UpdateImportadores(ImportadoresEntity ImportadoresEntity);
+        Task<ImportadoresModel> CreateImportadores(ImportadoresModel ImportadoresModel);
+        Task<List<ImportadoresModel>> ReadImportadores();
+        Task UpdateImportadores(ImportadoresModel ImportadoresModel);
         Task DeleteImportadores(string id);
-        Task<ImportadoresEntity> ReadImportadores(string id);
+        Task<ImportadoresModel> ReadImportadores(string id);
     }
     public class ImportadoresService : IImportadoresService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateImportadores(ImportadoresEntity entity)
+        public async Task<ImportadoresModel> CreateImportadores(ImportadoresModel model)
         {
-            var result = _mapper.Map<Importadores>(entity);
+            var result = _mapper.Map<Importadores>(model);
             await _repository.AddAsync(result);
+            model.IdImportadores = result.IdImportadores;
+            return model;
         }
 
-        public async Task<List<ImportadoresEntity>> ReadImportadores()
+        public async Task<List<ImportadoresModel>> ReadImportadores()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<ImportadoresEntity>>(data);
+            var result = _mapper.Map<List<ImportadoresModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateImportadores(ImportadoresEntity entity)
+        public async Task UpdateImportadores(ImportadoresModel model)
         {
-            var result = _mapper.Map<Importadores>(entity);
+            var result = _mapper.Map<Importadores>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<ImportadoresEntity> ReadImportadores(string id)
+        public async Task<ImportadoresModel> ReadImportadores(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<ImportadoresEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<ImportadoresModel>(model);
             return result;
         }
 

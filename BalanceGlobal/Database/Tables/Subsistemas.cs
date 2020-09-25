@@ -1,22 +1,22 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace BalanceGlobal.Database.Tables
 {
-    public partial class Subsistemas
+    public partial class SubSistemas
     {
-        public Subsistemas()
+        public SubSistemas()
         {
             SistemasSubSistemas = new HashSet<SistemasSubSistemas>();
         }
 
-        public int IdSubsistemas { get; set; }
-        public string Subsistema { get; set; }
+        public int IdSubSistemas { get; set; }
+        public string SubSistema { get; set; }
         public string Descripcion { get; set; }
         public bool? Activa { get; set; }
+        public string UsuarioActualizacion { get; set; }
+        public DateTime? FechaActualizacion { get; set; }
 
-        [JsonIgnore]
         public virtual ICollection<SistemasSubSistemas> SistemasSubSistemas { get; set; }
     }
 }

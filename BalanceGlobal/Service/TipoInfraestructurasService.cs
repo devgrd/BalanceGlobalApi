@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface ITipoInfraestructurasService
     {
-        Task CreateTipoInfraestructuras(TipoInfraestructurasEntity TipoInfraestructurasEntity);
-        Task<List<TipoInfraestructurasEntity>> ReadTipoInfraestructuras();
-        Task UpdateTipoInfraestructuras(TipoInfraestructurasEntity TipoInfraestructurasEntity);
+        Task<TipoInfraestructurasModel> CreateTipoInfraestructuras(TipoInfraestructurasModel TipoInfraestructurasModel);
+        Task<List<TipoInfraestructurasModel>> ReadTipoInfraestructuras();
+        Task UpdateTipoInfraestructuras(TipoInfraestructurasModel TipoInfraestructurasModel);
         Task DeleteTipoInfraestructuras(string id);
-        Task<TipoInfraestructurasEntity> ReadTipoInfraestructuras(string id);
+        Task<TipoInfraestructurasModel> ReadTipoInfraestructuras(string id);
     }
     public class TipoInfraestructurasService : ITipoInfraestructurasService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateTipoInfraestructuras(TipoInfraestructurasEntity entity)
+        public async Task<TipoInfraestructurasModel> CreateTipoInfraestructuras(TipoInfraestructurasModel model)
         {
-            var result = _mapper.Map<TipoInfraestructuras>(entity);
+            var result = _mapper.Map<TipoInfraestructuras>(model);
             await _repository.AddAsync(result);
+            model.IdTipoInfraestructuras = result.IdTipoInfraestructuras;
+            return model;
         }
 
-        public async Task<List<TipoInfraestructurasEntity>> ReadTipoInfraestructuras()
+        public async Task<List<TipoInfraestructurasModel>> ReadTipoInfraestructuras()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<TipoInfraestructurasEntity>>(data);
+            var result = _mapper.Map<List<TipoInfraestructurasModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateTipoInfraestructuras(TipoInfraestructurasEntity entity)
+        public async Task UpdateTipoInfraestructuras(TipoInfraestructurasModel model)
         {
-            var result = _mapper.Map<TipoInfraestructuras>(entity);
+            var result = _mapper.Map<TipoInfraestructuras>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<TipoInfraestructurasEntity> ReadTipoInfraestructuras(string id)
+        public async Task<TipoInfraestructurasModel> ReadTipoInfraestructuras(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<TipoInfraestructurasEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<TipoInfraestructurasModel>(model);
             return result;
         }
 

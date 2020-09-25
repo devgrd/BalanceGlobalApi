@@ -16,6 +16,8 @@ namespace BalanceGlobal.Database.Context
         {
         }
 
+        public virtual DbSet<Flujos> Flujos { get; set; }
+        public virtual DbSet<Reinyeccion> Reinyeccion { get; set; }
         public virtual DbSet<ConsInvCarmen> ConsInvCarmen { get; set; }
         public virtual DbSet<ConsumoEnergetico> ConsumoEnergetico { get; set; }
         public virtual DbSet<Faenas> Faenas { get; set; }
@@ -25,7 +27,7 @@ namespace BalanceGlobal.Database.Context
         public virtual DbSet<Porteos> Porteos { get; set; }
         public virtual DbSet<Sistemas> Sistemas { get; set; }
         public virtual DbSet<SistemasSubSistemas> SistemasSubSistemas { get; set; }
-        public virtual DbSet<Subsistemas> Subsistemas { get; set; }
+        public virtual DbSet<SubSistemas> Subsistemas { get; set; }
         public virtual DbSet<Infraestructuras> Infraestructuras { get; set; }
         public virtual DbSet<PeriodosOperacionales> PeriodosOperacionales { get; set; }
         public virtual DbSet<Extraccion> Extraccion { get; set; }
@@ -55,6 +57,66 @@ namespace BalanceGlobal.Database.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<Flujos>(entity =>
+            {
+                entity.HasKey(e => e.IdFlujos)
+                    .HasName("PK_IdFlujos");
+
+                entity.HasIndex(e => new { e.IdSistemasSubsistemas, e.IdBombas, e.Fecha })
+                    .HasName("UK_Flujos")
+                    .IsUnique();
+
+                entity.Property(e => e.Fecha).HasColumnType("datetime2(3)");
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime2(3)")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.IdSistemasSubsistemas).HasColumnName("IdSistemas_Subsistemas");
+
+                entity.Property(e => e.TotalizadorM3)
+                    .HasColumnName("Totalizador_m3")
+                    .HasColumnType("decimal(19, 3)");
+
+                entity.Property(e => e.UsuarioActualizacion)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Reinyeccion>(entity =>
+            {
+                entity.HasKey(e => e.IdReinyeccion)
+                    .HasName("PK_IdReinyeccion");
+
+                entity.HasIndex(e => new { e.IdSistemasSubsitemas, e.Fecha })
+                    .HasName("UK_Reinyeccion")
+                    .IsUnique();
+
+                entity.Property(e => e.EvapAreaExpuestaM3dia)
+                    .HasColumnName("EvapAreaExpuesta_m3dia")
+                    .HasColumnType("decimal(19, 3)");
+
+                entity.Property(e => e.EvapAreaImpM3dia)
+                    .HasColumnName("EvapAreaImp_m3dia")
+                    .HasColumnType("decimal(19, 3)");
+
+                entity.Property(e => e.Fecha).HasColumnType("date");
+
+                entity.Property(e => e.FechaActualizacion)
+                    .HasColumnType("datetime2(3)")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.IdSistemasSubsitemas).HasColumnName("IdSistemas_Subsitemas");
+
+                entity.Property(e => e.SalmueraInfiltradaM3dia)
+                    .HasColumnName("SalmueraInfiltrada_m3dia")
+                    .HasColumnType("decimal(19, 3)");
+
+                entity.Property(e => e.UsuarioActualizacion)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
 
             modelBuilder.Entity<ImportDestino>(entity =>
             {
@@ -653,35 +715,35 @@ namespace BalanceGlobal.Database.Context
 
             modelBuilder.Entity<SistemasSubSistemas>(entity =>
             {
-                entity.HasKey(e => e.IdSistemasSubsistemas)
+                entity.HasKey(e => e.IdSistemasSubSistemas)
                     .HasName("PK_Sistemas_SubSistemas_IdSistemas_Subsistemas2")
                     .IsClustered(false);
 
                 entity.ToTable("Sistemas_SubSistemas");
 
-                entity.HasIndex(e => new { e.IdSistemas, e.IdSubsistemas })
+                entity.HasIndex(e => new { e.IdSistemas, e.IdSubSistemas })
                     .HasName("UK_Sistemas_SubSistemas")
                     .IsUnique()
                     .IsClustered();
 
-                entity.Property(e => e.IdSistemasSubsistemas).HasColumnName("IdSistemas_Subsistemas");
+                entity.Property(e => e.IdSistemasSubSistemas).HasColumnName("IdSistemas_Subsistemas");
 
-                entity.HasOne(d => d.IdSistemasNavigation)
+                entity.HasOne(d => d.IdSubSistemasNavigation)
                     .WithMany(p => p.SistemasSubSistemas)
                     .HasForeignKey(d => d.IdSistemas)
                     .OnDelete(DeleteBehavior.ClientSetNull);
 
-                entity.HasOne(d => d.IdSubsistemasNavigation)
+                entity.HasOne(d => d.IdSubSistemasNavigation)
                     .WithMany(p => p.SistemasSubSistemas)
-                    .HasForeignKey(d => d.IdSubsistemas);
+                    .HasForeignKey(d => d.IdSubSistemas);
             });
 
-            modelBuilder.Entity<Subsistemas>(entity =>
+            modelBuilder.Entity<SubSistemas>(entity =>
             {
-                entity.HasKey(e => e.IdSubsistemas)
+                entity.HasKey(e => e.IdSubSistemas)
                     .HasName("PK_Subsistemas_IdSubsistemas");
 
-                entity.HasIndex(e => e.Subsistema)
+                entity.HasIndex(e => e.SubSistema)
                     .HasName("UK_Subsistemas_Subsistemas")
                     .IsUnique();
 
@@ -693,7 +755,7 @@ namespace BalanceGlobal.Database.Context
                     .HasMaxLength(254)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Subsistema)
+                entity.Property(e => e.SubSistema)
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
@@ -733,7 +795,7 @@ namespace BalanceGlobal.Database.Context
 
             modelBuilder.Entity<PeriodosOperacionales>(entity =>
             {
-                entity.HasKey(e => e.IdPeriodosOpercionales)
+                entity.HasKey(e => e.IdPeriodosOperacionales)
                     .HasName("PK_PeriodoOperacional_IdPeriodoOpercional");
 
                 entity.HasIndex(e => new { e.IdSistemas, e.IdPeriodo })
@@ -952,7 +1014,7 @@ namespace BalanceGlobal.Database.Context
                 entity.HasKey(e => e.IdTipoInfraestructuras)
                     .HasName("PK_TipoInfraestructuras_IdTipoInfraestructuras");
 
-                entity.HasIndex(e => e.TipoInfraestructuras1)
+                entity.HasIndex(e => e.TipoInfraestructura)
                     .HasName("UK_TipoInfraestructuras_TipoInfraestructuras")
                     .IsUnique();
 
@@ -968,7 +1030,7 @@ namespace BalanceGlobal.Database.Context
                     .HasColumnType("datetime2(3)")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.TipoInfraestructuras1)
+                entity.Property(e => e.TipoInfraestructura)
                     .IsRequired()
                     .HasColumnName("TipoInfraestructuras")
                     .HasMaxLength(50)
@@ -985,3 +1047,4 @@ namespace BalanceGlobal.Database.Context
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
+

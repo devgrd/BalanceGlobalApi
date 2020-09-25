@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
+using BalanceGlobal.Models;
+using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BalanceGlobal.Database.Context;
-using BalanceGlobal.Database.Tables;
-using AutoMapper;
-using BalanceGlobal.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -16,39 +12,79 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class ReservoriosController : ControllerBase
     {
-        private readonly BalanceGlobalContext _context;
-        private readonly IMapper _mapper;
+        private readonly IReservoriosService _service;
 
-        public ReservoriosController(BalanceGlobalContext context, IMapper mapper)
+        public ReservoriosController(IReservoriosService service)
         {
-            _context = context;
-            _mapper = mapper;
+            _service = service;
         }
 
-        // GET: api/Reservorios
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReservoriosEntity>>> GetReservorios()
+        public async Task<ActionResult<IEnumerable<ReservoriosModel>>> GetReservorios()
         {
-            var reservorios = await _context.Reservorios.ToListAsync();
-            var result = _mapper.Map<List<ReservoriosEntity>>(reservorios);
-
-            return result;
+            return await _service.ReadReservorios();
         }
 
-        // GET: api/Reservorios/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Reservorios>> GetReservorios(int id)
+        public async Task<ActionResult<ReservoriosModel>> GetReservorios(int id)
         {
-            var reservorios = await _context.Reservorios.FindAsync(id);
+            var _model = await _service.ReadReservorios(id.ToString());
 
-            if (reservorios == null)
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            return reservorios;
+            return _model;
         }
 
-      
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutReservorios(int id, ReservoriosModel model)
+        {
+            if (id != model.IdReservorios)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _service.UpdateReservorios(model);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (_service.ReadReservorios(id.ToString()) == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ReservoriosModel>> PostReservorios(ReservoriosModel model)
+        {
+            var _model = await _service.CreateReservorios(model);
+            return CreatedAtAction("GetReservorios", new { id = _model.IdReservorios }, _model);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ReservoriosModel>> DeleteReservorios(int id)
+        {
+            var _model = await _service.ReadReservorios(id.ToString());
+            if (_model == null)
+            {
+                return NotFound();
+            }
+
+            await _service.DeleteReservorios(id.ToString());
+
+            return _model;
+        }
+
     }
 }

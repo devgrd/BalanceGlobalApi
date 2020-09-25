@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IOrigenesDatosService
     {
-        Task CreateOrigenesDatos(OrigenesDatosEntity OrigenesDatosEntity);
-        Task<List<OrigenesDatosEntity>> ReadOrigenesDatos();
-        Task UpdateOrigenesDatos(OrigenesDatosEntity OrigenesDatosEntity);
+        Task<OrigenesDatosModel> CreateOrigenesDatos(OrigenesDatosModel OrigenesDatosModel);
+        Task<List<OrigenesDatosModel>> ReadOrigenesDatos();
+        Task UpdateOrigenesDatos(OrigenesDatosModel OrigenesDatosModel);
         Task DeleteOrigenesDatos(string id);
-        Task<OrigenesDatosEntity> ReadOrigenesDatos(string id);
+        Task<OrigenesDatosModel> ReadOrigenesDatos(string id);
     }
     public class OrigenesDatosService : IOrigenesDatosService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateOrigenesDatos(OrigenesDatosEntity entity)
+        public async Task<OrigenesDatosModel> CreateOrigenesDatos(OrigenesDatosModel model)
         {
-            var result = _mapper.Map<OrigenesDatos>(entity);
+            var result = _mapper.Map<OrigenesDatos>(model);
             await _repository.AddAsync(result);
+            model.IdOrigenesDatos = result.IdOrigenesDatos;
+            return model;
         }
 
-        public async Task<List<OrigenesDatosEntity>> ReadOrigenesDatos()
+        public async Task<List<OrigenesDatosModel>> ReadOrigenesDatos()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<OrigenesDatosEntity>>(data);
+            var result = _mapper.Map<List<OrigenesDatosModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateOrigenesDatos(OrigenesDatosEntity entity)
+        public async Task UpdateOrigenesDatos(OrigenesDatosModel model)
         {
-            var result = _mapper.Map<OrigenesDatos>(entity);
+            var result = _mapper.Map<OrigenesDatos>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<OrigenesDatosEntity> ReadOrigenesDatos(string id)
+        public async Task<OrigenesDatosModel> ReadOrigenesDatos(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<OrigenesDatosEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<OrigenesDatosModel>(model);
             return result;
         }
 

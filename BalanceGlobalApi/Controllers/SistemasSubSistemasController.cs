@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
+using BalanceGlobal.Models;
+using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BalanceGlobal.Database.Context;
-using BalanceGlobal.Database.Tables;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -14,54 +12,47 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class SistemasSubSistemasController : ControllerBase
     {
-        private readonly BalanceGlobalContext _context;
+        private readonly ISistemasSubSistemasService _service;
 
-        public SistemasSubSistemasController(BalanceGlobalContext context)
+        public SistemasSubSistemasController(ISistemasSubSistemasService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/SistemasSubSistemas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SistemasSubSistemas>>> GetSistemasSubSistemas()
+        public async Task<ActionResult<IEnumerable<SistemasSubSistemasModel>>> GetSistemasSubSistemas()
         {
-            return await _context.SistemasSubSistemas.ToListAsync();
+            return await _service.ReadSistemasSubSistemas();
         }
 
-        // GET: api/SistemasSubSistemas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<SistemasSubSistemas>> GetSistemasSubSistemas(int id)
+        public async Task<ActionResult<SistemasSubSistemasModel>> GetSistemasSubSistemas(int id)
         {
-            var sistemasSubSistemas = await _context.SistemasSubSistemas.FindAsync(id);
+            var _model = await _service.ReadSistemasSubSistemas(id.ToString());
 
-            if (sistemasSubSistemas == null)
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            return sistemasSubSistemas;
+            return _model;
         }
 
-        // PUT: api/SistemasSubSistemas/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSistemasSubSistemas(int id, SistemasSubSistemas sistemasSubSistemas)
+        public async Task<IActionResult> PutSistemasSubSistemas(int id, SistemasSubSistemasModel model)
         {
-            if (id != sistemasSubSistemas.IdSistemasSubsistemas)
+            if (id != model.IdSistemasSubSistemas)
             {
                 return BadRequest();
             }
 
-            _context.Entry(sistemasSubSistemas).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _service.UpdateSistemasSubSistemas(model);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SistemasSubSistemasExists(id))
+                if (_service.ReadSistemasSubSistemas(id.ToString()) == null)
                 {
                     return NotFound();
                 }
@@ -74,37 +65,26 @@ namespace BalanceGlobal.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/SistemasSubSistemas
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<SistemasSubSistemas>> PostSistemasSubSistemas(SistemasSubSistemas sistemasSubSistemas)
+        public async Task<ActionResult<SistemasSubSistemasModel>> PostSistemasSubSistemas(SistemasSubSistemasModel model)
         {
-            _context.SistemasSubSistemas.Add(sistemasSubSistemas);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetSistemasSubSistemas", new { id = sistemasSubSistemas.IdSistemasSubsistemas }, sistemasSubSistemas);
+            var _model = await _service.CreateSistemasSubSistemas(model);
+            return CreatedAtAction("GetSistemasSubSistemas", new { id = _model.IdSistemasSubSistemas }, _model);
         }
 
-        // DELETE: api/SistemasSubSistemas/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<SistemasSubSistemas>> DeleteSistemasSubSistemas(int id)
+        public async Task<ActionResult<SistemasSubSistemasModel>> DeleteSistemasSubSistemas(int id)
         {
-            var sistemasSubSistemas = await _context.SistemasSubSistemas.FindAsync(id);
-            if (sistemasSubSistemas == null)
+            var _model = await _service.ReadSistemasSubSistemas(id.ToString());
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            _context.SistemasSubSistemas.Remove(sistemasSubSistemas);
-            await _context.SaveChangesAsync();
+            await _service.DeleteSistemasSubSistemas(id.ToString());
 
-            return sistemasSubSistemas;
+            return _model;
         }
 
-        private bool SistemasSubSistemasExists(int id)
-        {
-            return _context.SistemasSubSistemas.Any(e => e.IdSistemasSubsistemas == id);
-        }
     }
 }

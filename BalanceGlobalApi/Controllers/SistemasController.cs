@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
+using BalanceGlobal.Models;
+using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BalanceGlobal.Database.Context;
-using BalanceGlobal.Database.Tables;
-using AutoMapper;
-using BalanceGlobal.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -16,59 +12,47 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class SistemasController : ControllerBase
     {
-        private readonly BalanceGlobalContext _context;
-        private readonly IMapper _mapper;
+        private readonly ISistemasService _service;
 
-        public SistemasController(BalanceGlobalContext context, IMapper mapper)
+        public SistemasController(ISistemasService service)
         {
-            _context = context;
-            _mapper = mapper;
+            _service = service;
         }
 
-        // GET: api/Sistemas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SistemasEntity>>> GetSistemas()
+        public async Task<ActionResult<IEnumerable<SistemasModel>>> GetSistemas()
         {
-            var sistemas = await _context.Sistemas.ToListAsync();
-            var result = _mapper.Map<List<SistemasEntity>>(sistemas);
-
-            return result;
+            return await _service.ReadSistemas();
         }
 
-        // GET: api/Sistemas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Sistemas>> GetSistemas(int id)
+        public async Task<ActionResult<SistemasModel>> GetSistemas(int id)
         {
-            var sistemas = await _context.Sistemas.FindAsync(id);
+            var _model = await _service.ReadSistemas(id.ToString());
 
-            if (sistemas == null)
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            return sistemas;
+            return _model;
         }
 
-        // PUT: api/Sistemas/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSistemas(int id, Sistemas sistemas)
+        public async Task<IActionResult> PutSistemas(int id, SistemasModel model)
         {
-            if (id != sistemas.IdSistemas)
+            if (id != model.IdSistemas)
             {
                 return BadRequest();
             }
 
-            _context.Entry(sistemas).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _service.UpdateSistemas(model);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SistemasExists(id))
+                if (_service.ReadSistemas(id.ToString()) == null)
                 {
                     return NotFound();
                 }
@@ -81,37 +65,26 @@ namespace BalanceGlobal.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/Sistemas
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Sistemas>> PostSistemas(Sistemas sistemas)
+        public async Task<ActionResult<SistemasModel>> PostSistemas(SistemasModel model)
         {
-            _context.Sistemas.Add(sistemas);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetSistemas", new { id = sistemas.IdSistemas }, sistemas);
+            var _model = await _service.CreateSistemas(model);
+            return CreatedAtAction("GetSistemas", new { id = _model.IdSistemas }, _model);
         }
 
-        // DELETE: api/Sistemas/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Sistemas>> DeleteSistemas(int id)
+        public async Task<ActionResult<SistemasModel>> DeleteSistemas(int id)
         {
-            var sistemas = await _context.Sistemas.FindAsync(id);
-            if (sistemas == null)
+            var _model = await _service.ReadSistemas(id.ToString());
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            _context.Sistemas.Remove(sistemas);
-            await _context.SaveChangesAsync();
+            await _service.DeleteSistemas(id.ToString());
 
-            return sistemas;
+            return _model;
         }
 
-        private bool SistemasExists(int id)
-        {
-            return _context.Sistemas.Any(e => e.IdSistemas == id);
-        }
     }
 }

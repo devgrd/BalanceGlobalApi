@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IBombasService
     {
-        Task CreateBombas(BombasEntity BombasEntity);
-        Task<List<BombasEntity>> ReadBombas();
-        Task UpdateBombas(BombasEntity BombasEntity);
+        Task<BombasModel> CreateBombas(BombasModel BombasModel);
+        Task<List<BombasModel>> ReadBombas();
+        Task UpdateBombas(BombasModel BombasModel);
         Task DeleteBombas(string id);
-        Task<BombasEntity> ReadBombas(string id);
+        Task<BombasModel> ReadBombas(string id);
     }
     public class BombasService : IBombasService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateBombas(BombasEntity entity)
+        public async Task<BombasModel> CreateBombas(BombasModel model)
         {
-            var result = _mapper.Map<Bombas>(entity);
+            var result = _mapper.Map<Bombas>(model);
             await _repository.AddAsync(result);
+            model.IdBombas = result.IdBombas;
+            return model;
         }
 
-        public async Task<List<BombasEntity>> ReadBombas()
+        public async Task<List<BombasModel>> ReadBombas()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<BombasEntity>>(data);
+            var result = _mapper.Map<List<BombasModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateBombas(BombasEntity entity)
+        public async Task UpdateBombas(BombasModel model)
         {
-            var result = _mapper.Map<Bombas>(entity);
+            var result = _mapper.Map<Bombas>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<BombasEntity> ReadBombas(string id)
+        public async Task<BombasModel> ReadBombas(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<BombasEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<BombasModel>(model);
             return result;
         }
 

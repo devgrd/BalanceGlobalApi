@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
+using BalanceGlobal.Models;
+using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BalanceGlobal.Database.Context;
-using BalanceGlobal.Database.Tables;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -14,34 +12,79 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class ConsInvCarmenController : ControllerBase
     {
-        private readonly BalanceGlobalContext _context;
+        private readonly IConsInvCarmenService _service;
 
-        public ConsInvCarmenController(BalanceGlobalContext context)
+        public ConsInvCarmenController(IConsInvCarmenService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/ConsInvCarmen
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ConsInvCarmen>>> GetConsInvCarmen()
+        public async Task<ActionResult<IEnumerable<ConsInvCarmenModel>>> GetConsInvCarmen()
         {
-            return await _context.ConsInvCarmen.ToListAsync();
+            return await _service.ReadConsInvCarmen();
         }
 
-        // GET: api/ConsInvCarmen/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ConsInvCarmen>> GetConsInvCarmen(int id)
+        public async Task<ActionResult<ConsInvCarmenModel>> GetConsInvCarmen(int id)
         {
-            var consInvCarmen = await _context.ConsInvCarmen.FindAsync(id);
+            var _model = await _service.ReadConsInvCarmen(id.ToString());
 
-            if (consInvCarmen == null)
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            return consInvCarmen;
+            return _model;
         }
 
-       
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutConsInvCarmen(int id, ConsInvCarmenModel model)
+        {
+            if (id != model.IdConsInvCarmen)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _service.UpdateConsInvCarmen(model);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (_service.ReadConsInvCarmen(id.ToString()) == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ConsInvCarmenModel>> PostConsInvCarmen(ConsInvCarmenModel model)
+        {
+            var _model = await _service.CreateConsInvCarmen(model);
+            return CreatedAtAction("GetConsInvCarmen", new { id = _model.IdConsInvCarmen }, _model);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ConsInvCarmenModel>> DeleteConsInvCarmen(int id)
+        {
+            var _model = await _service.ReadConsInvCarmen(id.ToString());
+            if (_model == null)
+            {
+                return NotFound();
+            }
+
+            await _service.DeleteConsInvCarmen(id.ToString());
+
+            return _model;
+        }
+
     }
 }

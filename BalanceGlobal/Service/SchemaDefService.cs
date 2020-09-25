@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface ISchemaDefService
     {
-        Task CreateSchemaDef(SchemaDefEntity SchemaDefEntity);
-        Task<List<SchemaDefEntity>> ReadSchemaDef();
-        Task UpdateSchemaDef(SchemaDefEntity SchemaDefEntity);
+        Task<SchemaDefModel> CreateSchemaDef(SchemaDefModel SchemaDefModel);
+        Task<List<SchemaDefModel>> ReadSchemaDef();
+        Task UpdateSchemaDef(SchemaDefModel SchemaDefModel);
         Task DeleteSchemaDef(string id);
-        Task<SchemaDefEntity> ReadSchemaDef(string id);
+        Task<SchemaDefModel> ReadSchemaDef(string id);
     }
     public class SchemaDefService : ISchemaDefService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateSchemaDef(SchemaDefEntity entity)
+        public async Task<SchemaDefModel> CreateSchemaDef(SchemaDefModel model)
         {
-            var result = _mapper.Map<SchemaDef>(entity);
+            var result = _mapper.Map<SchemaDef>(model);
             await _repository.AddAsync(result);
+            model.IdSchemaDef = result.IdSchemaDef;
+            return model;
         }
 
-        public async Task<List<SchemaDefEntity>> ReadSchemaDef()
+        public async Task<List<SchemaDefModel>> ReadSchemaDef()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<SchemaDefEntity>>(data);
+            var result = _mapper.Map<List<SchemaDefModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateSchemaDef(SchemaDefEntity entity)
+        public async Task UpdateSchemaDef(SchemaDefModel model)
         {
-            var result = _mapper.Map<SchemaDef>(entity);
+            var result = _mapper.Map<SchemaDef>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<SchemaDefEntity> ReadSchemaDef(string id)
+        public async Task<SchemaDefModel> ReadSchemaDef(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<SchemaDefEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<SchemaDefModel>(model);
             return result;
         }
 

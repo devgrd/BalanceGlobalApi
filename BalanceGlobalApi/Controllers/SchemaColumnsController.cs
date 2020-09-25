@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
+using BalanceGlobal.Models;
+using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BalanceGlobal.Database.Context;
-using BalanceGlobal.Database.Tables;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -14,54 +12,47 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class SchemaColumnsController : ControllerBase
     {
-        private readonly BalanceGlobalContext _context;
+        private readonly ISchemaColumnsService _service;
 
-        public SchemaColumnsController(BalanceGlobalContext context)
+        public SchemaColumnsController(ISchemaColumnsService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/SchemaColumns
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SchemaColumns>>> GetSchemaColumns()
+        public async Task<ActionResult<IEnumerable<SchemaColumnsModel>>> GetSchemaColumns()
         {
-            return await _context.SchemaColumns.ToListAsync();
+            return await _service.ReadSchemaColumns();
         }
 
-        // GET: api/SchemaColumns/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<SchemaColumns>> GetSchemaColumns(int id)
+        public async Task<ActionResult<SchemaColumnsModel>> GetSchemaColumns(int id)
         {
-            var schemaColumns = await _context.SchemaColumns.FindAsync(id);
+            var _model = await _service.ReadSchemaColumns(id.ToString());
 
-            if (schemaColumns == null)
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            return schemaColumns;
+            return _model;
         }
 
-        // PUT: api/SchemaColumns/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSchemaColumns(int id, SchemaColumns schemaColumns)
+        public async Task<IActionResult> PutSchemaColumns(int id, SchemaColumnsModel model)
         {
-            if (id != schemaColumns.IdSchemaColumns)
+            if (id != model.IdSchemaColumns)
             {
                 return BadRequest();
             }
 
-            _context.Entry(schemaColumns).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _service.UpdateSchemaColumns(model);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SchemaColumnsExists(id))
+                if (_service.ReadSchemaColumns(id.ToString()) == null)
                 {
                     return NotFound();
                 }
@@ -74,37 +65,26 @@ namespace BalanceGlobal.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/SchemaColumns
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<SchemaColumns>> PostSchemaColumns(SchemaColumns schemaColumns)
+        public async Task<ActionResult<SchemaColumnsModel>> PostSchemaColumns(SchemaColumnsModel model)
         {
-            _context.SchemaColumns.Add(schemaColumns);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetSchemaColumns", new { id = schemaColumns.IdSchemaColumns }, schemaColumns);
+            var _model = await _service.CreateSchemaColumns(model);
+            return CreatedAtAction("GetSchemaColumns", new { id = _model.IdSchemaColumns }, _model);
         }
 
-        // DELETE: api/SchemaColumns/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<SchemaColumns>> DeleteSchemaColumns(int id)
+        public async Task<ActionResult<SchemaColumnsModel>> DeleteSchemaColumns(int id)
         {
-            var schemaColumns = await _context.SchemaColumns.FindAsync(id);
-            if (schemaColumns == null)
+            var _model = await _service.ReadSchemaColumns(id.ToString());
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            _context.SchemaColumns.Remove(schemaColumns);
-            await _context.SaveChangesAsync();
+            await _service.DeleteSchemaColumns(id.ToString());
 
-            return schemaColumns;
+            return _model;
         }
 
-        private bool SchemaColumnsExists(int id)
-        {
-            return _context.SchemaColumns.Any(e => e.IdSchemaColumns == id);
-        }
     }
 }

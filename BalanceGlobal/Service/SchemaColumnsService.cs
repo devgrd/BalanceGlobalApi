@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface ISchemaColumnsService
     {
-        Task CreateSchemaColumns(SchemaColumnsEntity SchemaColumnsEntity);
-        Task<List<SchemaColumnsEntity>> ReadSchemaColumns();
-        Task UpdateSchemaColumns(SchemaColumnsEntity SchemaColumnsEntity);
+        Task<SchemaColumnsModel> CreateSchemaColumns(SchemaColumnsModel SchemaColumnsModel);
+        Task<List<SchemaColumnsModel>> ReadSchemaColumns();
+        Task UpdateSchemaColumns(SchemaColumnsModel SchemaColumnsModel);
         Task DeleteSchemaColumns(string id);
-        Task<SchemaColumnsEntity> ReadSchemaColumns(string id);
+        Task<SchemaColumnsModel> ReadSchemaColumns(string id);
     }
     public class SchemaColumnsService : ISchemaColumnsService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateSchemaColumns(SchemaColumnsEntity entity)
+        public async Task<SchemaColumnsModel> CreateSchemaColumns(SchemaColumnsModel model)
         {
-            var result = _mapper.Map<SchemaColumns>(entity);
+            var result = _mapper.Map<SchemaColumns>(model);
             await _repository.AddAsync(result);
+            model.IdSchemaColumns = result.IdSchemaColumns;
+            return model;
         }
 
-        public async Task<List<SchemaColumnsEntity>> ReadSchemaColumns()
+        public async Task<List<SchemaColumnsModel>> ReadSchemaColumns()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<SchemaColumnsEntity>>(data);
+            var result = _mapper.Map<List<SchemaColumnsModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateSchemaColumns(SchemaColumnsEntity entity)
+        public async Task UpdateSchemaColumns(SchemaColumnsModel model)
         {
-            var result = _mapper.Map<SchemaColumns>(entity);
+            var result = _mapper.Map<SchemaColumns>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<SchemaColumnsEntity> ReadSchemaColumns(string id)
+        public async Task<SchemaColumnsModel> ReadSchemaColumns(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<SchemaColumnsEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<SchemaColumnsModel>(model);
             return result;
         }
 

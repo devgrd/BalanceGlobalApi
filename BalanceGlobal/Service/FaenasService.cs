@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IFaenasService
     {
-        Task CreateFaenas(FaenasEntity FaenasEntity);
-        Task<List<FaenasEntity>> ReadFaenas();
-        Task UpdateFaenas(FaenasEntity FaenasEntity);
+        Task<FaenasModel> CreateFaenas(FaenasModel FaenasModel);
+        Task<List<FaenasModel>> ReadFaenas();
+        Task UpdateFaenas(FaenasModel FaenasModel);
         Task DeleteFaenas(string id);
-        Task<FaenasEntity> ReadFaenas(string id);
+        Task<FaenasModel> ReadFaenas(string id);
     }
     public class FaenasService : IFaenasService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateFaenas(FaenasEntity entity)
+        public async Task<FaenasModel> CreateFaenas(FaenasModel model)
         {
-            var result = _mapper.Map<Faenas>(entity);
+            var result = _mapper.Map<Faenas>(model);
             await _repository.AddAsync(result);
+            model.IdFaenas = result.IdFaenas;
+            return model;
         }
 
-        public async Task<List<FaenasEntity>> ReadFaenas()
+        public async Task<List<FaenasModel>> ReadFaenas()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<FaenasEntity>>(data);
+            var result = _mapper.Map<List<FaenasModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateFaenas(FaenasEntity entity)
+        public async Task UpdateFaenas(FaenasModel model)
         {
-            var result = _mapper.Map<Faenas>(entity);
+            var result = _mapper.Map<Faenas>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<FaenasEntity> ReadFaenas(string id)
+        public async Task<FaenasModel> ReadFaenas(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<FaenasEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<FaenasModel>(model);
             return result;
         }
 

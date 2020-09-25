@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IReservoriosService
     {
-        Task CreateReservorios(ReservoriosEntity ReservoriosEntity);
-        Task<List<ReservoriosEntity>> ReadReservorios();
-        Task UpdateReservorios(ReservoriosEntity ReservoriosEntity);
+        Task<ReservoriosModel> CreateReservorios(ReservoriosModel ReservoriosModel);
+        Task<List<ReservoriosModel>> ReadReservorios();
+        Task UpdateReservorios(ReservoriosModel ReservoriosModel);
         Task DeleteReservorios(string id);
-        Task<ReservoriosEntity> ReadReservorios(string id);
+        Task<ReservoriosModel> ReadReservorios(string id);
     }
     public class ReservoriosService : IReservoriosService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateReservorios(ReservoriosEntity entity)
+        public async Task<ReservoriosModel> CreateReservorios(ReservoriosModel model)
         {
-            var result = _mapper.Map<Reservorios>(entity);
+            var result = _mapper.Map<Reservorios>(model);
             await _repository.AddAsync(result);
+            model.IdReservorios = result.IdReservorios;
+            return model;
         }
 
-        public async Task<List<ReservoriosEntity>> ReadReservorios()
+        public async Task<List<ReservoriosModel>> ReadReservorios()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<ReservoriosEntity>>(data);
+            var result = _mapper.Map<List<ReservoriosModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateReservorios(ReservoriosEntity entity)
+        public async Task UpdateReservorios(ReservoriosModel model)
         {
-            var result = _mapper.Map<Reservorios>(entity);
+            var result = _mapper.Map<Reservorios>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<ReservoriosEntity> ReadReservorios(string id)
+        public async Task<ReservoriosModel> ReadReservorios(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<ReservoriosEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<ReservoriosModel>(model);
             return result;
         }
 

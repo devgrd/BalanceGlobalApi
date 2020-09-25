@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface ISchemaColumnsWarningService
     {
-        Task CreateSchemaColumnsWarning(SchemaColumnsWarningEntity SchemaColumnsWarningEntity);
-        Task<List<SchemaColumnsWarningEntity>> ReadSchemaColumnsWarning();
-        Task UpdateSchemaColumnsWarning(SchemaColumnsWarningEntity SchemaColumnsWarningEntity);
+        Task<SchemaColumnsWarningModel> CreateSchemaColumnsWarning(SchemaColumnsWarningModel SchemaColumnsWarningModel);
+        Task<List<SchemaColumnsWarningModel>> ReadSchemaColumnsWarning();
+        Task UpdateSchemaColumnsWarning(SchemaColumnsWarningModel SchemaColumnsWarningModel);
         Task DeleteSchemaColumnsWarning(string id);
-        Task<SchemaColumnsWarningEntity> ReadSchemaColumnsWarning(string id);
+        Task<SchemaColumnsWarningModel> ReadSchemaColumnsWarning(string id);
     }
     public class SchemaColumnsWarningService : ISchemaColumnsWarningService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateSchemaColumnsWarning(SchemaColumnsWarningEntity entity)
+        public async Task<SchemaColumnsWarningModel> CreateSchemaColumnsWarning(SchemaColumnsWarningModel model)
         {
-            var result = _mapper.Map<SchemaColumnsWarning>(entity);
+            var result = _mapper.Map<SchemaColumnsWarning>(model);
             await _repository.AddAsync(result);
+            model.IdSchemaColumnsWarning = result.IdSchemaColumnsWarning;
+            return model;
         }
 
-        public async Task<List<SchemaColumnsWarningEntity>> ReadSchemaColumnsWarning()
+        public async Task<List<SchemaColumnsWarningModel>> ReadSchemaColumnsWarning()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<SchemaColumnsWarningEntity>>(data);
+            var result = _mapper.Map<List<SchemaColumnsWarningModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateSchemaColumnsWarning(SchemaColumnsWarningEntity entity)
+        public async Task UpdateSchemaColumnsWarning(SchemaColumnsWarningModel model)
         {
-            var result = _mapper.Map<SchemaColumnsWarning>(entity);
+            var result = _mapper.Map<SchemaColumnsWarning>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<SchemaColumnsWarningEntity> ReadSchemaColumnsWarning(string id)
+        public async Task<SchemaColumnsWarningModel> ReadSchemaColumnsWarning(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<SchemaColumnsWarningEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<SchemaColumnsWarningModel>(model);
             return result;
         }
 

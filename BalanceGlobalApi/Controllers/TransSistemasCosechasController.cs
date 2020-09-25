@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+
+using BalanceGlobal.Models;
+using BalanceGlobal.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BalanceGlobal.Database.Context;
-using BalanceGlobal.Database.Tables;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -14,34 +12,79 @@ namespace BalanceGlobal.Api.Controllers
     [ApiController]
     public class TransSistemasCosechasController : ControllerBase
     {
-        private readonly BalanceGlobalContext _context;
+        private readonly ITransSistemasCosechasService _service;
 
-        public TransSistemasCosechasController(BalanceGlobalContext context)
+        public TransSistemasCosechasController(ITransSistemasCosechasService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/TransSistemasCosechas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TransSistemasCosechas>>> GetTransSistemasCosechas()
+        public async Task<ActionResult<IEnumerable<TransSistemasCosechasModel>>> GetTransSistemasCosechas()
         {
-            return await _context.TransSistemasCosechas.ToListAsync();
+            return await _service.ReadTransSistemasCosechas();
         }
 
-        // GET: api/TransSistemasCosechas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TransSistemasCosechas>> GetTransSistemasCosechas(int id)
+        public async Task<ActionResult<TransSistemasCosechasModel>> GetTransSistemasCosechas(int id)
         {
-            var transSistemasCosechas = await _context.TransSistemasCosechas.FindAsync(id);
+            var _model = await _service.ReadTransSistemasCosechas(id.ToString());
 
-            if (transSistemasCosechas == null)
+            if (_model == null)
             {
                 return NotFound();
             }
 
-            return transSistemasCosechas;
+            return _model;
         }
 
-    
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutTransSistemasCosechas(int id, TransSistemasCosechasModel model)
+        {
+            if (id != model.IdTransSistemasCosechas)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _service.UpdateTransSistemasCosechas(model);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (_service.ReadTransSistemasCosechas(id.ToString()) == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<TransSistemasCosechasModel>> PostTransSistemasCosechas(TransSistemasCosechasModel model)
+        {
+            var _model = await _service.CreateTransSistemasCosechas(model);
+            return CreatedAtAction("GetTransSistemasCosechas", new { id = _model.IdTransSistemasCosechas }, _model);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<TransSistemasCosechasModel>> DeleteTransSistemasCosechas(int id)
+        {
+            var _model = await _service.ReadTransSistemasCosechas(id.ToString());
+            if (_model == null)
+            {
+                return NotFound();
+            }
+
+            await _service.DeleteTransSistemasCosechas(id.ToString());
+
+            return _model;
+        }
+
     }
 }

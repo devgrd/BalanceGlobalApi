@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,20 +9,20 @@ using System.Threading.Tasks;
 namespace BalanceGlobal.Service
 {
 
-    public interface ISubsistemasService
+    public interface ISubSistemasService
     {
-        Task CreateSubsistemas(SubsistemasEntity SubsistemasEntity);
-        Task<List<SubsistemasEntity>> ReadSubsistemas();
-        Task UpdateSubsistemas(SubsistemasEntity SubsistemasEntity);
-        Task DeleteSubsistemas(string id);
-        Task<SubsistemasEntity> ReadSubsistemas(string id);
+        Task<SubSistemasModel> CreateSubSistemas(SubSistemasModel SubSistemasModel);
+        Task<List<SubSistemasModel>> ReadSubSistemas();
+        Task UpdateSubSistemas(SubSistemasModel SubSistemasModel);
+        Task DeleteSubSistemas(string id);
+        Task<SubSistemasModel> ReadSubSistemas(string id);
     }
-    public class SubsistemasService : ISubsistemasService
+    public class SubSistemasService : ISubSistemasService
     {
-        private readonly ISubsistemasRepository _repository;
+        private readonly ISubSistemasRepository _repository;
         private readonly IMapper _mapper;
 
-        public SubsistemasService(ISubsistemasRepository repository, IMapper mapper)
+        public SubSistemasService(ISubSistemasRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
@@ -29,35 +30,37 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateSubsistemas(SubsistemasEntity entity)
+        public async Task<SubSistemasModel> CreateSubSistemas(SubSistemasModel model)
         {
-            var result = _mapper.Map<Subsistemas>(entity);
+            var result = _mapper.Map<SubSistemas>(model);
             await _repository.AddAsync(result);
+            model.IdSubSistemas = result.IdSubSistemas;
+            return model;
         }
 
-        public async Task<List<SubsistemasEntity>> ReadSubsistemas()
+        public async Task<List<SubSistemasModel>> ReadSubSistemas()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<SubsistemasEntity>>(data);
+            var result = _mapper.Map<List<SubSistemasModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateSubsistemas(SubsistemasEntity entity)
+        public async Task UpdateSubSistemas(SubSistemasModel model)
         {
-            var result = _mapper.Map<Subsistemas>(entity);
+            var result = _mapper.Map<SubSistemas>(model);
             await _repository.UpdateAsync(result);
         }
 
-        public async Task DeleteSubsistemas(string id)
+        public async Task DeleteSubSistemas(string id)
         {
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<SubsistemasEntity> ReadSubsistemas(string id)
+        public async Task<SubSistemasModel> ReadSubSistemas(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<SubsistemasEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<SubSistemasModel>(model);
             return result;
         }
 

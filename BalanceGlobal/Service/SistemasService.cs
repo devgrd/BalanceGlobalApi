@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface ISistemasService
     {
-        Task CreateSistemas(SistemasEntity SistemasEntity);
-        Task<List<SistemasEntity>> ReadSistemas();
-        Task UpdateSistemas(SistemasEntity SistemasEntity);
+        Task<SistemasModel> CreateSistemas(SistemasModel SistemasModel);
+        Task<List<SistemasModel>> ReadSistemas();
+        Task UpdateSistemas(SistemasModel SistemasModel);
         Task DeleteSistemas(string id);
-        Task<SistemasEntity> ReadSistemas(string id);
+        Task<SistemasModel> ReadSistemas(string id);
     }
     public class SistemasService : ISistemasService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateSistemas(SistemasEntity entity)
+        public async Task<SistemasModel> CreateSistemas(SistemasModel model)
         {
-            var result = _mapper.Map<Sistemas>(entity);
+            var result = _mapper.Map<Sistemas>(model);
             await _repository.AddAsync(result);
+            model.IdSistemas = result.IdSistemas;
+            return model;
         }
 
-        public async Task<List<SistemasEntity>> ReadSistemas()
+        public async Task<List<SistemasModel>> ReadSistemas()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<SistemasEntity>>(data);
+            var result = _mapper.Map<List<SistemasModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateSistemas(SistemasEntity entity)
+        public async Task UpdateSistemas(SistemasModel model)
         {
-            var result = _mapper.Map<Sistemas>(entity);
+            var result = _mapper.Map<Sistemas>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<SistemasEntity> ReadSistemas(string id)
+        public async Task<SistemasModel> ReadSistemas(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<SistemasEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<SistemasModel>(model);
             return result;
         }
 

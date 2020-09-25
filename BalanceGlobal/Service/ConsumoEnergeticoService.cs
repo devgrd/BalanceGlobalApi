@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IConsumoEnergeticoService
     {
-        Task CreateConsumoEnergetico(ConsumoEnergeticoEntity ConsumoEnergeticoEntity);
-        Task<List<ConsumoEnergeticoEntity>> ReadConsumoEnergetico();
-        Task UpdateConsumoEnergetico(ConsumoEnergeticoEntity ConsumoEnergeticoEntity);
+        Task<ConsumoEnergeticoModel> CreateConsumoEnergetico(ConsumoEnergeticoModel ConsumoEnergeticoModel);
+        Task<List<ConsumoEnergeticoModel>> ReadConsumoEnergetico();
+        Task UpdateConsumoEnergetico(ConsumoEnergeticoModel ConsumoEnergeticoModel);
         Task DeleteConsumoEnergetico(string id);
-        Task<ConsumoEnergeticoEntity> ReadConsumoEnergetico(string id);
+        Task<ConsumoEnergeticoModel> ReadConsumoEnergetico(string id);
     }
     public class ConsumoEnergeticoService : IConsumoEnergeticoService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateConsumoEnergetico(ConsumoEnergeticoEntity entity)
+        public async Task<ConsumoEnergeticoModel> CreateConsumoEnergetico(ConsumoEnergeticoModel model)
         {
-            var result = _mapper.Map<ConsumoEnergetico>(entity);
+            var result = _mapper.Map<ConsumoEnergetico>(model);
             await _repository.AddAsync(result);
+            model.IdConsumoEnergetico = result.IdConsumoEnergetico;
+            return model;
         }
 
-        public async Task<List<ConsumoEnergeticoEntity>> ReadConsumoEnergetico()
+        public async Task<List<ConsumoEnergeticoModel>> ReadConsumoEnergetico()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<ConsumoEnergeticoEntity>>(data);
+            var result = _mapper.Map<List<ConsumoEnergeticoModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateConsumoEnergetico(ConsumoEnergeticoEntity entity)
+        public async Task UpdateConsumoEnergetico(ConsumoEnergeticoModel model)
         {
-            var result = _mapper.Map<ConsumoEnergetico>(entity);
+            var result = _mapper.Map<ConsumoEnergetico>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<ConsumoEnergeticoEntity> ReadConsumoEnergetico(string id)
+        public async Task<ConsumoEnergeticoModel> ReadConsumoEnergetico(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<ConsumoEnergeticoEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<ConsumoEnergeticoModel>(model);
             return result;
         }
 

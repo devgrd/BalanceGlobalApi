@@ -1,6 +1,7 @@
+
 using AutoMapper;
 using BalanceGlobal.Database.Tables;
-using BalanceGlobal.Entities;
+using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IExtraccionService
     {
-        Task CreateExtraccion(ExtraccionEntity ExtraccionEntity);
-        Task<List<ExtraccionEntity>> ReadExtraccion();
-        Task UpdateExtraccion(ExtraccionEntity ExtraccionEntity);
+        Task<ExtraccionModel> CreateExtraccion(ExtraccionModel ExtraccionModel);
+        Task<List<ExtraccionModel>> ReadExtraccion();
+        Task UpdateExtraccion(ExtraccionModel ExtraccionModel);
         Task DeleteExtraccion(string id);
-        Task<ExtraccionEntity> ReadExtraccion(string id);
+        Task<ExtraccionModel> ReadExtraccion(string id);
     }
     public class ExtraccionService : IExtraccionService
     {
@@ -29,23 +30,25 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task CreateExtraccion(ExtraccionEntity entity)
+        public async Task<ExtraccionModel> CreateExtraccion(ExtraccionModel model)
         {
-            var result = _mapper.Map<Extraccion>(entity);
+            var result = _mapper.Map<Extraccion>(model);
             await _repository.AddAsync(result);
+            model.IdExtraccion = result.IdExtraccion;
+            return model;
         }
 
-        public async Task<List<ExtraccionEntity>> ReadExtraccion()
+        public async Task<List<ExtraccionModel>> ReadExtraccion()
         {
             var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<ExtraccionEntity>>(data);
+            var result = _mapper.Map<List<ExtraccionModel>>(data);
 
             return result;
         }
 
-        public async Task UpdateExtraccion(ExtraccionEntity entity)
+        public async Task UpdateExtraccion(ExtraccionModel model)
         {
-            var result = _mapper.Map<Extraccion>(entity);
+            var result = _mapper.Map<Extraccion>(model);
             await _repository.UpdateAsync(result);
         }
 
@@ -54,10 +57,10 @@ namespace BalanceGlobal.Service
             await _repository.RemoveAsync(id);
         }
 
-        public async Task<ExtraccionEntity> ReadExtraccion(string id)
+        public async Task<ExtraccionModel> ReadExtraccion(string id)
         {
-            var entity = await _repository.GetById(id);
-            var result = _mapper.Map<ExtraccionEntity>(entity);
+            var model = await _repository.GetById(id);
+            var result = _mapper.Map<ExtraccionModel>(model);
             return result;
         }
 
