@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrigenesDatos(int id, OrigenesDatosModel model)
+        public async Task<IActionResult> PutOrigenesDatos(int id, OrigenesDatosModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdOrigenesDatos)
             {
@@ -48,7 +49,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateOrigenesDatos(model);
+                await _service.UpdateOrigenesDatos(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -66,14 +67,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<OrigenesDatosModel>> PostOrigenesDatos(OrigenesDatosModel model)
+        public async Task<ActionResult<OrigenesDatosModel>> PostOrigenesDatos(OrigenesDatosModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateOrigenesDatos(model);
+            var _model = await _service.CreateOrigenesDatos(model, userName);
             return CreatedAtAction("GetOrigenesDatos", new { id = _model.IdOrigenesDatos }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<OrigenesDatosModel>> DeleteOrigenesDatos(int id)
+        public async Task<ActionResult<OrigenesDatosModel>> DeleteOrigenesDatos(int id, [Required][FromHeader] string userName)
         {
             var _model = await _service.ReadOrigenesDatos(id.ToString());
             if (_model == null)
@@ -81,7 +82,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteOrigenesDatos(id.ToString());
+            await _service.DeleteOrigenesDatos(id.ToString(), userName);
 
             return _model;
         }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOperaPozas(int id, OperaPozasModel model)
+        public async Task<IActionResult> PutOperaPozas(int id, OperaPozasModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdOperaPozas)
             {
@@ -48,7 +49,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateOperaPozas(model);
+                await _service.UpdateOperaPozas(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -66,14 +67,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<OperaPozasModel>> PostOperaPozas(OperaPozasModel model)
+        public async Task<ActionResult<OperaPozasModel>> PostOperaPozas(OperaPozasModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateOperaPozas(model);
+            var _model = await _service.CreateOperaPozas(model, userName);
             return CreatedAtAction("GetOperaPozas", new { id = _model.IdOperaPozas }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<OperaPozasModel>> DeleteOperaPozas(int id)
+        public async Task<ActionResult<OperaPozasModel>> DeleteOperaPozas(int id, [Required][FromHeader] string userName)
         {
             var _model = await _service.ReadOperaPozas(id.ToString());
             if (_model == null)
@@ -81,7 +82,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteOperaPozas(id.ToString());
+            await _service.DeleteOperaPozas(id.ToString(), userName);
 
             return _model;
         }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFaenas(int id, FaenasModel model)
+        public async Task<IActionResult> PutFaenas(int id, FaenasModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdFaenas)
             {
@@ -48,7 +49,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateFaenas(model);
+                await _service.UpdateFaenas(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -66,14 +67,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<FaenasModel>> PostFaenas(FaenasModel model)
+        public async Task<ActionResult<FaenasModel>> PostFaenas(FaenasModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateFaenas(model);
+            var _model = await _service.CreateFaenas(model, userName);
             return CreatedAtAction("GetFaenas", new { id = _model.IdFaenas }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<FaenasModel>> DeleteFaenas(int id)
+        public async Task<ActionResult<FaenasModel>> DeleteFaenas(int id, [Required][FromHeader] string userName)
         {
             var _model = await _service.ReadFaenas(id.ToString());
             if (_model == null)
@@ -81,7 +82,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteFaenas(id.ToString());
+            await _service.DeleteFaenas(id.ToString(), userName);
 
             return _model;
         }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutConsInvCarmen(int id, ConsInvCarmenModel model)
+        public async Task<IActionResult> PutConsInvCarmen(int id, ConsInvCarmenModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdConsInvCarmen)
             {
@@ -48,7 +49,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateConsInvCarmen(model);
+                await _service.UpdateConsInvCarmen(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -66,14 +67,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ConsInvCarmenModel>> PostConsInvCarmen(ConsInvCarmenModel model)
+        public async Task<ActionResult<ConsInvCarmenModel>> PostConsInvCarmen(ConsInvCarmenModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateConsInvCarmen(model);
+            var _model = await _service.CreateConsInvCarmen(model, userName);
             return CreatedAtAction("GetConsInvCarmen", new { id = _model.IdConsInvCarmen }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ConsInvCarmenModel>> DeleteConsInvCarmen(int id)
+        public async Task<ActionResult<ConsInvCarmenModel>> DeleteConsInvCarmen(int id, [Required][FromHeader] string userName)
         {
             var _model = await _service.ReadConsInvCarmen(id.ToString());
             if (_model == null)
@@ -81,7 +82,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteConsInvCarmen(id.ToString());
+            await _service.DeleteConsInvCarmen(id.ToString(), userName);
 
             return _model;
         }

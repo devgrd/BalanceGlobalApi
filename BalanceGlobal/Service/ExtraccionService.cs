@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface IExtraccionService
     {
-        Task<ExtraccionModel> CreateExtraccion(ExtraccionModel ExtraccionModel);
+        Task<ExtraccionModel> CreateExtraccion(ExtraccionModel ExtraccionModel, string userName);
         Task<List<ExtraccionModel>> ReadExtraccion();
-        Task UpdateExtraccion(ExtraccionModel ExtraccionModel);
-        Task DeleteExtraccion(string id);
+        Task UpdateExtraccion(ExtraccionModel ExtraccionModel, string userName);
+        Task DeleteExtraccion(string id, string userName);
         Task<ExtraccionModel> ReadExtraccion(string id);
     }
     public class ExtraccionService : IExtraccionService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ExtraccionModel> CreateExtraccion(ExtraccionModel model)
+        public async Task<ExtraccionModel> CreateExtraccion(ExtraccionModel model, string userName)
         {
             var result = _mapper.Map<Extraccion>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdExtraccion = result.IdExtraccion;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateExtraccion(ExtraccionModel model)
+        public async Task UpdateExtraccion(ExtraccionModel model, string userName)
         {
             var result = _mapper.Map<Extraccion>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteExtraccion(string id)
+        public async Task DeleteExtraccion(string id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
         public async Task<ExtraccionModel> ReadExtraccion(string id)

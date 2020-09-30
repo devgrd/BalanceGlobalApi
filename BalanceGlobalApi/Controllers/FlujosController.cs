@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFlujos(int id, FlujosModel model)
+        public async Task<IActionResult> PutFlujos(int id, FlujosModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdFlujos)
             {
@@ -48,7 +49,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateFlujos(model);
+                await _service.UpdateFlujos(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -66,14 +67,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<FlujosModel>> PostFlujos(FlujosModel model)
+        public async Task<ActionResult<FlujosModel>> PostFlujos(FlujosModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateFlujos(model);
+            var _model = await _service.CreateFlujos(model, userName);
             return CreatedAtAction("GetFlujos", new { id = _model.IdFlujos }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<FlujosModel>> DeleteFlujos(int id)
+        public async Task<ActionResult<FlujosModel>> DeleteFlujos(int id, [Required][FromHeader] string userName)
         {
             var _model = await _service.ReadFlujos(id.ToString());
             if (_model == null)
@@ -81,7 +82,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteFlujos(id.ToString());
+            await _service.DeleteFlujos(id.ToString(), userName);
 
             return _model;
         }

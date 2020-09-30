@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface IPeriodosOperacionalesService
     {
-        Task<PeriodosOperacionalesModel> CreatePeriodosOperacionales(PeriodosOperacionalesModel PeriodosOperacionalesModel);
+        Task<PeriodosOperacionalesModel> CreatePeriodosOperacionales(PeriodosOperacionalesModel PeriodosOperacionalesModel, string userName);
         Task<List<PeriodosOperacionalesModel>> ReadPeriodosOperacionales();
-        Task UpdatePeriodosOperacionales(PeriodosOperacionalesModel PeriodosOperacionalesModel);
-        Task DeletePeriodosOperacionales(string id);
+        Task UpdatePeriodosOperacionales(PeriodosOperacionalesModel PeriodosOperacionalesModel, string userName);
+        Task DeletePeriodosOperacionales(string id, string userName);
         Task<PeriodosOperacionalesModel> ReadPeriodosOperacionales(string id);
     }
     public class PeriodosOperacionalesService : IPeriodosOperacionalesService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<PeriodosOperacionalesModel> CreatePeriodosOperacionales(PeriodosOperacionalesModel model)
+        public async Task<PeriodosOperacionalesModel> CreatePeriodosOperacionales(PeriodosOperacionalesModel model, string userName)
         {
             var result = _mapper.Map<PeriodosOperacionales>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdPeriodosOperacionales = result.IdPeriodosOperacionales;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdatePeriodosOperacionales(PeriodosOperacionalesModel model)
+        public async Task UpdatePeriodosOperacionales(PeriodosOperacionalesModel model, string userName)
         {
             var result = _mapper.Map<PeriodosOperacionales>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeletePeriodosOperacionales(string id)
+        public async Task DeletePeriodosOperacionales(string id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
         public async Task<PeriodosOperacionalesModel> ReadPeriodosOperacionales(string id)

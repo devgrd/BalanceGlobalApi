@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubSistemas(int id, SubSistemasModel model)
+        public async Task<IActionResult> PutSubSistemas(int id, SubSistemasModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdSubSistemas)
             {
@@ -48,7 +49,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateSubSistemas(model);
+                await _service.UpdateSubSistemas(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -66,14 +67,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<SubSistemasModel>> PostSubSistemas(SubSistemasModel model)
+        public async Task<ActionResult<SubSistemasModel>> PostSubSistemas(SubSistemasModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateSubSistemas(model);
+            var _model = await _service.CreateSubSistemas(model, userName);
             return CreatedAtAction("GetSubSistemas", new { id = _model.IdSubSistemas }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<SubSistemasModel>> DeleteSubSistemas(int id)
+        public async Task<ActionResult<SubSistemasModel>> DeleteSubSistemas(int id, [Required][FromHeader] string userName)
         {
             var _model = await _service.ReadSubSistemas(id.ToString());
             if (_model == null)
@@ -81,7 +82,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteSubSistemas(id.ToString());
+            await _service.DeleteSubSistemas(id.ToString(), userName);
 
             return _model;
         }

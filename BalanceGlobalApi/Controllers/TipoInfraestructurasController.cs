@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTipoInfraestructuras(int id, TipoInfraestructurasModel model)
+        public async Task<IActionResult> PutTipoInfraestructuras(int id, TipoInfraestructurasModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdTipoInfraestructuras)
             {
@@ -48,7 +49,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateTipoInfraestructuras(model);
+                await _service.UpdateTipoInfraestructuras(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -66,14 +67,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<TipoInfraestructurasModel>> PostTipoInfraestructuras(TipoInfraestructurasModel model)
+        public async Task<ActionResult<TipoInfraestructurasModel>> PostTipoInfraestructuras(TipoInfraestructurasModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateTipoInfraestructuras(model);
+            var _model = await _service.CreateTipoInfraestructuras(model, userName);
             return CreatedAtAction("GetTipoInfraestructuras", new { id = _model.IdTipoInfraestructuras }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<TipoInfraestructurasModel>> DeleteTipoInfraestructuras(int id)
+        public async Task<ActionResult<TipoInfraestructurasModel>> DeleteTipoInfraestructuras(int id, [Required][FromHeader] string userName)
         {
             var _model = await _service.ReadTipoInfraestructuras(id.ToString());
             if (_model == null)
@@ -81,7 +82,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteTipoInfraestructuras(id.ToString());
+            await _service.DeleteTipoInfraestructuras(id.ToString(), userName);
 
             return _model;
         }

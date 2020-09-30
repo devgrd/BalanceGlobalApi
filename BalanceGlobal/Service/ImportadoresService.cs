@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface IImportadoresService
     {
-        Task<ImportadoresModel> CreateImportadores(ImportadoresModel ImportadoresModel);
+        Task<ImportadoresModel> CreateImportadores(ImportadoresModel ImportadoresModel, string userName);
         Task<List<ImportadoresModel>> ReadImportadores();
-        Task UpdateImportadores(ImportadoresModel ImportadoresModel);
-        Task DeleteImportadores(string id);
+        Task UpdateImportadores(ImportadoresModel ImportadoresModel, string userName);
+        Task DeleteImportadores(string id, string userName);
         Task<ImportadoresModel> ReadImportadores(string id);
     }
     public class ImportadoresService : IImportadoresService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ImportadoresModel> CreateImportadores(ImportadoresModel model)
+        public async Task<ImportadoresModel> CreateImportadores(ImportadoresModel model, string userName)
         {
             var result = _mapper.Map<Importadores>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdImportadores = result.IdImportadores;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateImportadores(ImportadoresModel model)
+        public async Task UpdateImportadores(ImportadoresModel model, string userName)
         {
             var result = _mapper.Map<Importadores>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteImportadores(string id)
+        public async Task DeleteImportadores(string id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
         public async Task<ImportadoresModel> ReadImportadores(string id)

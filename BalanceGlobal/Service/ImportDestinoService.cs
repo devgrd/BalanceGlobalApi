@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface IImportDestinoService
     {
-        Task<ImportDestinoModel> CreateImportDestino(ImportDestinoModel ImportDestinoModel);
+        Task<ImportDestinoModel> CreateImportDestino(ImportDestinoModel ImportDestinoModel, string userName);
         Task<List<ImportDestinoModel>> ReadImportDestino();
-        Task UpdateImportDestino(ImportDestinoModel ImportDestinoModel);
-        Task DeleteImportDestino(string id);
+        Task UpdateImportDestino(ImportDestinoModel ImportDestinoModel, string userName);
+        Task DeleteImportDestino(string id, string userName);
         Task<ImportDestinoModel> ReadImportDestino(string id);
     }
     public class ImportDestinoService : IImportDestinoService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ImportDestinoModel> CreateImportDestino(ImportDestinoModel model)
+        public async Task<ImportDestinoModel> CreateImportDestino(ImportDestinoModel model, string userName)
         {
             var result = _mapper.Map<ImportDestino>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdImportDestino = result.IdImportDestino;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateImportDestino(ImportDestinoModel model)
+        public async Task UpdateImportDestino(ImportDestinoModel model, string userName)
         {
             var result = _mapper.Map<ImportDestino>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteImportDestino(string id)
+        public async Task DeleteImportDestino(string id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
         public async Task<ImportDestinoModel> ReadImportDestino(string id)

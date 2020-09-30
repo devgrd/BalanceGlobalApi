@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCosechas(int id, CosechasModel model)
+        public async Task<IActionResult> PutCosechas(int id, CosechasModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdCosechas)
             {
@@ -48,7 +49,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateCosechas(model);
+                await _service.UpdateCosechas(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -66,14 +67,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CosechasModel>> PostCosechas(CosechasModel model)
+        public async Task<ActionResult<CosechasModel>> PostCosechas(CosechasModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateCosechas(model);
+            var _model = await _service.CreateCosechas(model, userName);
             return CreatedAtAction("GetCosechas", new { id = _model.IdCosechas }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<CosechasModel>> DeleteCosechas(int id)
+        public async Task<ActionResult<CosechasModel>> DeleteCosechas(int id, [Required][FromHeader] string userName)
         {
             var _model = await _service.ReadCosechas(id.ToString());
             if (_model == null)
@@ -81,7 +82,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteCosechas(id.ToString());
+            await _service.DeleteCosechas(id.ToString(), userName);
 
             return _model;
         }

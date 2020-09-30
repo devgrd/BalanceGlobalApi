@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSchemaColumnsWarning(int id, SchemaColumnsWarningModel model)
+        public async Task<IActionResult> PutSchemaColumnsWarning(int id, SchemaColumnsWarningModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdSchemaColumnsWarning)
             {
@@ -48,7 +49,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateSchemaColumnsWarning(model);
+                await _service.UpdateSchemaColumnsWarning(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -66,14 +67,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<SchemaColumnsWarningModel>> PostSchemaColumnsWarning(SchemaColumnsWarningModel model)
+        public async Task<ActionResult<SchemaColumnsWarningModel>> PostSchemaColumnsWarning(SchemaColumnsWarningModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateSchemaColumnsWarning(model);
+            var _model = await _service.CreateSchemaColumnsWarning(model, userName);
             return CreatedAtAction("GetSchemaColumnsWarning", new { id = _model.IdSchemaColumnsWarning }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<SchemaColumnsWarningModel>> DeleteSchemaColumnsWarning(int id)
+        public async Task<ActionResult<SchemaColumnsWarningModel>> DeleteSchemaColumnsWarning(int id, [Required][FromHeader] string userName)
         {
             var _model = await _service.ReadSchemaColumnsWarning(id.ToString());
             if (_model == null)
@@ -81,7 +82,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteSchemaColumnsWarning(id.ToString());
+            await _service.DeleteSchemaColumnsWarning(id.ToString(), userName);
 
             return _model;
         }

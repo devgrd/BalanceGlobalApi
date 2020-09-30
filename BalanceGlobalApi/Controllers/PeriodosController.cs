@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -28,7 +29,7 @@ namespace BalanceGlobal.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PeriodosModel>> GetPeriodos(int id)
         {
-            var _model = await _service.ReadPeriodos(id.ToString());
+            var _model = await _service.ReadPeriodos(id);
 
             if (_model == null)
             {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPeriodos(int id, PeriodosModel model)
+        public async Task<IActionResult> PutPeriodos(int id, PeriodosModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdPeriodos)
             {
@@ -48,11 +49,16 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdatePeriodos(model);
+                if (await _service.ReadPeriodos(id) == null)
+                {
+                    return NotFound();
+                }
+
+                await _service.UpdatePeriodos(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (_service.ReadPeriodos(id.ToString()) == null)
+                if (_service.ReadPeriodos(id) == null)
                 {
                     return NotFound();
                 }
@@ -66,22 +72,22 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<PeriodosModel>> PostPeriodos(PeriodosModel model)
+        public async Task<ActionResult<PeriodosModel>> PostPeriodos(PeriodosModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreatePeriodos(model);
+            var _model = await _service.CreatePeriodos(model, userName);
             return CreatedAtAction("GetPeriodos", new { id = _model.IdPeriodos }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<PeriodosModel>> DeletePeriodos(int id)
+        public async Task<ActionResult<PeriodosModel>> DeletePeriodos(int id, [Required][FromHeader] string userName)
         {
-            var _model = await _service.ReadPeriodos(id.ToString());
+            var _model = await _service.ReadPeriodos(id);
             if (_model == null)
             {
                 return NotFound();
             }
 
-            await _service.DeletePeriodos(id.ToString());
+            await _service.DeletePeriodos(id, userName);
 
             return _model;
         }

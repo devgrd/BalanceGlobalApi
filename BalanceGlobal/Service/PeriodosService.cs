@@ -11,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IPeriodosService
     {
-        Task<PeriodosModel> CreatePeriodos(PeriodosModel PeriodosModel);
+        Task<PeriodosModel> CreatePeriodos(PeriodosModel PeriodosModel, string userName);
         Task<List<PeriodosModel>> ReadPeriodos();
-        Task UpdatePeriodos(PeriodosModel PeriodosModel);
-        Task DeletePeriodos(string id);
-        Task<PeriodosModel> ReadPeriodos(string id);
+        Task UpdatePeriodos(PeriodosModel PeriodosModel, string userName);
+        Task DeletePeriodos(int id, string userName);
+        Task<PeriodosModel> ReadPeriodos(int id);
     }
     public class PeriodosService : IPeriodosService
     {
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<PeriodosModel> CreatePeriodos(PeriodosModel model)
+        public async Task<PeriodosModel> CreatePeriodos(PeriodosModel model, string userName)
         {
             var result = _mapper.Map<Periodos>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdPeriodos = result.IdPeriodos;
             return model;
         }
@@ -46,18 +46,18 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdatePeriodos(PeriodosModel model)
+        public async Task UpdatePeriodos(PeriodosModel model, string userName)
         {
             var result = _mapper.Map<Periodos>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeletePeriodos(string id)
+        public async Task DeletePeriodos(int id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
-        public async Task<PeriodosModel> ReadPeriodos(string id)
+        public async Task<PeriodosModel> ReadPeriodos(int id)
         {
             var model = await _repository.GetById(id);
             var result = _mapper.Map<PeriodosModel>(model);

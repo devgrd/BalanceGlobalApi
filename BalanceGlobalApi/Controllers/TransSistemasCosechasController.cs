@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTransSistemasCosechas(int id, TransSistemasCosechasModel model)
+        public async Task<IActionResult> PutTransSistemasCosechas(int id, TransSistemasCosechasModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdTransSistemasCosechas)
             {
@@ -48,7 +49,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateTransSistemasCosechas(model);
+                await _service.UpdateTransSistemasCosechas(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -66,14 +67,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<TransSistemasCosechasModel>> PostTransSistemasCosechas(TransSistemasCosechasModel model)
+        public async Task<ActionResult<TransSistemasCosechasModel>> PostTransSistemasCosechas(TransSistemasCosechasModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateTransSistemasCosechas(model);
+            var _model = await _service.CreateTransSistemasCosechas(model, userName);
             return CreatedAtAction("GetTransSistemasCosechas", new { id = _model.IdTransSistemasCosechas }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<TransSistemasCosechasModel>> DeleteTransSistemasCosechas(int id)
+        public async Task<ActionResult<TransSistemasCosechasModel>> DeleteTransSistemasCosechas(int id, [Required][FromHeader] string userName)
         {
             var _model = await _service.ReadTransSistemasCosechas(id.ToString());
             if (_model == null)
@@ -81,7 +82,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteTransSistemasCosechas(id.ToString());
+            await _service.DeleteTransSistemasCosechas(id.ToString(), userName);
 
             return _model;
         }

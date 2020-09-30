@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface IInfraestructurasService
     {
-        Task<InfraestructurasModel> CreateInfraestructuras(InfraestructurasModel InfraestructurasModel);
+        Task<InfraestructurasModel> CreateInfraestructuras(InfraestructurasModel InfraestructurasModel, string userName);
         Task<List<InfraestructurasModel>> ReadInfraestructuras();
-        Task UpdateInfraestructuras(InfraestructurasModel InfraestructurasModel);
-        Task DeleteInfraestructuras(string id);
+        Task UpdateInfraestructuras(InfraestructurasModel InfraestructurasModel, string userName);
+        Task DeleteInfraestructuras(string id, string userName);
         Task<InfraestructurasModel> ReadInfraestructuras(string id);
     }
     public class InfraestructurasService : IInfraestructurasService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<InfraestructurasModel> CreateInfraestructuras(InfraestructurasModel model)
+        public async Task<InfraestructurasModel> CreateInfraestructuras(InfraestructurasModel model, string userName)
         {
             var result = _mapper.Map<Infraestructuras>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdInfraestructuras = result.IdInfraestructuras;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateInfraestructuras(InfraestructurasModel model)
+        public async Task UpdateInfraestructuras(InfraestructurasModel model, string userName)
         {
             var result = _mapper.Map<Infraestructuras>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteInfraestructuras(string id)
+        public async Task DeleteInfraestructuras(string id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
         public async Task<InfraestructurasModel> ReadInfraestructuras(string id)

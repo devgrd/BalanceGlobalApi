@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface ITipoInfraestructurasService
     {
-        Task<TipoInfraestructurasModel> CreateTipoInfraestructuras(TipoInfraestructurasModel TipoInfraestructurasModel);
+        Task<TipoInfraestructurasModel> CreateTipoInfraestructuras(TipoInfraestructurasModel TipoInfraestructurasModel, string userName);
         Task<List<TipoInfraestructurasModel>> ReadTipoInfraestructuras();
-        Task UpdateTipoInfraestructuras(TipoInfraestructurasModel TipoInfraestructurasModel);
-        Task DeleteTipoInfraestructuras(string id);
+        Task UpdateTipoInfraestructuras(TipoInfraestructurasModel TipoInfraestructurasModel, string userName);
+        Task DeleteTipoInfraestructuras(string id, string userName);
         Task<TipoInfraestructurasModel> ReadTipoInfraestructuras(string id);
     }
     public class TipoInfraestructurasService : ITipoInfraestructurasService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<TipoInfraestructurasModel> CreateTipoInfraestructuras(TipoInfraestructurasModel model)
+        public async Task<TipoInfraestructurasModel> CreateTipoInfraestructuras(TipoInfraestructurasModel model, string userName)
         {
             var result = _mapper.Map<TipoInfraestructuras>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdTipoInfraestructuras = result.IdTipoInfraestructuras;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateTipoInfraestructuras(TipoInfraestructurasModel model)
+        public async Task UpdateTipoInfraestructuras(TipoInfraestructurasModel model, string userName)
         {
             var result = _mapper.Map<TipoInfraestructuras>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteTipoInfraestructuras(string id)
+        public async Task DeleteTipoInfraestructuras(string id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
         public async Task<TipoInfraestructurasModel> ReadTipoInfraestructuras(string id)

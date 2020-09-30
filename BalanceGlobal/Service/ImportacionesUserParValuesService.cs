@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface IImportacionesUserParValuesService
     {
-        Task<ImportacionesUserParValuesModel> CreateImportacionesUserParValues(ImportacionesUserParValuesModel ImportacionesUserParValuesModel);
+        Task<ImportacionesUserParValuesModel> CreateImportacionesUserParValues(ImportacionesUserParValuesModel ImportacionesUserParValuesModel, string userName);
         Task<List<ImportacionesUserParValuesModel>> ReadImportacionesUserParValues();
-        Task UpdateImportacionesUserParValues(ImportacionesUserParValuesModel ImportacionesUserParValuesModel);
-        Task DeleteImportacionesUserParValues(string id);
+        Task UpdateImportacionesUserParValues(ImportacionesUserParValuesModel ImportacionesUserParValuesModel, string userName);
+        Task DeleteImportacionesUserParValues(string id, string userName);
         Task<ImportacionesUserParValuesModel> ReadImportacionesUserParValues(string id);
     }
     public class ImportacionesUserParValuesService : IImportacionesUserParValuesService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ImportacionesUserParValuesModel> CreateImportacionesUserParValues(ImportacionesUserParValuesModel model)
+        public async Task<ImportacionesUserParValuesModel> CreateImportacionesUserParValues(ImportacionesUserParValuesModel model, string userName)
         {
             var result = _mapper.Map<ImportacionesUserParValues>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdImportacionesUserParValues = result.IdImportacionesUserParValues;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateImportacionesUserParValues(ImportacionesUserParValuesModel model)
+        public async Task UpdateImportacionesUserParValues(ImportacionesUserParValuesModel model, string userName)
         {
             var result = _mapper.Map<ImportacionesUserParValues>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteImportacionesUserParValues(string id)
+        public async Task DeleteImportacionesUserParValues(string id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
         public async Task<ImportacionesUserParValuesModel> ReadImportacionesUserParValues(string id)
