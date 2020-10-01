@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -40,7 +39,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutConsumoEnergetico(int id, ConsumoEnergeticoModel model, [Required][FromHeader] string userName)
+        public async Task<IActionResult> PutConsumoEnergetico(int id, ConsumoEnergeticoModel model)
         {
             if (id != model.IdConsumoEnergetico)
             {
@@ -49,7 +48,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateConsumoEnergetico(model, userName);
+                await _service.UpdateConsumoEnergetico(model);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -67,14 +66,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ConsumoEnergeticoModel>> PostConsumoEnergetico(ConsumoEnergeticoModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<ConsumoEnergeticoModel>> PostConsumoEnergetico(ConsumoEnergeticoModel model)
         {
-            var _model = await _service.CreateConsumoEnergetico(model, userName);
+            var _model = await _service.CreateConsumoEnergetico(model);
             return CreatedAtAction("GetConsumoEnergetico", new { id = _model.IdConsumoEnergetico }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ConsumoEnergeticoModel>> DeleteConsumoEnergetico(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<ConsumoEnergeticoModel>> DeleteConsumoEnergetico(int id)
         {
             var _model = await _service.ReadConsumoEnergetico(id.ToString());
             if (_model == null)
@@ -82,7 +81,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteConsumoEnergetico(id.ToString(), userName);
+            await _service.DeleteConsumoEnergetico(id.ToString());
 
             return _model;
         }

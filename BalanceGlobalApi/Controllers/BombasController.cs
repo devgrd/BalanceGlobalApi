@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -40,7 +39,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBombas(int id, BombasModel model, [Required][FromHeader] string userName)
+        public async Task<IActionResult> PutBombas(int id, BombasModel model)
         {
             if (id != model.IdBombas)
             {
@@ -49,7 +48,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateBombas(model, userName);
+                await _service.UpdateBombas(model);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -67,14 +66,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<BombasModel>> PostBombas(BombasModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<BombasModel>> PostBombas(BombasModel model)
         {
-            var _model = await _service.CreateBombas(model, userName);
+            var _model = await _service.CreateBombas(model);
             return CreatedAtAction("GetBombas", new { id = _model.IdBombas }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<BombasModel>> DeleteBombas(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<BombasModel>> DeleteBombas(int id)
         {
             var _model = await _service.ReadBombas(id.ToString());
             if (_model == null)
@@ -82,7 +81,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteBombas(id.ToString(), userName);
+            await _service.DeleteBombas(id.ToString());
 
             return _model;
         }

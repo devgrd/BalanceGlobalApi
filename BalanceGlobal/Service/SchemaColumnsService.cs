@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface ISchemaColumnsService
     {
-        Task<SchemaColumnsModel> CreateSchemaColumns(SchemaColumnsModel SchemaColumnsModel, string userName);
+        Task<SchemaColumnsModel> CreateSchemaColumns(SchemaColumnsModel SchemaColumnsModel);
         Task<List<SchemaColumnsModel>> ReadSchemaColumns();
-        Task UpdateSchemaColumns(SchemaColumnsModel SchemaColumnsModel, string userName);
-        Task DeleteSchemaColumns(string id, string userName);
+        Task UpdateSchemaColumns(SchemaColumnsModel SchemaColumnsModel);
+        Task DeleteSchemaColumns(string id);
         Task<SchemaColumnsModel> ReadSchemaColumns(string id);
     }
     public class SchemaColumnsService : ISchemaColumnsService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<SchemaColumnsModel> CreateSchemaColumns(SchemaColumnsModel model, string userName)
+        public async Task<SchemaColumnsModel> CreateSchemaColumns(SchemaColumnsModel model)
         {
             var result = _mapper.Map<SchemaColumns>(model);
-            await _repository.AddAsync(result, userName);
+            await _repository.AddAsync(result);
             model.IdSchemaColumns = result.IdSchemaColumns;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateSchemaColumns(SchemaColumnsModel model, string userName)
+        public async Task UpdateSchemaColumns(SchemaColumnsModel model)
         {
             var result = _mapper.Map<SchemaColumns>(model);
-            await _repository.UpdateAsync(result, userName);
+            await _repository.UpdateAsync(result);
         }
 
-        public async Task DeleteSchemaColumns(string id, string userName)
+        public async Task DeleteSchemaColumns(string id)
         {
-            await _repository.RemoveAsync(id, userName);
+            await _repository.RemoveAsync(id);
         }
 
         public async Task<SchemaColumnsModel> ReadSchemaColumns(string id)

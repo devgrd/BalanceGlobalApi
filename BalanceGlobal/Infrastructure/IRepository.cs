@@ -8,13 +8,13 @@ namespace BalanceGlobal.Infrastructure
 {
     public interface IRepository<T> where T : class
     {
-        Task<T> GetById(object id);
+        Task<T> GetById(string id);
         //T Get(Expression<Func<T, bool>> where);
         Task<IEnumerable<T>> GetAllAsync();
         Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> where);
         Task<IEnumerable<T>> GetWithStoredProcedureAsync(string spName, params object[] prms);
-        Task AddAsync(T entity, string userName);
-        Task UpdateAsync(T entity, string userName);
-        Task RemoveAsync(object id, string userName);
+        Task AddAsync(T entity);
+        Task UpdateAsync(T entity);
+        Task RemoveAsync(object id);
     }
 }

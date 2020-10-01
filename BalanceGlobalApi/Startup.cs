@@ -5,7 +5,6 @@ using BalanceGlobal.Api.Middleware;
 using BalanceGlobal.Database.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -40,11 +39,6 @@ namespace BalanceGlobalApi
             });
 
             services.AddSwaggerGenNewtonsoftSupport();
-
-            services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.SuppressModelStateInvalidFilter = false;
-            });
 
             services.AddContext<BalanceGlobalContext>(Configuration, "BalanceGlobalContext");
             services.AddServices();

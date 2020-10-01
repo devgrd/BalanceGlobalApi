@@ -7,6 +7,7 @@ namespace BalanceGlobal.Repository
 {
     public interface IPeriodosRepository : IRepository<Periodos>
     {
+        Task AddAsync(Periodos entity, string context);
     }
     public class PeriodosRepository : RepositoryBase<Periodos>, IPeriodosRepository
     {
@@ -15,6 +16,11 @@ namespace BalanceGlobal.Repository
 
         }
 
+        public async Task AddAsync(Periodos entity, string context)
+        {
+            await AddAsync(entity);
+            await SaveChangesAsync(context);
+        }
     }
 
 }

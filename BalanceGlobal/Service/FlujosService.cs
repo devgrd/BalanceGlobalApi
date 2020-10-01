@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface IFlujosService
     {
-        Task<FlujosModel> CreateFlujos(FlujosModel FlujosModel, string userName);
+        Task<FlujosModel> CreateFlujos(FlujosModel FlujosModel);
         Task<List<FlujosModel>> ReadFlujos();
-        Task UpdateFlujos(FlujosModel FlujosModel, string userName);
-        Task DeleteFlujos(string id, string userName);
+        Task UpdateFlujos(FlujosModel FlujosModel);
+        Task DeleteFlujos(string id);
         Task<FlujosModel> ReadFlujos(string id);
     }
     public class FlujosService : IFlujosService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<FlujosModel> CreateFlujos(FlujosModel model, string userName)
+        public async Task<FlujosModel> CreateFlujos(FlujosModel model)
         {
             var result = _mapper.Map<Flujos>(model);
-            await _repository.AddAsync(result, userName);
+            await _repository.AddAsync(result);
             model.IdFlujos = result.IdFlujos;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateFlujos(FlujosModel model, string userName)
+        public async Task UpdateFlujos(FlujosModel model)
         {
             var result = _mapper.Map<Flujos>(model);
-            await _repository.UpdateAsync(result, userName);
+            await _repository.UpdateAsync(result);
         }
 
-        public async Task DeleteFlujos(string id, string userName)
+        public async Task DeleteFlujos(string id)
         {
-            await _repository.RemoveAsync(id, userName);
+            await _repository.RemoveAsync(id);
         }
 
         public async Task<FlujosModel> ReadFlujos(string id)

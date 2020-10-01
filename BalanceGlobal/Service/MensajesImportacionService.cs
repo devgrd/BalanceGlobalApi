@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface IMensajesImportacionService
     {
-        Task<MensajesImportacionModel> CreateMensajesImportacion(MensajesImportacionModel MensajesImportacionModel, string userName);
+        Task<MensajesImportacionModel> CreateMensajesImportacion(MensajesImportacionModel MensajesImportacionModel);
         Task<List<MensajesImportacionModel>> ReadMensajesImportacion();
-        Task UpdateMensajesImportacion(MensajesImportacionModel MensajesImportacionModel, string userName);
-        Task DeleteMensajesImportacion(string id, string userName);
+        Task UpdateMensajesImportacion(MensajesImportacionModel MensajesImportacionModel);
+        Task DeleteMensajesImportacion(string id);
         Task<MensajesImportacionModel> ReadMensajesImportacion(string id);
     }
     public class MensajesImportacionService : IMensajesImportacionService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<MensajesImportacionModel> CreateMensajesImportacion(MensajesImportacionModel model, string userName)
+        public async Task<MensajesImportacionModel> CreateMensajesImportacion(MensajesImportacionModel model)
         {
             var result = _mapper.Map<MensajesImportacion>(model);
-            await _repository.AddAsync(result, userName);
+            await _repository.AddAsync(result);
             model.IdMensajesImportacion = result.IdMensajesImportacion;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateMensajesImportacion(MensajesImportacionModel model, string userName)
+        public async Task UpdateMensajesImportacion(MensajesImportacionModel model)
         {
             var result = _mapper.Map<MensajesImportacion>(model);
-            await _repository.UpdateAsync(result, userName);
+            await _repository.UpdateAsync(result);
         }
 
-        public async Task DeleteMensajesImportacion(string id, string userName)
+        public async Task DeleteMensajesImportacion(string id)
         {
-            await _repository.RemoveAsync(id, userName);
+            await _repository.RemoveAsync(id);
         }
 
         public async Task<MensajesImportacionModel> ReadMensajesImportacion(string id)

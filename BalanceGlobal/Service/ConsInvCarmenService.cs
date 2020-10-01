@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface IConsInvCarmenService
     {
-        Task<ConsInvCarmenModel> CreateConsInvCarmen(ConsInvCarmenModel ConsInvCarmenModel, string userName);
+        Task<ConsInvCarmenModel> CreateConsInvCarmen(ConsInvCarmenModel ConsInvCarmenModel);
         Task<List<ConsInvCarmenModel>> ReadConsInvCarmen();
-        Task UpdateConsInvCarmen(ConsInvCarmenModel ConsInvCarmenModel, string userName);
-        Task DeleteConsInvCarmen(string id, string userName);
+        Task UpdateConsInvCarmen(ConsInvCarmenModel ConsInvCarmenModel);
+        Task DeleteConsInvCarmen(string id);
         Task<ConsInvCarmenModel> ReadConsInvCarmen(string id);
     }
     public class ConsInvCarmenService : IConsInvCarmenService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ConsInvCarmenModel> CreateConsInvCarmen(ConsInvCarmenModel model, string userName)
+        public async Task<ConsInvCarmenModel> CreateConsInvCarmen(ConsInvCarmenModel model)
         {
             var result = _mapper.Map<ConsInvCarmen>(model);
-            await _repository.AddAsync(result, userName);
+            await _repository.AddAsync(result);
             model.IdConsInvCarmen = result.IdConsInvCarmen;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateConsInvCarmen(ConsInvCarmenModel model, string userName)
+        public async Task UpdateConsInvCarmen(ConsInvCarmenModel model)
         {
             var result = _mapper.Map<ConsInvCarmen>(model);
-            await _repository.UpdateAsync(result, userName);
+            await _repository.UpdateAsync(result);
         }
 
-        public async Task DeleteConsInvCarmen(string id, string userName)
+        public async Task DeleteConsInvCarmen(string id)
         {
-            await _repository.RemoveAsync(id, userName);
+            await _repository.RemoveAsync(id);
         }
 
         public async Task<ConsInvCarmenModel> ReadConsInvCarmen(string id)

@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface IReinyeccionService
     {
-        Task<ReinyeccionModel> CreateReinyeccion(ReinyeccionModel ReinyeccionModel, string userName);
+        Task<ReinyeccionModel> CreateReinyeccion(ReinyeccionModel ReinyeccionModel);
         Task<List<ReinyeccionModel>> ReadReinyeccion();
-        Task UpdateReinyeccion(ReinyeccionModel ReinyeccionModel, string userName);
-        Task DeleteReinyeccion(string id, string userName);
+        Task UpdateReinyeccion(ReinyeccionModel ReinyeccionModel);
+        Task DeleteReinyeccion(string id);
         Task<ReinyeccionModel> ReadReinyeccion(string id);
     }
     public class ReinyeccionService : IReinyeccionService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ReinyeccionModel> CreateReinyeccion(ReinyeccionModel model, string userName)
+        public async Task<ReinyeccionModel> CreateReinyeccion(ReinyeccionModel model)
         {
             var result = _mapper.Map<Reinyeccion>(model);
-            await _repository.AddAsync(result, userName);
+            await _repository.AddAsync(result);
             model.IdReinyeccion = result.IdReinyeccion;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateReinyeccion(ReinyeccionModel model, string userName)
+        public async Task UpdateReinyeccion(ReinyeccionModel model)
         {
             var result = _mapper.Map<Reinyeccion>(model);
-            await _repository.UpdateAsync(result, userName);
+            await _repository.UpdateAsync(result);
         }
 
-        public async Task DeleteReinyeccion(string id, string userName)
+        public async Task DeleteReinyeccion(string id)
         {
-            await _repository.RemoveAsync(id, userName);
+            await _repository.RemoveAsync(id);
         }
 
         public async Task<ReinyeccionModel> ReadReinyeccion(string id)

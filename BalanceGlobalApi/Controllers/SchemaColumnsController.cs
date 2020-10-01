@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -40,7 +39,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSchemaColumns(int id, SchemaColumnsModel model, [Required][FromHeader] string userName)
+        public async Task<IActionResult> PutSchemaColumns(int id, SchemaColumnsModel model)
         {
             if (id != model.IdSchemaColumns)
             {
@@ -49,7 +48,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateSchemaColumns(model, userName);
+                await _service.UpdateSchemaColumns(model);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -67,14 +66,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<SchemaColumnsModel>> PostSchemaColumns(SchemaColumnsModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<SchemaColumnsModel>> PostSchemaColumns(SchemaColumnsModel model)
         {
-            var _model = await _service.CreateSchemaColumns(model, userName);
+            var _model = await _service.CreateSchemaColumns(model);
             return CreatedAtAction("GetSchemaColumns", new { id = _model.IdSchemaColumns }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<SchemaColumnsModel>> DeleteSchemaColumns(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<SchemaColumnsModel>> DeleteSchemaColumns(int id)
         {
             var _model = await _service.ReadSchemaColumns(id.ToString());
             if (_model == null)
@@ -82,7 +81,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteSchemaColumns(id.ToString(), userName);
+            await _service.DeleteSchemaColumns(id.ToString());
 
             return _model;
         }

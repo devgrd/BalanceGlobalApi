@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -40,7 +39,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPeriodosOperacionales(int id, PeriodosOperacionalesModel model, [Required][FromHeader] string userName)
+        public async Task<IActionResult> PutPeriodosOperacionales(int id, PeriodosOperacionalesModel model)
         {
             if (id != model.IdPeriodosOperacionales)
             {
@@ -49,7 +48,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdatePeriodosOperacionales(model, userName);
+                await _service.UpdatePeriodosOperacionales(model);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -67,14 +66,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<PeriodosOperacionalesModel>> PostPeriodosOperacionales(PeriodosOperacionalesModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<PeriodosOperacionalesModel>> PostPeriodosOperacionales(PeriodosOperacionalesModel model)
         {
-            var _model = await _service.CreatePeriodosOperacionales(model, userName);
+            var _model = await _service.CreatePeriodosOperacionales(model);
             return CreatedAtAction("GetPeriodosOperacionales", new { id = _model.IdPeriodosOperacionales }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<PeriodosOperacionalesModel>> DeletePeriodosOperacionales(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<PeriodosOperacionalesModel>> DeletePeriodosOperacionales(int id)
         {
             var _model = await _service.ReadPeriodosOperacionales(id.ToString());
             if (_model == null)
@@ -82,7 +81,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeletePeriodosOperacionales(id.ToString(), userName);
+            await _service.DeletePeriodosOperacionales(id.ToString());
 
             return _model;
         }

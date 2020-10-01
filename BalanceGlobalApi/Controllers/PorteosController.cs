@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -40,7 +39,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPorteos(int id, PorteosModel model, [Required][FromHeader] string userName)
+        public async Task<IActionResult> PutPorteos(int id, PorteosModel model)
         {
             if (id != model.IdPorteos)
             {
@@ -49,7 +48,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdatePorteos(model, userName);
+                await _service.UpdatePorteos(model);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -67,14 +66,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<PorteosModel>> PostPorteos(PorteosModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<PorteosModel>> PostPorteos(PorteosModel model)
         {
-            var _model = await _service.CreatePorteos(model, userName);
+            var _model = await _service.CreatePorteos(model);
             return CreatedAtAction("GetPorteos", new { id = _model.IdPorteos }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<PorteosModel>> DeletePorteos(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<PorteosModel>> DeletePorteos(int id)
         {
             var _model = await _service.ReadPorteos(id.ToString());
             if (_model == null)
@@ -82,7 +81,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeletePorteos(id.ToString(), userName);
+            await _service.DeletePorteos(id.ToString());
 
             return _model;
         }

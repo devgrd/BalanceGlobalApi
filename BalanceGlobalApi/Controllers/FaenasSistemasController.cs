@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -40,7 +39,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFaenasSistemas(int id, FaenasSistemasModel model, [Required][FromHeader] string userName)
+        public async Task<IActionResult> PutFaenasSistemas(int id, FaenasSistemasModel model)
         {
             if (id != model.IdFaenasSistemas)
             {
@@ -49,7 +48,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateFaenasSistemas(model, userName);
+                await _service.UpdateFaenasSistemas(model);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -67,14 +66,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<FaenasSistemasModel>> PostFaenasSistemas(FaenasSistemasModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<FaenasSistemasModel>> PostFaenasSistemas(FaenasSistemasModel model)
         {
-            var _model = await _service.CreateFaenasSistemas(model, userName);
+            var _model = await _service.CreateFaenasSistemas(model);
             return CreatedAtAction("GetFaenasSistemas", new { id = _model.IdFaenasSistemas }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<FaenasSistemasModel>> DeleteFaenasSistemas(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<FaenasSistemasModel>> DeleteFaenasSistemas(int id)
         {
             var _model = await _service.ReadFaenasSistemas(id.ToString());
             if (_model == null)
@@ -82,7 +81,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteFaenasSistemas(id.ToString(), userName);
+            await _service.DeleteFaenasSistemas(id.ToString());
 
             return _model;
         }

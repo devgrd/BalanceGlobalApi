@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -40,7 +39,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutInfraestructuras(int id, InfraestructurasModel model, [Required][FromHeader] string userName)
+        public async Task<IActionResult> PutInfraestructuras(int id, InfraestructurasModel model)
         {
             if (id != model.IdInfraestructuras)
             {
@@ -49,7 +48,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateInfraestructuras(model, userName);
+                await _service.UpdateInfraestructuras(model);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -67,14 +66,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<InfraestructurasModel>> PostInfraestructuras(InfraestructurasModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<InfraestructurasModel>> PostInfraestructuras(InfraestructurasModel model)
         {
-            var _model = await _service.CreateInfraestructuras(model, userName);
+            var _model = await _service.CreateInfraestructuras(model);
             return CreatedAtAction("GetInfraestructuras", new { id = _model.IdInfraestructuras }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<InfraestructurasModel>> DeleteInfraestructuras(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<InfraestructurasModel>> DeleteInfraestructuras(int id)
         {
             var _model = await _service.ReadInfraestructuras(id.ToString());
             if (_model == null)
@@ -82,7 +81,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteInfraestructuras(id.ToString(), userName);
+            await _service.DeleteInfraestructuras(id.ToString());
 
             return _model;
         }

@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface IPorteosService
     {
-        Task<PorteosModel> CreatePorteos(PorteosModel PorteosModel, string userName);
+        Task<PorteosModel> CreatePorteos(PorteosModel PorteosModel);
         Task<List<PorteosModel>> ReadPorteos();
-        Task UpdatePorteos(PorteosModel PorteosModel, string userName);
-        Task DeletePorteos(string id, string userName);
+        Task UpdatePorteos(PorteosModel PorteosModel);
+        Task DeletePorteos(string id);
         Task<PorteosModel> ReadPorteos(string id);
     }
     public class PorteosService : IPorteosService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<PorteosModel> CreatePorteos(PorteosModel model, string userName)
+        public async Task<PorteosModel> CreatePorteos(PorteosModel model)
         {
             var result = _mapper.Map<Porteos>(model);
-            await _repository.AddAsync(result, userName);
+            await _repository.AddAsync(result);
             model.IdPorteos = result.IdPorteos;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdatePorteos(PorteosModel model, string userName)
+        public async Task UpdatePorteos(PorteosModel model)
         {
             var result = _mapper.Map<Porteos>(model);
-            await _repository.UpdateAsync(result, userName);
+            await _repository.UpdateAsync(result);
         }
 
-        public async Task DeletePorteos(string id, string userName)
+        public async Task DeletePorteos(string id)
         {
-            await _repository.RemoveAsync(id, userName);
+            await _repository.RemoveAsync(id);
         }
 
         public async Task<PorteosModel> ReadPorteos(string id)

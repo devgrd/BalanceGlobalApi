@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -40,7 +39,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutImportDestino(int id, ImportDestinoModel model, [Required][FromHeader] string userName)
+        public async Task<IActionResult> PutImportDestino(int id, ImportDestinoModel model)
         {
             if (id != model.IdImportDestino)
             {
@@ -49,7 +48,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateImportDestino(model, userName);
+                await _service.UpdateImportDestino(model);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -67,14 +66,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ImportDestinoModel>> PostImportDestino(ImportDestinoModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<ImportDestinoModel>> PostImportDestino(ImportDestinoModel model)
         {
-            var _model = await _service.CreateImportDestino(model, userName);
+            var _model = await _service.CreateImportDestino(model);
             return CreatedAtAction("GetImportDestino", new { id = _model.IdImportDestino }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ImportDestinoModel>> DeleteImportDestino(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<ImportDestinoModel>> DeleteImportDestino(int id)
         {
             var _model = await _service.ReadImportDestino(id.ToString());
             if (_model == null)
@@ -82,7 +81,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteImportDestino(id.ToString(), userName);
+            await _service.DeleteImportDestino(id.ToString());
 
             return _model;
         }

@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface IFaenasSistemasService
     {
-        Task<FaenasSistemasModel> CreateFaenasSistemas(FaenasSistemasModel FaenasSistemasModel, string userName);
+        Task<FaenasSistemasModel> CreateFaenasSistemas(FaenasSistemasModel FaenasSistemasModel);
         Task<List<FaenasSistemasModel>> ReadFaenasSistemas();
-        Task UpdateFaenasSistemas(FaenasSistemasModel FaenasSistemasModel, string userName);
-        Task DeleteFaenasSistemas(string id, string userName);
+        Task UpdateFaenasSistemas(FaenasSistemasModel FaenasSistemasModel);
+        Task DeleteFaenasSistemas(string id);
         Task<FaenasSistemasModel> ReadFaenasSistemas(string id);
     }
     public class FaenasSistemasService : IFaenasSistemasService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<FaenasSistemasModel> CreateFaenasSistemas(FaenasSistemasModel model, string userName)
+        public async Task<FaenasSistemasModel> CreateFaenasSistemas(FaenasSistemasModel model)
         {
             var result = _mapper.Map<FaenasSistemas>(model);
-            await _repository.AddAsync(result, userName);
+            await _repository.AddAsync(result);
             model.IdFaenasSistemas = result.IdFaenasSistemas;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateFaenasSistemas(FaenasSistemasModel model, string userName)
+        public async Task UpdateFaenasSistemas(FaenasSistemasModel model)
         {
             var result = _mapper.Map<FaenasSistemas>(model);
-            await _repository.UpdateAsync(result, userName);
+            await _repository.UpdateAsync(result);
         }
 
-        public async Task DeleteFaenasSistemas(string id, string userName)
+        public async Task DeleteFaenasSistemas(string id)
         {
-            await _repository.RemoveAsync(id, userName);
+            await _repository.RemoveAsync(id);
         }
 
         public async Task<FaenasSistemasModel> ReadFaenasSistemas(string id)

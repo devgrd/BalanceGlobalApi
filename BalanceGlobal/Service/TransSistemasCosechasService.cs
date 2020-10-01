@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface ITransSistemasCosechasService
     {
-        Task<TransSistemasCosechasModel> CreateTransSistemasCosechas(TransSistemasCosechasModel TransSistemasCosechasModel, string userName);
+        Task<TransSistemasCosechasModel> CreateTransSistemasCosechas(TransSistemasCosechasModel TransSistemasCosechasModel);
         Task<List<TransSistemasCosechasModel>> ReadTransSistemasCosechas();
-        Task UpdateTransSistemasCosechas(TransSistemasCosechasModel TransSistemasCosechasModel, string userName);
-        Task DeleteTransSistemasCosechas(string id, string userName);
+        Task UpdateTransSistemasCosechas(TransSistemasCosechasModel TransSistemasCosechasModel);
+        Task DeleteTransSistemasCosechas(string id);
         Task<TransSistemasCosechasModel> ReadTransSistemasCosechas(string id);
     }
     public class TransSistemasCosechasService : ITransSistemasCosechasService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<TransSistemasCosechasModel> CreateTransSistemasCosechas(TransSistemasCosechasModel model, string userName)
+        public async Task<TransSistemasCosechasModel> CreateTransSistemasCosechas(TransSistemasCosechasModel model)
         {
             var result = _mapper.Map<TransSistemasCosechas>(model);
-            await _repository.AddAsync(result, userName);
+            await _repository.AddAsync(result);
             model.IdTransSistemasCosechas = result.IdTransSistemasCosechas;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateTransSistemasCosechas(TransSistemasCosechasModel model, string userName)
+        public async Task UpdateTransSistemasCosechas(TransSistemasCosechasModel model)
         {
             var result = _mapper.Map<TransSistemasCosechas>(model);
-            await _repository.UpdateAsync(result, userName);
+            await _repository.UpdateAsync(result);
         }
 
-        public async Task DeleteTransSistemasCosechas(string id, string userName)
+        public async Task DeleteTransSistemasCosechas(string id)
         {
-            await _repository.RemoveAsync(id, userName);
+            await _repository.RemoveAsync(id);
         }
 
         public async Task<TransSistemasCosechasModel> ReadTransSistemasCosechas(string id)

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -40,7 +39,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMensajesImportacion(int id, MensajesImportacionModel model, [Required][FromHeader] string userName)
+        public async Task<IActionResult> PutMensajesImportacion(int id, MensajesImportacionModel model)
         {
             if (id != model.IdMensajesImportacion)
             {
@@ -49,7 +48,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateMensajesImportacion(model, userName);
+                await _service.UpdateMensajesImportacion(model);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -67,14 +66,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<MensajesImportacionModel>> PostMensajesImportacion(MensajesImportacionModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<MensajesImportacionModel>> PostMensajesImportacion(MensajesImportacionModel model)
         {
-            var _model = await _service.CreateMensajesImportacion(model, userName);
+            var _model = await _service.CreateMensajesImportacion(model);
             return CreatedAtAction("GetMensajesImportacion", new { id = _model.IdMensajesImportacion }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<MensajesImportacionModel>> DeleteMensajesImportacion(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<MensajesImportacionModel>> DeleteMensajesImportacion(int id)
         {
             var _model = await _service.ReadMensajesImportacion(id.ToString());
             if (_model == null)
@@ -82,7 +81,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteMensajesImportacion(id.ToString(), userName);
+            await _service.DeleteMensajesImportacion(id.ToString());
 
             return _model;
         }

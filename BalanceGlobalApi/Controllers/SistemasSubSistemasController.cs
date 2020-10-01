@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -40,7 +39,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSistemasSubSistemas(int id, SistemasSubSistemasModel model, [Required][FromHeader] string userName)
+        public async Task<IActionResult> PutSistemasSubSistemas(int id, SistemasSubSistemasModel model)
         {
             if (id != model.IdSistemasSubSistemas)
             {
@@ -49,7 +48,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateSistemasSubSistemas(model, userName);
+                await _service.UpdateSistemasSubSistemas(model);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -67,14 +66,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<SistemasSubSistemasModel>> PostSistemasSubSistemas(SistemasSubSistemasModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<SistemasSubSistemasModel>> PostSistemasSubSistemas(SistemasSubSistemasModel model)
         {
-            var _model = await _service.CreateSistemasSubSistemas(model, userName);
+            var _model = await _service.CreateSistemasSubSistemas(model);
             return CreatedAtAction("GetSistemasSubSistemas", new { id = _model.IdSistemasSubSistemas }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<SistemasSubSistemasModel>> DeleteSistemasSubSistemas(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<SistemasSubSistemasModel>> DeleteSistemasSubSistemas(int id)
         {
             var _model = await _service.ReadSistemasSubSistemas(id.ToString());
             if (_model == null)
@@ -82,7 +81,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteSistemasSubSistemas(id.ToString(), userName);
+            await _service.DeleteSistemasSubSistemas(id.ToString());
 
             return _model;
         }

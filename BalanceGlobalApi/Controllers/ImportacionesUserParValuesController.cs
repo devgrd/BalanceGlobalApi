@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -40,7 +39,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutImportacionesUserParValues(int id, ImportacionesUserParValuesModel model, [Required][FromHeader] string userName)
+        public async Task<IActionResult> PutImportacionesUserParValues(int id, ImportacionesUserParValuesModel model)
         {
             if (id != model.IdImportacionesUserParValues)
             {
@@ -49,7 +48,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateImportacionesUserParValues(model, userName);
+                await _service.UpdateImportacionesUserParValues(model);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -67,14 +66,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ImportacionesUserParValuesModel>> PostImportacionesUserParValues(ImportacionesUserParValuesModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<ImportacionesUserParValuesModel>> PostImportacionesUserParValues(ImportacionesUserParValuesModel model)
         {
-            var _model = await _service.CreateImportacionesUserParValues(model, userName);
+            var _model = await _service.CreateImportacionesUserParValues(model);
             return CreatedAtAction("GetImportacionesUserParValues", new { id = _model.IdImportacionesUserParValues }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ImportacionesUserParValuesModel>> DeleteImportacionesUserParValues(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<ImportacionesUserParValuesModel>> DeleteImportacionesUserParValues(int id)
         {
             var _model = await _service.ReadImportacionesUserParValues(id.ToString());
             if (_model == null)
@@ -82,7 +81,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteImportacionesUserParValues(id.ToString(), userName);
+            await _service.DeleteImportacionesUserParValues(id.ToString());
 
             return _model;
         }

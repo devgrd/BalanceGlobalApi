@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface IBombasService
     {
-        Task<BombasModel> CreateBombas(BombasModel BombasModel, string userName);
+        Task<BombasModel> CreateBombas(BombasModel BombasModel);
         Task<List<BombasModel>> ReadBombas();
-        Task UpdateBombas(BombasModel BombasModel, string userName);
-        Task DeleteBombas(string id, string userName);
+        Task UpdateBombas(BombasModel BombasModel);
+        Task DeleteBombas(string id);
         Task<BombasModel> ReadBombas(string id);
     }
     public class BombasService : IBombasService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<BombasModel> CreateBombas(BombasModel model, string userName)
+        public async Task<BombasModel> CreateBombas(BombasModel model)
         {
             var result = _mapper.Map<Bombas>(model);
-            await _repository.AddAsync(result, userName);
+            await _repository.AddAsync(result);
             model.IdBombas = result.IdBombas;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateBombas(BombasModel model, string userName)
+        public async Task UpdateBombas(BombasModel model)
         {
             var result = _mapper.Map<Bombas>(model);
-            await _repository.UpdateAsync(result, userName);
+            await _repository.UpdateAsync(result);
         }
 
-        public async Task DeleteBombas(string id, string userName)
+        public async Task DeleteBombas(string id)
         {
-            await _repository.RemoveAsync(id, userName);
+            await _repository.RemoveAsync(id);
         }
 
         public async Task<BombasModel> ReadBombas(string id)

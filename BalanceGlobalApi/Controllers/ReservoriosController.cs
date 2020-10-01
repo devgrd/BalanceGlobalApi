@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -40,7 +39,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutReservorios(int id, ReservoriosModel model, [Required][FromHeader] string userName)
+        public async Task<IActionResult> PutReservorios(int id, ReservoriosModel model)
         {
             if (id != model.IdReservorios)
             {
@@ -49,7 +48,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateReservorios(model, userName);
+                await _service.UpdateReservorios(model);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -67,14 +66,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ReservoriosModel>> PostReservorios(ReservoriosModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<ReservoriosModel>> PostReservorios(ReservoriosModel model)
         {
-            var _model = await _service.CreateReservorios(model, userName);
+            var _model = await _service.CreateReservorios(model);
             return CreatedAtAction("GetReservorios", new { id = _model.IdReservorios }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ReservoriosModel>> DeleteReservorios(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<ReservoriosModel>> DeleteReservorios(int id)
         {
             var _model = await _service.ReadReservorios(id.ToString());
             if (_model == null)
@@ -82,7 +81,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteReservorios(id.ToString(), userName);
+            await _service.DeleteReservorios(id.ToString());
 
             return _model;
         }

@@ -28,7 +28,7 @@ namespace BalanceGlobal.Infrastructure
             return result;
         }
 
-        public virtual async Task<T> GetById(object id)
+        public virtual async Task<T> GetById(string id)
         {
             return await dbset.FindAsync(id);
         }
@@ -48,20 +48,20 @@ namespace BalanceGlobal.Infrastructure
             return await dbset.Where(where).FirstOrDefaultAsync<T>();
         }
 
-        public async Task AddAsync(T entity, string userName)
+        public async Task AddAsync(T entity)
         {
             await dbset.AddAsync(entity);
             await _dataContext.SaveChangesAsync();
         }
 
-        public async Task RemoveAsync(object id, string userName)
+        public async Task RemoveAsync(object id)
         {
             var entity = await dbset.FindAsync(id);
             dbset.Remove(entity);
             await _dataContext.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(T entity, string userName)
+        public async Task UpdateAsync(T entity)
         {
             dbset.Update(entity);
             await _dataContext.SaveChangesAsync();

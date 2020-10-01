@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface IOrigenesDatosService
     {
-        Task<OrigenesDatosModel> CreateOrigenesDatos(OrigenesDatosModel OrigenesDatosModel, string userName);
+        Task<OrigenesDatosModel> CreateOrigenesDatos(OrigenesDatosModel OrigenesDatosModel);
         Task<List<OrigenesDatosModel>> ReadOrigenesDatos();
-        Task UpdateOrigenesDatos(OrigenesDatosModel OrigenesDatosModel, string userName);
-        Task DeleteOrigenesDatos(string id, string userName);
+        Task UpdateOrigenesDatos(OrigenesDatosModel OrigenesDatosModel);
+        Task DeleteOrigenesDatos(string id);
         Task<OrigenesDatosModel> ReadOrigenesDatos(string id);
     }
     public class OrigenesDatosService : IOrigenesDatosService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<OrigenesDatosModel> CreateOrigenesDatos(OrigenesDatosModel model, string userName)
+        public async Task<OrigenesDatosModel> CreateOrigenesDatos(OrigenesDatosModel model)
         {
             var result = _mapper.Map<OrigenesDatos>(model);
-            await _repository.AddAsync(result, userName);
+            await _repository.AddAsync(result);
             model.IdOrigenesDatos = result.IdOrigenesDatos;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateOrigenesDatos(OrigenesDatosModel model, string userName)
+        public async Task UpdateOrigenesDatos(OrigenesDatosModel model)
         {
             var result = _mapper.Map<OrigenesDatos>(model);
-            await _repository.UpdateAsync(result, userName);
+            await _repository.UpdateAsync(result);
         }
 
-        public async Task DeleteOrigenesDatos(string id, string userName)
+        public async Task DeleteOrigenesDatos(string id)
         {
-            await _repository.RemoveAsync(id, userName);
+            await _repository.RemoveAsync(id);
         }
 
         public async Task<OrigenesDatosModel> ReadOrigenesDatos(string id)

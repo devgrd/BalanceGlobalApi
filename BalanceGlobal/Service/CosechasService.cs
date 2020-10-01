@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface ICosechasService
     {
-        Task<CosechasModel> CreateCosechas(CosechasModel CosechasModel, string userName);
+        Task<CosechasModel> CreateCosechas(CosechasModel CosechasModel);
         Task<List<CosechasModel>> ReadCosechas();
-        Task UpdateCosechas(CosechasModel CosechasModel, string userName);
-        Task DeleteCosechas(string id, string userName);
+        Task UpdateCosechas(CosechasModel CosechasModel);
+        Task DeleteCosechas(string id);
         Task<CosechasModel> ReadCosechas(string id);
     }
     public class CosechasService : ICosechasService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<CosechasModel> CreateCosechas(CosechasModel model, string userName)
+        public async Task<CosechasModel> CreateCosechas(CosechasModel model)
         {
             var result = _mapper.Map<Cosechas>(model);
-            await _repository.AddAsync(result, userName);
+            await _repository.AddAsync(result);
             model.IdCosechas = result.IdCosechas;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateCosechas(CosechasModel model, string userName)
+        public async Task UpdateCosechas(CosechasModel model)
         {
             var result = _mapper.Map<Cosechas>(model);
-            await _repository.UpdateAsync(result, userName);
+            await _repository.UpdateAsync(result);
         }
 
-        public async Task DeleteCosechas(string id, string userName)
+        public async Task DeleteCosechas(string id)
         {
-            await _repository.RemoveAsync(id, userName);
+            await _repository.RemoveAsync(id);
         }
 
         public async Task<CosechasModel> ReadCosechas(string id)

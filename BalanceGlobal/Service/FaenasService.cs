@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface IFaenasService
     {
-        Task<FaenasModel> CreateFaenas(FaenasModel FaenasModel, string userName);
+        Task<FaenasModel> CreateFaenas(FaenasModel FaenasModel);
         Task<List<FaenasModel>> ReadFaenas();
-        Task UpdateFaenas(FaenasModel FaenasModel, string userName);
-        Task DeleteFaenas(string id, string userName);
+        Task UpdateFaenas(FaenasModel FaenasModel);
+        Task DeleteFaenas(string id);
         Task<FaenasModel> ReadFaenas(string id);
     }
     public class FaenasService : IFaenasService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<FaenasModel> CreateFaenas(FaenasModel model, string userName)
+        public async Task<FaenasModel> CreateFaenas(FaenasModel model)
         {
             var result = _mapper.Map<Faenas>(model);
-            await _repository.AddAsync(result, userName);
+            await _repository.AddAsync(result);
             model.IdFaenas = result.IdFaenas;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateFaenas(FaenasModel model, string userName)
+        public async Task UpdateFaenas(FaenasModel model)
         {
             var result = _mapper.Map<Faenas>(model);
-            await _repository.UpdateAsync(result, userName);
+            await _repository.UpdateAsync(result);
         }
 
-        public async Task DeleteFaenas(string id, string userName)
+        public async Task DeleteFaenas(string id)
         {
-            await _repository.RemoveAsync(id, userName);
+            await _repository.RemoveAsync(id);
         }
 
         public async Task<FaenasModel> ReadFaenas(string id)

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -40,7 +39,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutImportadores(int id, ImportadoresModel model, [Required][FromHeader] string userName)
+        public async Task<IActionResult> PutImportadores(int id, ImportadoresModel model)
         {
             if (id != model.IdImportadores)
             {
@@ -49,7 +48,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateImportadores(model, userName);
+                await _service.UpdateImportadores(model);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -67,14 +66,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ImportadoresModel>> PostImportadores(ImportadoresModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<ImportadoresModel>> PostImportadores(ImportadoresModel model)
         {
-            var _model = await _service.CreateImportadores(model, userName);
+            var _model = await _service.CreateImportadores(model);
             return CreatedAtAction("GetImportadores", new { id = _model.IdImportadores }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ImportadoresModel>> DeleteImportadores(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<ImportadoresModel>> DeleteImportadores(int id)
         {
             var _model = await _service.ReadImportadores(id.ToString());
             if (_model == null)
@@ -82,7 +81,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteImportadores(id.ToString(), userName);
+            await _service.DeleteImportadores(id.ToString());
 
             return _model;
         }

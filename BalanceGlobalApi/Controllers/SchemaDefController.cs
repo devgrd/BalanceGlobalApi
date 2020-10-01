@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -40,7 +39,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSchemaDef(int id, SchemaDefModel model, [Required][FromHeader] string userName)
+        public async Task<IActionResult> PutSchemaDef(int id, SchemaDefModel model)
         {
             if (id != model.IdSchemaDef)
             {
@@ -49,7 +48,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateSchemaDef(model, userName);
+                await _service.UpdateSchemaDef(model);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -67,14 +66,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<SchemaDefModel>> PostSchemaDef(SchemaDefModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<SchemaDefModel>> PostSchemaDef(SchemaDefModel model)
         {
-            var _model = await _service.CreateSchemaDef(model, userName);
+            var _model = await _service.CreateSchemaDef(model);
             return CreatedAtAction("GetSchemaDef", new { id = _model.IdSchemaDef }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<SchemaDefModel>> DeleteSchemaDef(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<SchemaDefModel>> DeleteSchemaDef(int id)
         {
             var _model = await _service.ReadSchemaDef(id.ToString());
             if (_model == null)
@@ -82,7 +81,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteSchemaDef(id.ToString(), userName);
+            await _service.DeleteSchemaDef(id.ToString());
 
             return _model;
         }

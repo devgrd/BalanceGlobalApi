@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -40,7 +39,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutExtraccion(int id, ExtraccionModel model, [Required][FromHeader] string userName)
+        public async Task<IActionResult> PutExtraccion(int id, ExtraccionModel model)
         {
             if (id != model.IdExtraccion)
             {
@@ -49,7 +48,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateExtraccion(model, userName);
+                await _service.UpdateExtraccion(model);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -67,14 +66,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ExtraccionModel>> PostExtraccion(ExtraccionModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<ExtraccionModel>> PostExtraccion(ExtraccionModel model)
         {
-            var _model = await _service.CreateExtraccion(model, userName);
+            var _model = await _service.CreateExtraccion(model);
             return CreatedAtAction("GetExtraccion", new { id = _model.IdExtraccion }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ExtraccionModel>> DeleteExtraccion(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<ExtraccionModel>> DeleteExtraccion(int id)
         {
             var _model = await _service.ReadExtraccion(id.ToString());
             if (_model == null)
@@ -82,7 +81,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteExtraccion(id.ToString(), userName);
+            await _service.DeleteExtraccion(id.ToString());
 
             return _model;
         }

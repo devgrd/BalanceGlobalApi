@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface IImportacionesService
     {
-        Task<ImportacionesModel> CreateImportaciones(ImportacionesModel ImportacionesModel, string userName);
+        Task<ImportacionesModel> CreateImportaciones(ImportacionesModel ImportacionesModel);
         Task<List<ImportacionesModel>> ReadImportaciones();
-        Task UpdateImportaciones(ImportacionesModel ImportacionesModel, string userName);
-        Task DeleteImportaciones(string id, string userName);
+        Task UpdateImportaciones(ImportacionesModel ImportacionesModel);
+        Task DeleteImportaciones(string id);
         Task<ImportacionesModel> ReadImportaciones(string id);
     }
     public class ImportacionesService : IImportacionesService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ImportacionesModel> CreateImportaciones(ImportacionesModel model, string userName)
+        public async Task<ImportacionesModel> CreateImportaciones(ImportacionesModel model)
         {
             var result = _mapper.Map<Importaciones>(model);
-            await _repository.AddAsync(result, userName);
+            await _repository.AddAsync(result);
             model.IdImportaciones = result.IdImportaciones;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateImportaciones(ImportacionesModel model, string userName)
+        public async Task UpdateImportaciones(ImportacionesModel model)
         {
             var result = _mapper.Map<Importaciones>(model);
-            await _repository.UpdateAsync(result, userName);
+            await _repository.UpdateAsync(result);
         }
 
-        public async Task DeleteImportaciones(string id, string userName)
+        public async Task DeleteImportaciones(string id)
         {
-            await _repository.RemoveAsync(id, userName);
+            await _repository.RemoveAsync(id);
         }
 
         public async Task<ImportacionesModel> ReadImportaciones(string id)

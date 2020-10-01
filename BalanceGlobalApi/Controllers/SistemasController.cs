@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -40,7 +39,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSistemas(int id, SistemasModel model, [Required][FromHeader] string userName)
+        public async Task<IActionResult> PutSistemas(int id, SistemasModel model)
         {
             if (id != model.IdSistemas)
             {
@@ -49,7 +48,7 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateSistemas(model, userName);
+                await _service.UpdateSistemas(model);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -67,14 +66,14 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<SistemasModel>> PostSistemas(SistemasModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<SistemasModel>> PostSistemas(SistemasModel model)
         {
-            var _model = await _service.CreateSistemas(model, userName);
+            var _model = await _service.CreateSistemas(model);
             return CreatedAtAction("GetSistemas", new { id = _model.IdSistemas }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<SistemasModel>> DeleteSistemas(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<SistemasModel>> DeleteSistemas(int id)
         {
             var _model = await _service.ReadSistemas(id.ToString());
             if (_model == null)
@@ -82,7 +81,7 @@ namespace BalanceGlobal.Api.Controllers
                 return NotFound();
             }
 
-            await _service.DeleteSistemas(id.ToString(), userName);
+            await _service.DeleteSistemas(id.ToString());
 
             return _model;
         }

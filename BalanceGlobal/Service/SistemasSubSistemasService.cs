@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface ISistemasSubSistemasService
     {
-        Task<SistemasSubSistemasModel> CreateSistemasSubSistemas(SistemasSubSistemasModel SistemasSubSistemasModel, string userName);
+        Task<SistemasSubSistemasModel> CreateSistemasSubSistemas(SistemasSubSistemasModel SistemasSubSistemasModel);
         Task<List<SistemasSubSistemasModel>> ReadSistemasSubSistemas();
-        Task UpdateSistemasSubSistemas(SistemasSubSistemasModel SistemasSubSistemasModel, string userName);
-        Task DeleteSistemasSubSistemas(string id, string userName);
+        Task UpdateSistemasSubSistemas(SistemasSubSistemasModel SistemasSubSistemasModel);
+        Task DeleteSistemasSubSistemas(string id);
         Task<SistemasSubSistemasModel> ReadSistemasSubSistemas(string id);
     }
     public class SistemasSubSistemasService : ISistemasSubSistemasService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<SistemasSubSistemasModel> CreateSistemasSubSistemas(SistemasSubSistemasModel model, string userName)
+        public async Task<SistemasSubSistemasModel> CreateSistemasSubSistemas(SistemasSubSistemasModel model)
         {
             var result = _mapper.Map<SistemasSubSistemas>(model);
-            await _repository.AddAsync(result, userName);
+            await _repository.AddAsync(result);
             model.IdSistemasSubSistemas = result.IdSistemasSubSistemas;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateSistemasSubSistemas(SistemasSubSistemasModel model, string userName)
+        public async Task UpdateSistemasSubSistemas(SistemasSubSistemasModel model)
         {
             var result = _mapper.Map<SistemasSubSistemas>(model);
-            await _repository.UpdateAsync(result, userName);
+            await _repository.UpdateAsync(result);
         }
 
-        public async Task DeleteSistemasSubSistemas(string id, string userName)
+        public async Task DeleteSistemasSubSistemas(string id)
         {
-            await _repository.RemoveAsync(id, userName);
+            await _repository.RemoveAsync(id);
         }
 
         public async Task<SistemasSubSistemasModel> ReadSistemasSubSistemas(string id)

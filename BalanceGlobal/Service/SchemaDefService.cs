@@ -11,10 +11,10 @@ namespace BalanceGlobal.Service
 
     public interface ISchemaDefService
     {
-        Task<SchemaDefModel> CreateSchemaDef(SchemaDefModel SchemaDefModel, string userName);
+        Task<SchemaDefModel> CreateSchemaDef(SchemaDefModel SchemaDefModel);
         Task<List<SchemaDefModel>> ReadSchemaDef();
-        Task UpdateSchemaDef(SchemaDefModel SchemaDefModel, string userName);
-        Task DeleteSchemaDef(string id, string userName);
+        Task UpdateSchemaDef(SchemaDefModel SchemaDefModel);
+        Task DeleteSchemaDef(string id);
         Task<SchemaDefModel> ReadSchemaDef(string id);
     }
     public class SchemaDefService : ISchemaDefService
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<SchemaDefModel> CreateSchemaDef(SchemaDefModel model, string userName)
+        public async Task<SchemaDefModel> CreateSchemaDef(SchemaDefModel model)
         {
             var result = _mapper.Map<SchemaDef>(model);
-            await _repository.AddAsync(result, userName);
+            await _repository.AddAsync(result);
             model.IdSchemaDef = result.IdSchemaDef;
             return model;
         }
@@ -46,15 +46,15 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateSchemaDef(SchemaDefModel model, string userName)
+        public async Task UpdateSchemaDef(SchemaDefModel model)
         {
             var result = _mapper.Map<SchemaDef>(model);
-            await _repository.UpdateAsync(result, userName);
+            await _repository.UpdateAsync(result);
         }
 
-        public async Task DeleteSchemaDef(string id, string userName)
+        public async Task DeleteSchemaDef(string id)
         {
-            await _repository.RemoveAsync(id, userName);
+            await _repository.RemoveAsync(id);
         }
 
         public async Task<SchemaDefModel> ReadSchemaDef(string id)
