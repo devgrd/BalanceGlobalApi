@@ -6,6 +6,6 @@ namespace BalanceGlobal.Models
 {
     public abstract class ModelBase
     {
-        public string UserName { get; set; }
+        
     }
 }

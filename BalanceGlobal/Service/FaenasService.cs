@@ -58,17 +58,7 @@ namespace BalanceGlobal.Service
 
         public async Task DeleteFaenas(int id, string userName)
         {
-
-            try
-            {
-            
-                await _repository.RemoveAsync(id, userName);
-
-            }
-            catch (DbUpdateException e)
-            {
-                Debug.WriteLine(e.GetBaseException().Message);
-            }
+            await _repository.RemoveAsync(id, userName);          
         }
 
         public async Task<FaenasModel> ReadFaenas(int id)
