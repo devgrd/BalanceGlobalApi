@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -28,7 +29,7 @@ namespace BalanceGlobal.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PeriodosOperacionalesModel>> GetPeriodosOperacionales(int id)
         {
-            var _model = await _service.ReadPeriodosOperacionales(id.ToString());
+            var _model = await _service.ReadPeriodosOperacionales(id);
 
             if (_model == null)
             {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPeriodosOperacionales(int id, PeriodosOperacionalesModel model)
+        public async Task<IActionResult> PutPeriodosOperacionales(int id, PeriodosOperacionalesModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdPeriodosOperacionales)
             {
@@ -48,11 +49,11 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdatePeriodosOperacionales(model);
+                await _service.UpdatePeriodosOperacionales(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (_service.ReadPeriodosOperacionales(id.ToString()) == null)
+                if (_service.ReadPeriodosOperacionales(id) == null)
                 {
                     return NotFound();
                 }
@@ -66,22 +67,22 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<PeriodosOperacionalesModel>> PostPeriodosOperacionales(PeriodosOperacionalesModel model)
+        public async Task<ActionResult<PeriodosOperacionalesModel>> PostPeriodosOperacionales(PeriodosOperacionalesModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreatePeriodosOperacionales(model);
+            var _model = await _service.CreatePeriodosOperacionales(model, userName);
             return CreatedAtAction("GetPeriodosOperacionales", new { id = _model.IdPeriodosOperacionales }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<PeriodosOperacionalesModel>> DeletePeriodosOperacionales(int id)
+        public async Task<ActionResult<PeriodosOperacionalesModel>> DeletePeriodosOperacionales(int id, [Required][FromHeader] string userName)
         {
-            var _model = await _service.ReadPeriodosOperacionales(id.ToString());
+            var _model = await _service.ReadPeriodosOperacionales(id);
             if (_model == null)
             {
                 return NotFound();
             }
 
-            await _service.DeletePeriodosOperacionales(id.ToString());
+            await _service.DeletePeriodosOperacionales(id, userName);
 
             return _model;
         }

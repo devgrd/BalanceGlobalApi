@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -28,7 +29,7 @@ namespace BalanceGlobal.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<BombasModel>> GetBombas(int id)
         {
-            var _model = await _service.ReadBombas(id.ToString());
+            var _model = await _service.ReadBombas(id);
 
             if (_model == null)
             {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBombas(int id, BombasModel model)
+        public async Task<IActionResult> PutBombas(int id, BombasModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdBombas)
             {
@@ -48,11 +49,11 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateBombas(model);
+                await _service.UpdateBombas(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (_service.ReadBombas(id.ToString()) == null)
+                if (_service.ReadBombas(id) == null)
                 {
                     return NotFound();
                 }
@@ -66,22 +67,22 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<BombasModel>> PostBombas(BombasModel model)
+        public async Task<ActionResult<BombasModel>> PostBombas(BombasModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateBombas(model);
+            var _model = await _service.CreateBombas(model, userName);
             return CreatedAtAction("GetBombas", new { id = _model.IdBombas }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<BombasModel>> DeleteBombas(int id)
+        public async Task<ActionResult<BombasModel>> DeleteBombas(int id, [Required][FromHeader] string userName)
         {
-            var _model = await _service.ReadBombas(id.ToString());
+            var _model = await _service.ReadBombas(id);
             if (_model == null)
             {
                 return NotFound();
             }
 
-            await _service.DeleteBombas(id.ToString());
+            await _service.DeleteBombas(id, userName);
 
             return _model;
         }

@@ -11,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IOrigenesDatosService
     {
-        Task<OrigenesDatosModel> CreateOrigenesDatos(OrigenesDatosModel OrigenesDatosModel);
+        Task<OrigenesDatosModel> CreateOrigenesDatos(OrigenesDatosModel OrigenesDatosModel, string userName);
         Task<List<OrigenesDatosModel>> ReadOrigenesDatos();
-        Task UpdateOrigenesDatos(OrigenesDatosModel OrigenesDatosModel);
-        Task DeleteOrigenesDatos(string id);
-        Task<OrigenesDatosModel> ReadOrigenesDatos(string id);
+        Task UpdateOrigenesDatos(OrigenesDatosModel OrigenesDatosModel, string userName);
+        Task DeleteOrigenesDatos(int id, string userName);
+        Task<OrigenesDatosModel> ReadOrigenesDatos(int id);
     }
     public class OrigenesDatosService : IOrigenesDatosService
     {
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<OrigenesDatosModel> CreateOrigenesDatos(OrigenesDatosModel model)
+        public async Task<OrigenesDatosModel> CreateOrigenesDatos(OrigenesDatosModel model, string userName)
         {
             var result = _mapper.Map<OrigenesDatos>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdOrigenesDatos = result.IdOrigenesDatos;
             return model;
         }
@@ -46,18 +46,18 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateOrigenesDatos(OrigenesDatosModel model)
+        public async Task UpdateOrigenesDatos(OrigenesDatosModel model, string userName)
         {
             var result = _mapper.Map<OrigenesDatos>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteOrigenesDatos(string id)
+        public async Task DeleteOrigenesDatos(int id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
-        public async Task<OrigenesDatosModel> ReadOrigenesDatos(string id)
+        public async Task<OrigenesDatosModel> ReadOrigenesDatos(int id)
         {
             var model = await _repository.GetById(id);
             var result = _mapper.Map<OrigenesDatosModel>(model);

@@ -11,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface ISistemasService
     {
-        Task<SistemasModel> CreateSistemas(SistemasModel SistemasModel);
+        Task<SistemasModel> CreateSistemas(SistemasModel SistemasModel, string userName);
         Task<List<SistemasModel>> ReadSistemas();
-        Task UpdateSistemas(SistemasModel SistemasModel);
-        Task DeleteSistemas(string id);
-        Task<SistemasModel> ReadSistemas(string id);
+        Task UpdateSistemas(SistemasModel SistemasModel, string userName);
+        Task DeleteSistemas(int id, string userName);
+        Task<SistemasModel> ReadSistemas(int id);
     }
     public class SistemasService : ISistemasService
     {
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<SistemasModel> CreateSistemas(SistemasModel model)
+        public async Task<SistemasModel> CreateSistemas(SistemasModel model, string userName)
         {
             var result = _mapper.Map<Sistemas>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdSistemas = result.IdSistemas;
             return model;
         }
@@ -46,18 +46,18 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateSistemas(SistemasModel model)
+        public async Task UpdateSistemas(SistemasModel model, string userName)
         {
             var result = _mapper.Map<Sistemas>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteSistemas(string id)
+        public async Task DeleteSistemas(int id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
-        public async Task<SistemasModel> ReadSistemas(string id)
+        public async Task<SistemasModel> ReadSistemas(int id)
         {
             var model = await _repository.GetById(id);
             var result = _mapper.Map<SistemasModel>(model);

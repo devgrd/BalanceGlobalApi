@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -28,7 +29,7 @@ namespace BalanceGlobal.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ImportDestinoModel>> GetImportDestino(int id)
         {
-            var _model = await _service.ReadImportDestino(id.ToString());
+            var _model = await _service.ReadImportDestino(id);
 
             if (_model == null)
             {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutImportDestino(int id, ImportDestinoModel model)
+        public async Task<IActionResult> PutImportDestino(int id, ImportDestinoModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdImportDestino)
             {
@@ -48,11 +49,11 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateImportDestino(model);
+                await _service.UpdateImportDestino(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (_service.ReadImportDestino(id.ToString()) == null)
+                if (_service.ReadImportDestino(id) == null)
                 {
                     return NotFound();
                 }
@@ -66,22 +67,22 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ImportDestinoModel>> PostImportDestino(ImportDestinoModel model)
+        public async Task<ActionResult<ImportDestinoModel>> PostImportDestino(ImportDestinoModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateImportDestino(model);
+            var _model = await _service.CreateImportDestino(model, userName);
             return CreatedAtAction("GetImportDestino", new { id = _model.IdImportDestino }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ImportDestinoModel>> DeleteImportDestino(int id)
+        public async Task<ActionResult<ImportDestinoModel>> DeleteImportDestino(int id, [Required][FromHeader] string userName)
         {
-            var _model = await _service.ReadImportDestino(id.ToString());
+            var _model = await _service.ReadImportDestino(id);
             if (_model == null)
             {
                 return NotFound();
             }
 
-            await _service.DeleteImportDestino(id.ToString());
+            await _service.DeleteImportDestino(id, userName);
 
             return _model;
         }

@@ -11,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IBombasService
     {
-        Task<BombasModel> CreateBombas(BombasModel BombasModel);
+        Task<BombasModel> CreateBombas(BombasModel BombasModel, string userName);
         Task<List<BombasModel>> ReadBombas();
-        Task UpdateBombas(BombasModel BombasModel);
-        Task DeleteBombas(string id);
-        Task<BombasModel> ReadBombas(string id);
+        Task UpdateBombas(BombasModel BombasModel, string userName);
+        Task DeleteBombas(int id, string userName);
+        Task<BombasModel> ReadBombas(int id);
     }
     public class BombasService : IBombasService
     {
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<BombasModel> CreateBombas(BombasModel model)
+        public async Task<BombasModel> CreateBombas(BombasModel model, string userName)
         {
             var result = _mapper.Map<Bombas>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdBombas = result.IdBombas;
             return model;
         }
@@ -46,18 +46,18 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateBombas(BombasModel model)
+        public async Task UpdateBombas(BombasModel model, string userName)
         {
             var result = _mapper.Map<Bombas>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteBombas(string id)
+        public async Task DeleteBombas(int id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
-        public async Task<BombasModel> ReadBombas(string id)
+        public async Task<BombasModel> ReadBombas(int id)
         {
             var model = await _repository.GetById(id);
             var result = _mapper.Map<BombasModel>(model);

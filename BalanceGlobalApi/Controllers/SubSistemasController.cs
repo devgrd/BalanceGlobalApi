@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -28,7 +29,7 @@ namespace BalanceGlobal.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SubSistemasModel>> GetSubSistemas(int id)
         {
-            var _model = await _service.ReadSubSistemas(id.ToString());
+            var _model = await _service.ReadSubSistemas(id);
 
             if (_model == null)
             {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubSistemas(int id, SubSistemasModel model)
+        public async Task<IActionResult> PutSubSistemas(int id, SubSistemasModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdSubSistemas)
             {
@@ -48,11 +49,11 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateSubSistemas(model);
+                await _service.UpdateSubSistemas(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (_service.ReadSubSistemas(id.ToString()) == null)
+                if (_service.ReadSubSistemas(id) == null)
                 {
                     return NotFound();
                 }
@@ -66,22 +67,22 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<SubSistemasModel>> PostSubSistemas(SubSistemasModel model)
+        public async Task<ActionResult<SubSistemasModel>> PostSubSistemas(SubSistemasModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateSubSistemas(model);
+            var _model = await _service.CreateSubSistemas(model, userName);
             return CreatedAtAction("GetSubSistemas", new { id = _model.IdSubSistemas }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<SubSistemasModel>> DeleteSubSistemas(int id)
+        public async Task<ActionResult<SubSistemasModel>> DeleteSubSistemas(int id, [Required][FromHeader] string userName)
         {
-            var _model = await _service.ReadSubSistemas(id.ToString());
+            var _model = await _service.ReadSubSistemas(id);
             if (_model == null)
             {
                 return NotFound();
             }
 
-            await _service.DeleteSubSistemas(id.ToString());
+            await _service.DeleteSubSistemas(id, userName);
 
             return _model;
         }

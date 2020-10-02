@@ -6,7 +6,8 @@ namespace BalanceGlobal.Models
 {
     public class SistemasSubSistemasModel : ModelBase
     {
-        [Required] public int IdSistemasSubSistemas { get; set; }
+
+        [Required] public int IdSistemasSubsistemas { get; set; }
         [Required] public int IdSistemas { get; set; }
         public int? IdSubSistemas { get; set; }
         public string UsuarioActualizacion { get; set; }

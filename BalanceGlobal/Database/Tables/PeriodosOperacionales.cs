@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace BalanceGlobal.Database.Tables
 {
@@ -9,5 +10,11 @@ namespace BalanceGlobal.Database.Tables
         public int IdPeriodo { get; set; }
         public DateTime FechaInicio { get; set; }
         public DateTime FechaFin { get; set; }
+        public bool Real { get; set; }
+        public string UsuarioActualizacion { get; set; }
+        public DateTime? FechaActualizacion { get; set; }
+
+        public virtual Periodos IdPeriodoNavigation { get; set; }
+        public virtual Sistemas IdSistemasNavigation { get; set; }
     }
 }

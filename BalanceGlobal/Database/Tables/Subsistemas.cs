@@ -7,6 +7,8 @@ namespace BalanceGlobal.Database.Tables
     {
         public SubSistemas()
         {
+            ImpregnacionSistemaRef = new HashSet<ImpregnacionSistemaRef>();
+            PciacopiosOrigen = new HashSet<PciacopiosOrigen>();
             SistemasSubSistemas = new HashSet<SistemasSubSistemas>();
         }
 
@@ -17,6 +19,8 @@ namespace BalanceGlobal.Database.Tables
         public string UsuarioActualizacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
 
+        public virtual ICollection<ImpregnacionSistemaRef> ImpregnacionSistemaRef { get; set; }
+        public virtual ICollection<PciacopiosOrigen> PciacopiosOrigen { get; set; }
         public virtual ICollection<SistemasSubSistemas> SistemasSubSistemas { get; set; }
     }
 }

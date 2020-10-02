@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace BalanceGlobal.Database.Tables
 {
@@ -22,5 +23,11 @@ namespace BalanceGlobal.Database.Tables
         public decimal? ClPct { get; set; }
         public decimal? DensidadTonm3 { get; set; }
         public decimal? H3bo3Pct { get; set; }
+        public string UsuarioActualizacion { get; set; }
+        public DateTime? FechaActualizacion { get; set; }
+
+        public virtual Infraestructuras IdInfraestructuraDestinoNavigation { get; set; }
+        public virtual Infraestructuras IdInfraestructuraOrigenNavigation { get; set; }
+        public virtual Periodos IdPeriodosNavigation { get; set; }
     }
 }

@@ -11,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IConsInvCarmenService
     {
-        Task<ConsInvCarmenModel> CreateConsInvCarmen(ConsInvCarmenModel ConsInvCarmenModel);
+        Task<ConsInvCarmenModel> CreateConsInvCarmen(ConsInvCarmenModel ConsInvCarmenModel, string userName);
         Task<List<ConsInvCarmenModel>> ReadConsInvCarmen();
-        Task UpdateConsInvCarmen(ConsInvCarmenModel ConsInvCarmenModel);
-        Task DeleteConsInvCarmen(string id);
-        Task<ConsInvCarmenModel> ReadConsInvCarmen(string id);
+        Task UpdateConsInvCarmen(ConsInvCarmenModel ConsInvCarmenModel, string userName);
+        Task DeleteConsInvCarmen(int id, string userName);
+        Task<ConsInvCarmenModel> ReadConsInvCarmen(int id);
     }
     public class ConsInvCarmenService : IConsInvCarmenService
     {
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ConsInvCarmenModel> CreateConsInvCarmen(ConsInvCarmenModel model)
+        public async Task<ConsInvCarmenModel> CreateConsInvCarmen(ConsInvCarmenModel model, string userName)
         {
             var result = _mapper.Map<ConsInvCarmen>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdConsInvCarmen = result.IdConsInvCarmen;
             return model;
         }
@@ -46,18 +46,18 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateConsInvCarmen(ConsInvCarmenModel model)
+        public async Task UpdateConsInvCarmen(ConsInvCarmenModel model, string userName)
         {
             var result = _mapper.Map<ConsInvCarmen>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteConsInvCarmen(string id)
+        public async Task DeleteConsInvCarmen(int id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
-        public async Task<ConsInvCarmenModel> ReadConsInvCarmen(string id)
+        public async Task<ConsInvCarmenModel> ReadConsInvCarmen(int id)
         {
             var model = await _repository.GetById(id);
             var result = _mapper.Map<ConsInvCarmenModel>(model);

@@ -3,7 +3,11 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,11 +15,11 @@ namespace BalanceGlobal.Service
 
     public interface IFaenasService
     {
-        Task<FaenasModel> CreateFaenas(FaenasModel FaenasModel);
+        Task<FaenasModel> CreateFaenas(FaenasModel FaenasModel, string userName);
         Task<List<FaenasModel>> ReadFaenas();
-        Task UpdateFaenas(FaenasModel FaenasModel);
-        Task DeleteFaenas(string id);
-        Task<FaenasModel> ReadFaenas(string id);
+        Task UpdateFaenas(FaenasModel FaenasModel, string userName);
+        Task DeleteFaenas(int id, string userName);
+        Task<FaenasModel> ReadFaenas(int id);
     }
     public class FaenasService : IFaenasService
     {
@@ -30,10 +34,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<FaenasModel> CreateFaenas(FaenasModel model)
+        public async Task<FaenasModel> CreateFaenas(FaenasModel model, string userName)
         {
             var result = _mapper.Map<Faenas>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdFaenas = result.IdFaenas;
             return model;
         }
@@ -46,18 +50,28 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateFaenas(FaenasModel model)
+        public async Task UpdateFaenas(FaenasModel model, string userName)
         {
             var result = _mapper.Map<Faenas>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteFaenas(string id)
+        public async Task DeleteFaenas(int id, string userName)
         {
-            await _repository.RemoveAsync(id);
+
+            try
+            {
+            
+                await _repository.RemoveAsync(id, userName);
+
+            }
+            catch (DbUpdateException e)
+            {
+                Debug.WriteLine(e.GetBaseException().Message);
+            }
         }
 
-        public async Task<FaenasModel> ReadFaenas(string id)
+        public async Task<FaenasModel> ReadFaenas(int id)
         {
             var model = await _repository.GetById(id);
             var result = _mapper.Map<FaenasModel>(model);
@@ -65,5 +79,7 @@ namespace BalanceGlobal.Service
         }
 
         #endregion
+
+
     }
 }

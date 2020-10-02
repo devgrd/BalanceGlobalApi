@@ -13,5 +13,9 @@ namespace BalanceGlobal.Database.Tables
         public decimal? TotalizadorM3 { get; set; }
         public string UsuarioActualizacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
+
+        public virtual Bombas IdBombasNavigation { get; set; }
+        public virtual Periodos IdPeriodosNavigation { get; set; }
+        public virtual SistemasSubSistemas IdSistemasSubsistemasNavigation { get; set; }
     }
 }

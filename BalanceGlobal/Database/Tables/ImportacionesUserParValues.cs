@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace BalanceGlobal.Database.Tables
 {
@@ -11,5 +12,6 @@ namespace BalanceGlobal.Database.Tables
         public DateTime Fecha { get; set; }
 
         public virtual Importaciones IdImportacionesNavigation { get; set; }
+        public virtual ImportadoresUserPar IdImportadoresUserParNavigation { get; set; }
     }
 }

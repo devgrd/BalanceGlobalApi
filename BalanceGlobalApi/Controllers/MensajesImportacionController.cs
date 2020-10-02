@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -28,7 +29,7 @@ namespace BalanceGlobal.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<MensajesImportacionModel>> GetMensajesImportacion(int id)
         {
-            var _model = await _service.ReadMensajesImportacion(id.ToString());
+            var _model = await _service.ReadMensajesImportacion(id);
 
             if (_model == null)
             {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMensajesImportacion(int id, MensajesImportacionModel model)
+        public async Task<IActionResult> PutMensajesImportacion(int id, MensajesImportacionModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdMensajesImportacion)
             {
@@ -48,11 +49,11 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateMensajesImportacion(model);
+                await _service.UpdateMensajesImportacion(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (_service.ReadMensajesImportacion(id.ToString()) == null)
+                if (_service.ReadMensajesImportacion(id) == null)
                 {
                     return NotFound();
                 }
@@ -66,22 +67,22 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<MensajesImportacionModel>> PostMensajesImportacion(MensajesImportacionModel model)
+        public async Task<ActionResult<MensajesImportacionModel>> PostMensajesImportacion(MensajesImportacionModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateMensajesImportacion(model);
+            var _model = await _service.CreateMensajesImportacion(model, userName);
             return CreatedAtAction("GetMensajesImportacion", new { id = _model.IdMensajesImportacion }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<MensajesImportacionModel>> DeleteMensajesImportacion(int id)
+        public async Task<ActionResult<MensajesImportacionModel>> DeleteMensajesImportacion(int id, [Required][FromHeader] string userName)
         {
-            var _model = await _service.ReadMensajesImportacion(id.ToString());
+            var _model = await _service.ReadMensajesImportacion(id);
             if (_model == null)
             {
                 return NotFound();
             }
 
-            await _service.DeleteMensajesImportacion(id.ToString());
+            await _service.DeleteMensajesImportacion(id, userName);
 
             return _model;
         }

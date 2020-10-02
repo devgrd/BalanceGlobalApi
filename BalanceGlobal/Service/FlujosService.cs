@@ -11,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IFlujosService
     {
-        Task<FlujosModel> CreateFlujos(FlujosModel FlujosModel);
+        Task<FlujosModel> CreateFlujos(FlujosModel FlujosModel, string userName);
         Task<List<FlujosModel>> ReadFlujos();
-        Task UpdateFlujos(FlujosModel FlujosModel);
-        Task DeleteFlujos(string id);
-        Task<FlujosModel> ReadFlujos(string id);
+        Task UpdateFlujos(FlujosModel FlujosModel, string userName);
+        Task DeleteFlujos(int id, string userName);
+        Task<FlujosModel> ReadFlujos(int id);
     }
     public class FlujosService : IFlujosService
     {
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<FlujosModel> CreateFlujos(FlujosModel model)
+        public async Task<FlujosModel> CreateFlujos(FlujosModel model, string userName)
         {
             var result = _mapper.Map<Flujos>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdFlujos = result.IdFlujos;
             return model;
         }
@@ -46,18 +46,18 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateFlujos(FlujosModel model)
+        public async Task UpdateFlujos(FlujosModel model, string userName)
         {
             var result = _mapper.Map<Flujos>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteFlujos(string id)
+        public async Task DeleteFlujos(int id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
-        public async Task<FlujosModel> ReadFlujos(string id)
+        public async Task<FlujosModel> ReadFlujos(int id)
         {
             var model = await _repository.GetById(id);
             var result = _mapper.Map<FlujosModel>(model);

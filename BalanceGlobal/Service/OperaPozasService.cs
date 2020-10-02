@@ -11,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IOperaPozasService
     {
-        Task<OperaPozasModel> CreateOperaPozas(OperaPozasModel OperaPozasModel);
+        Task<OperaPozasModel> CreateOperaPozas(OperaPozasModel OperaPozasModel, string userName);
         Task<List<OperaPozasModel>> ReadOperaPozas();
-        Task UpdateOperaPozas(OperaPozasModel OperaPozasModel);
-        Task DeleteOperaPozas(string id);
-        Task<OperaPozasModel> ReadOperaPozas(string id);
+        Task UpdateOperaPozas(OperaPozasModel OperaPozasModel, string userName);
+        Task DeleteOperaPozas(int id, string userName);
+        Task<OperaPozasModel> ReadOperaPozas(int id);
     }
     public class OperaPozasService : IOperaPozasService
     {
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<OperaPozasModel> CreateOperaPozas(OperaPozasModel model)
+        public async Task<OperaPozasModel> CreateOperaPozas(OperaPozasModel model, string userName)
         {
             var result = _mapper.Map<OperaPozas>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdOperaPozas = result.IdOperaPozas;
             return model;
         }
@@ -46,18 +46,18 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateOperaPozas(OperaPozasModel model)
+        public async Task UpdateOperaPozas(OperaPozasModel model, string userName)
         {
             var result = _mapper.Map<OperaPozas>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteOperaPozas(string id)
+        public async Task DeleteOperaPozas(int id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
-        public async Task<OperaPozasModel> ReadOperaPozas(string id)
+        public async Task<OperaPozasModel> ReadOperaPozas(int id)
         {
             var model = await _repository.GetById(id);
             var result = _mapper.Map<OperaPozasModel>(model);

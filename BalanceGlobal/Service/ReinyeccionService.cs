@@ -11,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IReinyeccionService
     {
-        Task<ReinyeccionModel> CreateReinyeccion(ReinyeccionModel ReinyeccionModel);
+        Task<ReinyeccionModel> CreateReinyeccion(ReinyeccionModel ReinyeccionModel, string userName);
         Task<List<ReinyeccionModel>> ReadReinyeccion();
-        Task UpdateReinyeccion(ReinyeccionModel ReinyeccionModel);
-        Task DeleteReinyeccion(string id);
-        Task<ReinyeccionModel> ReadReinyeccion(string id);
+        Task UpdateReinyeccion(ReinyeccionModel ReinyeccionModel, string userName);
+        Task DeleteReinyeccion(int id, string userName);
+        Task<ReinyeccionModel> ReadReinyeccion(int id);
     }
     public class ReinyeccionService : IReinyeccionService
     {
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ReinyeccionModel> CreateReinyeccion(ReinyeccionModel model)
+        public async Task<ReinyeccionModel> CreateReinyeccion(ReinyeccionModel model, string userName)
         {
             var result = _mapper.Map<Reinyeccion>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdReinyeccion = result.IdReinyeccion;
             return model;
         }
@@ -46,18 +46,18 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateReinyeccion(ReinyeccionModel model)
+        public async Task UpdateReinyeccion(ReinyeccionModel model, string userName)
         {
             var result = _mapper.Map<Reinyeccion>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteReinyeccion(string id)
+        public async Task DeleteReinyeccion(int id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
-        public async Task<ReinyeccionModel> ReadReinyeccion(string id)
+        public async Task<ReinyeccionModel> ReadReinyeccion(int id)
         {
             var model = await _repository.GetById(id);
             var result = _mapper.Map<ReinyeccionModel>(model);

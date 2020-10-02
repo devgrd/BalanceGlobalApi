@@ -10,7 +10,7 @@ namespace BalanceGlobal.Models
         [Required] public int IdImportaciones { get; set; }
         [Required] public int IdImportadores { get; set; }
         [Required] public DateTime Fecha { get; set; }
-        public int? IdMensagesImportacion { get; set; }
+        public Guid? Uid { get; set; }
 
     }
 }

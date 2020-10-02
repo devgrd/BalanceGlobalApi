@@ -11,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface ISubSistemasService
     {
-        Task<SubSistemasModel> CreateSubSistemas(SubSistemasModel SubSistemasModel);
+        Task<SubSistemasModel> CreateSubSistemas(SubSistemasModel SubSistemasModel, string userName);
         Task<List<SubSistemasModel>> ReadSubSistemas();
-        Task UpdateSubSistemas(SubSistemasModel SubSistemasModel);
-        Task DeleteSubSistemas(string id);
-        Task<SubSistemasModel> ReadSubSistemas(string id);
+        Task UpdateSubSistemas(SubSistemasModel SubSistemasModel, string userName);
+        Task DeleteSubSistemas(int id, string userName);
+        Task<SubSistemasModel> ReadSubSistemas(int id);
     }
     public class SubSistemasService : ISubSistemasService
     {
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<SubSistemasModel> CreateSubSistemas(SubSistemasModel model)
+        public async Task<SubSistemasModel> CreateSubSistemas(SubSistemasModel model, string userName)
         {
             var result = _mapper.Map<SubSistemas>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdSubSistemas = result.IdSubSistemas;
             return model;
         }
@@ -46,18 +46,18 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateSubSistemas(SubSistemasModel model)
+        public async Task UpdateSubSistemas(SubSistemasModel model, string userName)
         {
             var result = _mapper.Map<SubSistemas>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteSubSistemas(string id)
+        public async Task DeleteSubSistemas(int id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
-        public async Task<SubSistemasModel> ReadSubSistemas(string id)
+        public async Task<SubSistemasModel> ReadSubSistemas(int id)
         {
             var model = await _repository.GetById(id);
             var result = _mapper.Map<SubSistemasModel>(model);

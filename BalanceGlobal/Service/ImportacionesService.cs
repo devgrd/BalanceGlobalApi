@@ -11,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IImportacionesService
     {
-        Task<ImportacionesModel> CreateImportaciones(ImportacionesModel ImportacionesModel);
+        Task<ImportacionesModel> CreateImportaciones(ImportacionesModel ImportacionesModel, string userName);
         Task<List<ImportacionesModel>> ReadImportaciones();
-        Task UpdateImportaciones(ImportacionesModel ImportacionesModel);
-        Task DeleteImportaciones(string id);
-        Task<ImportacionesModel> ReadImportaciones(string id);
+        Task UpdateImportaciones(ImportacionesModel ImportacionesModel, string userName);
+        Task DeleteImportaciones(int id, string userName);
+        Task<ImportacionesModel> ReadImportaciones(int id);
     }
     public class ImportacionesService : IImportacionesService
     {
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ImportacionesModel> CreateImportaciones(ImportacionesModel model)
+        public async Task<ImportacionesModel> CreateImportaciones(ImportacionesModel model, string userName)
         {
             var result = _mapper.Map<Importaciones>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdImportaciones = result.IdImportaciones;
             return model;
         }
@@ -46,18 +46,18 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateImportaciones(ImportacionesModel model)
+        public async Task UpdateImportaciones(ImportacionesModel model, string userName)
         {
             var result = _mapper.Map<Importaciones>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteImportaciones(string id)
+        public async Task DeleteImportaciones(int id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
-        public async Task<ImportacionesModel> ReadImportaciones(string id)
+        public async Task<ImportacionesModel> ReadImportaciones(int id)
         {
             var model = await _repository.GetById(id);
             var result = _mapper.Map<ImportacionesModel>(model);

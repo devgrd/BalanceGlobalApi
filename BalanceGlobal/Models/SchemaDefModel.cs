@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System;
 using System.Collections.Generic;
 
 namespace BalanceGlobal.Models
@@ -12,6 +13,7 @@ namespace BalanceGlobal.Models
         public string SkiprowsList { get; set; }
         [Required] public bool UsarPosicion { get; set; }
         public int? FilaNombreColumna { get; set; }
+        public int? FilaInicioDatos { get; set; }
 
     }
 }

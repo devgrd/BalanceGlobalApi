@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BalanceGlobal.Database.Tables
 {
@@ -7,6 +8,7 @@ namespace BalanceGlobal.Database.Tables
         public Importadores()
         {
             Importaciones = new HashSet<Importaciones>();
+            ImportadoresUserPar = new HashSet<ImportadoresUserPar>();
             OrigenesDatos = new HashSet<OrigenesDatos>();
         }
 
@@ -15,6 +17,7 @@ namespace BalanceGlobal.Database.Tables
         public bool? Activa { get; set; }
 
         public virtual ICollection<Importaciones> Importaciones { get; set; }
+        public virtual ICollection<ImportadoresUserPar> ImportadoresUserPar { get; set; }
         public virtual ICollection<OrigenesDatos> OrigenesDatos { get; set; }
     }
 }

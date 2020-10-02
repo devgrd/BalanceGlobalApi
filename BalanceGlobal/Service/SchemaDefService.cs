@@ -11,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface ISchemaDefService
     {
-        Task<SchemaDefModel> CreateSchemaDef(SchemaDefModel SchemaDefModel);
+        Task<SchemaDefModel> CreateSchemaDef(SchemaDefModel SchemaDefModel, string userName);
         Task<List<SchemaDefModel>> ReadSchemaDef();
-        Task UpdateSchemaDef(SchemaDefModel SchemaDefModel);
-        Task DeleteSchemaDef(string id);
-        Task<SchemaDefModel> ReadSchemaDef(string id);
+        Task UpdateSchemaDef(SchemaDefModel SchemaDefModel, string userName);
+        Task DeleteSchemaDef(int id, string userName);
+        Task<SchemaDefModel> ReadSchemaDef(int id);
     }
     public class SchemaDefService : ISchemaDefService
     {
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<SchemaDefModel> CreateSchemaDef(SchemaDefModel model)
+        public async Task<SchemaDefModel> CreateSchemaDef(SchemaDefModel model, string userName)
         {
             var result = _mapper.Map<SchemaDef>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdSchemaDef = result.IdSchemaDef;
             return model;
         }
@@ -46,18 +46,18 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateSchemaDef(SchemaDefModel model)
+        public async Task UpdateSchemaDef(SchemaDefModel model, string userName)
         {
             var result = _mapper.Map<SchemaDef>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteSchemaDef(string id)
+        public async Task DeleteSchemaDef(int id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
-        public async Task<SchemaDefModel> ReadSchemaDef(string id)
+        public async Task<SchemaDefModel> ReadSchemaDef(int id)
         {
             var model = await _repository.GetById(id);
             var result = _mapper.Map<SchemaDefModel>(model);

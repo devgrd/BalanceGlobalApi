@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -28,7 +29,7 @@ namespace BalanceGlobal.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ConsInvCarmenModel>> GetConsInvCarmen(int id)
         {
-            var _model = await _service.ReadConsInvCarmen(id.ToString());
+            var _model = await _service.ReadConsInvCarmen(id);
 
             if (_model == null)
             {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutConsInvCarmen(int id, ConsInvCarmenModel model)
+        public async Task<IActionResult> PutConsInvCarmen(int id, ConsInvCarmenModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdConsInvCarmen)
             {
@@ -48,11 +49,11 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateConsInvCarmen(model);
+                await _service.UpdateConsInvCarmen(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (_service.ReadConsInvCarmen(id.ToString()) == null)
+                if (_service.ReadConsInvCarmen(id) == null)
                 {
                     return NotFound();
                 }
@@ -66,22 +67,22 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ConsInvCarmenModel>> PostConsInvCarmen(ConsInvCarmenModel model)
+        public async Task<ActionResult<ConsInvCarmenModel>> PostConsInvCarmen(ConsInvCarmenModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateConsInvCarmen(model);
+            var _model = await _service.CreateConsInvCarmen(model, userName);
             return CreatedAtAction("GetConsInvCarmen", new { id = _model.IdConsInvCarmen }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ConsInvCarmenModel>> DeleteConsInvCarmen(int id)
+        public async Task<ActionResult<ConsInvCarmenModel>> DeleteConsInvCarmen(int id, [Required][FromHeader] string userName)
         {
-            var _model = await _service.ReadConsInvCarmen(id.ToString());
+            var _model = await _service.ReadConsInvCarmen(id);
             if (_model == null)
             {
                 return NotFound();
             }
 
-            await _service.DeleteConsInvCarmen(id.ToString());
+            await _service.DeleteConsInvCarmen(id, userName);
 
             return _model;
         }

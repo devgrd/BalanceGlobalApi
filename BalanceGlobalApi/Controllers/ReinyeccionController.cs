@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -28,7 +29,7 @@ namespace BalanceGlobal.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ReinyeccionModel>> GetReinyeccion(int id)
         {
-            var _model = await _service.ReadReinyeccion(id.ToString());
+            var _model = await _service.ReadReinyeccion(id);
 
             if (_model == null)
             {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutReinyeccion(int id, ReinyeccionModel model)
+        public async Task<IActionResult> PutReinyeccion(int id, ReinyeccionModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdReinyeccion)
             {
@@ -48,11 +49,11 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateReinyeccion(model);
+                await _service.UpdateReinyeccion(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (_service.ReadReinyeccion(id.ToString()) == null)
+                if (_service.ReadReinyeccion(id) == null)
                 {
                     return NotFound();
                 }
@@ -66,22 +67,22 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ReinyeccionModel>> PostReinyeccion(ReinyeccionModel model)
+        public async Task<ActionResult<ReinyeccionModel>> PostReinyeccion(ReinyeccionModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateReinyeccion(model);
+            var _model = await _service.CreateReinyeccion(model, userName);
             return CreatedAtAction("GetReinyeccion", new { id = _model.IdReinyeccion }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ReinyeccionModel>> DeleteReinyeccion(int id)
+        public async Task<ActionResult<ReinyeccionModel>> DeleteReinyeccion(int id, [Required][FromHeader] string userName)
         {
-            var _model = await _service.ReadReinyeccion(id.ToString());
+            var _model = await _service.ReadReinyeccion(id);
             if (_model == null)
             {
                 return NotFound();
             }
 
-            await _service.DeleteReinyeccion(id.ToString());
+            await _service.DeleteReinyeccion(id, userName);
 
             return _model;
         }

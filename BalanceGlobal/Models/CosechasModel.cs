@@ -1,4 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using System;
+using System.Collections.Generic;
+
 namespace BalanceGlobal.Models
 {
     public class CosechasModel : ModelBase
@@ -21,5 +24,8 @@ namespace BalanceGlobal.Models
         public decimal? H3bo3Pct { get; set; }
         public decimal? ImprgPct { get; set; }
         public decimal? HumPct { get; set; }
+        public string UsuarioActualizacion { get; set; }
+        public DateTime? FechaActualizacion { get; set; }
+
     }
 }

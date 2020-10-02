@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -28,7 +29,7 @@ namespace BalanceGlobal.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PorteosModel>> GetPorteos(int id)
         {
-            var _model = await _service.ReadPorteos(id.ToString());
+            var _model = await _service.ReadPorteos(id);
 
             if (_model == null)
             {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPorteos(int id, PorteosModel model)
+        public async Task<IActionResult> PutPorteos(int id, PorteosModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdPorteos)
             {
@@ -48,11 +49,11 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdatePorteos(model);
+                await _service.UpdatePorteos(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (_service.ReadPorteos(id.ToString()) == null)
+                if (_service.ReadPorteos(id) == null)
                 {
                     return NotFound();
                 }
@@ -66,22 +67,22 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<PorteosModel>> PostPorteos(PorteosModel model)
+        public async Task<ActionResult<PorteosModel>> PostPorteos(PorteosModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreatePorteos(model);
+            var _model = await _service.CreatePorteos(model, userName);
             return CreatedAtAction("GetPorteos", new { id = _model.IdPorteos }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<PorteosModel>> DeletePorteos(int id)
+        public async Task<ActionResult<PorteosModel>> DeletePorteos(int id, [Required][FromHeader] string userName)
         {
-            var _model = await _service.ReadPorteos(id.ToString());
+            var _model = await _service.ReadPorteos(id);
             if (_model == null)
             {
                 return NotFound();
             }
 
-            await _service.DeletePorteos(id.ToString());
+            await _service.DeletePorteos(id, userName);
 
             return _model;
         }

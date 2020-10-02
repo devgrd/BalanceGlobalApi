@@ -11,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface IConsumoEnergeticoService
     {
-        Task<ConsumoEnergeticoModel> CreateConsumoEnergetico(ConsumoEnergeticoModel ConsumoEnergeticoModel);
+        Task<ConsumoEnergeticoModel> CreateConsumoEnergetico(ConsumoEnergeticoModel ConsumoEnergeticoModel, string userName);
         Task<List<ConsumoEnergeticoModel>> ReadConsumoEnergetico();
-        Task UpdateConsumoEnergetico(ConsumoEnergeticoModel ConsumoEnergeticoModel);
-        Task DeleteConsumoEnergetico(string id);
-        Task<ConsumoEnergeticoModel> ReadConsumoEnergetico(string id);
+        Task UpdateConsumoEnergetico(ConsumoEnergeticoModel ConsumoEnergeticoModel, string userName);
+        Task DeleteConsumoEnergetico(int id, string userName);
+        Task<ConsumoEnergeticoModel> ReadConsumoEnergetico(int id);
     }
     public class ConsumoEnergeticoService : IConsumoEnergeticoService
     {
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ConsumoEnergeticoModel> CreateConsumoEnergetico(ConsumoEnergeticoModel model)
+        public async Task<ConsumoEnergeticoModel> CreateConsumoEnergetico(ConsumoEnergeticoModel model, string userName)
         {
             var result = _mapper.Map<ConsumoEnergetico>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdConsumoEnergetico = result.IdConsumoEnergetico;
             return model;
         }
@@ -46,18 +46,18 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateConsumoEnergetico(ConsumoEnergeticoModel model)
+        public async Task UpdateConsumoEnergetico(ConsumoEnergeticoModel model, string userName)
         {
             var result = _mapper.Map<ConsumoEnergetico>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteConsumoEnergetico(string id)
+        public async Task DeleteConsumoEnergetico(int id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
-        public async Task<ConsumoEnergeticoModel> ReadConsumoEnergetico(string id)
+        public async Task<ConsumoEnergeticoModel> ReadConsumoEnergetico(int id)
         {
             var model = await _repository.GetById(id);
             var result = _mapper.Map<ConsumoEnergeticoModel>(model);

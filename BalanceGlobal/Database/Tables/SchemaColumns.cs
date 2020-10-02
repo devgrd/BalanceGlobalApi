@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace BalanceGlobal.Database.Tables
 {
@@ -23,6 +24,7 @@ namespace BalanceGlobal.Database.Tables
         public bool? Requerido { get; set; }
         public bool? Unico { get; set; }
 
+        public virtual DatosEnLista IdDatosEnListaNavigation { get; set; }
         public virtual SchemaDef IdSchemaDefNavigation { get; set; }
     }
 }

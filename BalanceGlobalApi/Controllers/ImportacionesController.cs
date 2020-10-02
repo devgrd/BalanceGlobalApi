@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -28,7 +29,7 @@ namespace BalanceGlobal.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ImportacionesModel>> GetImportaciones(int id)
         {
-            var _model = await _service.ReadImportaciones(id.ToString());
+            var _model = await _service.ReadImportaciones(id);
 
             if (_model == null)
             {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutImportaciones(int id, ImportacionesModel model)
+        public async Task<IActionResult> PutImportaciones(int id, ImportacionesModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdImportaciones)
             {
@@ -48,11 +49,11 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateImportaciones(model);
+                await _service.UpdateImportaciones(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (_service.ReadImportaciones(id.ToString()) == null)
+                if (_service.ReadImportaciones(id) == null)
                 {
                     return NotFound();
                 }
@@ -66,22 +67,22 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ImportacionesModel>> PostImportaciones(ImportacionesModel model)
+        public async Task<ActionResult<ImportacionesModel>> PostImportaciones(ImportacionesModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateImportaciones(model);
+            var _model = await _service.CreateImportaciones(model, userName);
             return CreatedAtAction("GetImportaciones", new { id = _model.IdImportaciones }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ImportacionesModel>> DeleteImportaciones(int id)
+        public async Task<ActionResult<ImportacionesModel>> DeleteImportaciones(int id, [Required][FromHeader] string userName)
         {
-            var _model = await _service.ReadImportaciones(id.ToString());
+            var _model = await _service.ReadImportaciones(id);
             if (_model == null)
             {
                 return NotFound();
             }
 
-            await _service.DeleteImportaciones(id.ToString());
+            await _service.DeleteImportaciones(id, userName);
 
             return _model;
         }

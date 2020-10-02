@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System;
+using System.Collections.Generic;
 
 namespace BalanceGlobal.Models
 {
@@ -16,5 +17,8 @@ namespace BalanceGlobal.Models
         public decimal? MasaLceTon { get; set; }
         public decimal? KPct { get; set; }
         public decimal? MasaBalanceLceTon { get; set; }
+        public string UsuarioActualizacion { get; set; }
+        public DateTime? FechaActualizacion { get; set; }
+
     }
 }

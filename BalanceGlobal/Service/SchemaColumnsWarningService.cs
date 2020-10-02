@@ -11,11 +11,11 @@ namespace BalanceGlobal.Service
 
     public interface ISchemaColumnsWarningService
     {
-        Task<SchemaColumnsWarningModel> CreateSchemaColumnsWarning(SchemaColumnsWarningModel SchemaColumnsWarningModel);
+        Task<SchemaColumnsWarningModel> CreateSchemaColumnsWarning(SchemaColumnsWarningModel SchemaColumnsWarningModel, string userName);
         Task<List<SchemaColumnsWarningModel>> ReadSchemaColumnsWarning();
-        Task UpdateSchemaColumnsWarning(SchemaColumnsWarningModel SchemaColumnsWarningModel);
-        Task DeleteSchemaColumnsWarning(string id);
-        Task<SchemaColumnsWarningModel> ReadSchemaColumnsWarning(string id);
+        Task UpdateSchemaColumnsWarning(SchemaColumnsWarningModel SchemaColumnsWarningModel, string userName);
+        Task DeleteSchemaColumnsWarning(int id, string userName);
+        Task<SchemaColumnsWarningModel> ReadSchemaColumnsWarning(int id);
     }
     public class SchemaColumnsWarningService : ISchemaColumnsWarningService
     {
@@ -30,10 +30,10 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<SchemaColumnsWarningModel> CreateSchemaColumnsWarning(SchemaColumnsWarningModel model)
+        public async Task<SchemaColumnsWarningModel> CreateSchemaColumnsWarning(SchemaColumnsWarningModel model, string userName)
         {
             var result = _mapper.Map<SchemaColumnsWarning>(model);
-            await _repository.AddAsync(result);
+            await _repository.AddAsync(result, userName);
             model.IdSchemaColumnsWarning = result.IdSchemaColumnsWarning;
             return model;
         }
@@ -46,18 +46,18 @@ namespace BalanceGlobal.Service
             return result;
         }
 
-        public async Task UpdateSchemaColumnsWarning(SchemaColumnsWarningModel model)
+        public async Task UpdateSchemaColumnsWarning(SchemaColumnsWarningModel model, string userName)
         {
             var result = _mapper.Map<SchemaColumnsWarning>(model);
-            await _repository.UpdateAsync(result);
+            await _repository.UpdateAsync(result, userName);
         }
 
-        public async Task DeleteSchemaColumnsWarning(string id)
+        public async Task DeleteSchemaColumnsWarning(int id, string userName)
         {
-            await _repository.RemoveAsync(id);
+            await _repository.RemoveAsync(id, userName);
         }
 
-        public async Task<SchemaColumnsWarningModel> ReadSchemaColumnsWarning(string id)
+        public async Task<SchemaColumnsWarningModel> ReadSchemaColumnsWarning(int id)
         {
             var model = await _repository.GetById(id);
             var result = _mapper.Map<SchemaColumnsWarningModel>(model);

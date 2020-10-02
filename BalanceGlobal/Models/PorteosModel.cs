@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System;
+using System.Collections.Generic;
 
 namespace BalanceGlobal.Models
 {
@@ -30,6 +31,8 @@ namespace BalanceGlobal.Models
         public decimal? TkLimsSolPct { get; set; }
         public decimal? TkSiproSolPct { get; set; }
         public decimal? FlujoRepulpeo { get; set; }
+        public string UsuarioActualizacion { get; set; }
+        public DateTime? FechaActualizacion { get; set; }
 
     }
 }

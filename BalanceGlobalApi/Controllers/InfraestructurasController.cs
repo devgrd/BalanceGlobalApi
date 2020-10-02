@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -28,7 +29,7 @@ namespace BalanceGlobal.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<InfraestructurasModel>> GetInfraestructuras(int id)
         {
-            var _model = await _service.ReadInfraestructuras(id.ToString());
+            var _model = await _service.ReadInfraestructuras(id);
 
             if (_model == null)
             {
@@ -39,7 +40,7 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutInfraestructuras(int id, InfraestructurasModel model)
+        public async Task<IActionResult> PutInfraestructuras(int id, InfraestructurasModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdInfraestructuras)
             {
@@ -48,11 +49,11 @@ namespace BalanceGlobal.Api.Controllers
 
             try
             {
-                await _service.UpdateInfraestructuras(model);
+                await _service.UpdateInfraestructuras(model, userName);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (_service.ReadInfraestructuras(id.ToString()) == null)
+                if (_service.ReadInfraestructuras(id) == null)
                 {
                     return NotFound();
                 }
@@ -66,22 +67,22 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<InfraestructurasModel>> PostInfraestructuras(InfraestructurasModel model)
+        public async Task<ActionResult<InfraestructurasModel>> PostInfraestructuras(InfraestructurasModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateInfraestructuras(model);
+            var _model = await _service.CreateInfraestructuras(model, userName);
             return CreatedAtAction("GetInfraestructuras", new { id = _model.IdInfraestructuras }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<InfraestructurasModel>> DeleteInfraestructuras(int id)
+        public async Task<ActionResult<InfraestructurasModel>> DeleteInfraestructuras(int id, [Required][FromHeader] string userName)
         {
-            var _model = await _service.ReadInfraestructuras(id.ToString());
+            var _model = await _service.ReadInfraestructuras(id);
             if (_model == null)
             {
                 return NotFound();
             }
 
-            await _service.DeleteInfraestructuras(id.ToString());
+            await _service.DeleteInfraestructuras(id, userName);
 
             return _model;
         }

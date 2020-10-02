@@ -14,5 +14,8 @@ namespace BalanceGlobal.Database.Tables
         public decimal? SalmueraInfiltradaM3dia { get; set; }
         public string UsuarioActualizacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
+
+        public virtual Periodos IdPeriodosNavigation { get; set; }
+        public virtual SistemasSubSistemas IdSistemasSubsitemasNavigation { get; set; }
     }
 }
