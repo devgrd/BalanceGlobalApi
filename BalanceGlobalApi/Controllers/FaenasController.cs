@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using BalanceGlobal.Response;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -21,13 +22,13 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<FaenasModel>>> GetFaenas()
+        public async Task<ActionResult<ApiResponse>> GetFaenas()
         {
             return await _service.ReadFaenas();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<FaenasModel>> GetFaenas(int id)
+        public async Task<ActionResult<ApiResponse>> GetFaenas(int id)
         {
             var _model = await _service.ReadFaenas(id);
 
@@ -40,41 +41,27 @@ namespace BalanceGlobal.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFaenas(int id, FaenasModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<ApiResponse>> PutFaenas(int id, FaenasModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdFaenas)
             {
                 return BadRequest();
             }
 
-            try
-            {
-                await _service.UpdateFaenas(model, userName);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (_service.ReadFaenas(id) == null)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            var result = await _service.UpdateFaenas(model, userName);
 
-            return NoContent();
+            return result;
         }
 
         [HttpPost]
-        public async Task<ActionResult<FaenasModel>> PostFaenas(FaenasModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<ApiResponse>> PostFaenas(FaenasModel model, [Required][FromHeader] string userName)
         {
-            var _model = await _service.CreateFaenas(model, userName);
+            var _model = (await _service.CreateFaenas(model, userName)).Data as FaenasModel;
             return CreatedAtAction("GetFaenas", new { id = _model.IdFaenas }, _model);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<FaenasModel>> DeleteFaenas(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<ApiResponse>> DeleteFaenas(int id, [Required][FromHeader] string userName)
         {
             var _model = await _service.ReadFaenas(id);
             if (_model == null)
