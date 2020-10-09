@@ -40,7 +40,7 @@ namespace BalanceGlobal.AutoMapper
             CreateMap<ImpregnacionCosechas, ImpregnacionCosechasModel>(); CreateMap<ImpregnacionCosechasModel, ImpregnacionCosechas>();
             CreateMap<ImpregnacionSistemaRef, ImpregnacionSistemaRefModel>(); CreateMap<ImpregnacionSistemaRefModel, ImpregnacionSistemaRef>();
             CreateMap<Infraestructuras, InfraestructurasModel>(); CreateMap<InfraestructurasModel, Infraestructuras>();
-            CreateMap<InfraestruturasReinyeccion, InfraestruturasReinyeccionModel>(); CreateMap<InfraestruturasReinyeccionModel, InfraestruturasReinyeccion>();
+            CreateMap<InfraestructurasReinyeccion, InfraestructurasReinyeccionModel>(); CreateMap<InfraestructurasReinyeccionModel, InfraestructurasReinyeccion>();
             CreateMap<InventariosAtacama, InventariosAtacamaModel>(); CreateMap<InventariosAtacamaModel, InventariosAtacama>();
             CreateMap<ModalidadPci, ModalidadPciModel>(); CreateMap<ModalidadPciModel, ModalidadPci>();
             CreateMap<ModalidadPlantas, ModalidadPlantasModel>(); CreateMap<ModalidadPlantasModel, ModalidadPlantas>();
@@ -83,6 +83,15 @@ namespace BalanceGlobal.AutoMapper
             CreateMap<SchemaColumnsWarning, SchemaColumnsWarningModel>(); CreateMap<SchemaColumnsWarningModel, SchemaColumnsWarning>();
             CreateMap<SchemaDef, SchemaDefModel>(); CreateMap<SchemaDefModel, SchemaDef>();
 
+            CreateMap<DetallePerfil, DetallePerfilModel>(); CreateMap<DetallePerfilModel, DetallePerfil>();
+            CreateMap<Eventos, EventosModel>(); CreateMap<EventosModel, Eventos>();
+            CreateMap<DetallePerfil, DetallePerfilModel>(); CreateMap<DetallePerfilModel, DetallePerfil>();
+            CreateMap<Mensajes, MensajesModel>(); CreateMap<MensajesModel, Mensajes>();
+            CreateMap<PerfilesUsuario, PerfilesUsuarioModel>(); CreateMap<PerfilesUsuarioModel, PerfilesUsuario>();
+            CreateMap<SuscripcionEventos, SuscripcionEventosModel>(); CreateMap<SuscripcionEventosModel, SuscripcionEventos>();
+            CreateMap<Usuarios, UsuariosModel>(); CreateMap<UsuariosModel, Usuarios>();
+            CreateMap<UsuariosPerfilesUsuario, UsuariosPerfilesUsuarioModel>(); CreateMap<UsuariosPerfilesUsuarioModel, UsuariosPerfilesUsuario>();
+            CreateMap<WorkflowItem, WorkflowItemModel>(); CreateMap<WorkflowItemModel, WorkflowItem>();
 
         }
     }

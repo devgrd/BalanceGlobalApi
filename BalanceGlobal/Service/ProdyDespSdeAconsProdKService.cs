@@ -3,7 +3,12 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface IProdyDespSdeAconsProdKService
     {
-        Task<ProdyDespSdeAconsProdKModel> CreateProdyDespSdeAconsProdK(ProdyDespSdeAconsProdKModel ProdyDespSdeAconsProdKModel, string userName);
-        Task<List<ProdyDespSdeAconsProdKModel>> ReadProdyDespSdeAconsProdK();
-        Task UpdateProdyDespSdeAconsProdK(ProdyDespSdeAconsProdKModel ProdyDespSdeAconsProdKModel, string userName);
-        Task DeleteProdyDespSdeAconsProdK(int id, string userName);
-        Task<ProdyDespSdeAconsProdKModel> ReadProdyDespSdeAconsProdK(int id);
+        Task<ApiResponse> CreateProdyDespSdeAconsProdK(ProdyDespSdeAconsProdKModel ProdyDespSdeAconsProdKModel, string userName);
+        Task<ApiResponse> ReadProdyDespSdeAconsProdK();
+        Task<ApiResponse> UpdateProdyDespSdeAconsProdK(ProdyDespSdeAconsProdKModel ProdyDespSdeAconsProdKModel, string userName);
+        Task<ApiResponse> DeleteProdyDespSdeAconsProdK(int id, string userName);
+        Task<ApiResponse> ReadProdyDespSdeAconsProdK(int id);
     }
+
     public class ProdyDespSdeAconsProdKService : IProdyDespSdeAconsProdKService
     {
         private readonly IProdyDespSdeAconsProdKRepository _repository;
@@ -30,40 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ProdyDespSdeAconsProdKModel> CreateProdyDespSdeAconsProdK(ProdyDespSdeAconsProdKModel model, string userName)
+        public async Task<ApiResponse> CreateProdyDespSdeAconsProdK(ProdyDespSdeAconsProdKModel model, string userName)
         {
-            var result = _mapper.Map<ProdyDespSdeAconsProdK>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdProdyDespSdeAconsProdK = result.IdProdyDespSdeAconsProdK;
-            return model;
+            try
+            {
+                var result = _mapper.Map<ProdyDespSdeAconsProdK>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdProdyDespSdeAconsProdK = result.IdProdyDespSdeAconsProdK;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<ProdyDespSdeAconsProdKModel>> ReadProdyDespSdeAconsProdK()
+        public async Task<ApiResponse> ReadProdyDespSdeAconsProdK()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<ProdyDespSdeAconsProdKModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<ProdyDespSdeAconsProdKModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdateProdyDespSdeAconsProdK(ProdyDespSdeAconsProdKModel model, string userName)
+        public async Task<ApiResponse> UpdateProdyDespSdeAconsProdK(ProdyDespSdeAconsProdKModel model, string userName)
         {
-            var result = _mapper.Map<ProdyDespSdeAconsProdK>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdProdyDespSdeAconsProdK);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<ProdyDespSdeAconsProdK>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeleteProdyDespSdeAconsProdK(int id, string userName)
+        public async Task<ApiResponse> DeleteProdyDespSdeAconsProdK(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<ProdyDespSdeAconsProdKModel> ReadProdyDespSdeAconsProdK(int id)
+        public async Task<ApiResponse> ReadProdyDespSdeAconsProdK(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<ProdyDespSdeAconsProdKModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<ProdyDespSdeAconsProdKModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
+
     }
 }
+

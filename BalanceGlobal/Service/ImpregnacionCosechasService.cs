@@ -3,7 +3,12 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface IImpregnacionCosechasService
     {
-        Task<ImpregnacionCosechasModel> CreateImpregnacionCosechas(ImpregnacionCosechasModel ImpregnacionCosechasModel, string userName);
-        Task<List<ImpregnacionCosechasModel>> ReadImpregnacionCosechas();
-        Task UpdateImpregnacionCosechas(ImpregnacionCosechasModel ImpregnacionCosechasModel, string userName);
-        Task DeleteImpregnacionCosechas(int id, string userName);
-        Task<ImpregnacionCosechasModel> ReadImpregnacionCosechas(int id);
+        Task<ApiResponse> CreateImpregnacionCosechas(ImpregnacionCosechasModel ImpregnacionCosechasModel, string userName);
+        Task<ApiResponse> ReadImpregnacionCosechas();
+        Task<ApiResponse> UpdateImpregnacionCosechas(ImpregnacionCosechasModel ImpregnacionCosechasModel, string userName);
+        Task<ApiResponse> DeleteImpregnacionCosechas(int id, string userName);
+        Task<ApiResponse> ReadImpregnacionCosechas(int id);
     }
+
     public class ImpregnacionCosechasService : IImpregnacionCosechasService
     {
         private readonly IImpregnacionCosechasRepository _repository;
@@ -30,40 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ImpregnacionCosechasModel> CreateImpregnacionCosechas(ImpregnacionCosechasModel model, string userName)
+        public async Task<ApiResponse> CreateImpregnacionCosechas(ImpregnacionCosechasModel model, string userName)
         {
-            var result = _mapper.Map<ImpregnacionCosechas>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdImpregnacionCosechas = result.IdImpregnacionCosechas;
-            return model;
+            try
+            {
+                var result = _mapper.Map<ImpregnacionCosechas>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdImpregnacionCosechas = result.IdImpregnacionCosechas;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<ImpregnacionCosechasModel>> ReadImpregnacionCosechas()
+        public async Task<ApiResponse> ReadImpregnacionCosechas()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<ImpregnacionCosechasModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<ImpregnacionCosechasModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdateImpregnacionCosechas(ImpregnacionCosechasModel model, string userName)
+        public async Task<ApiResponse> UpdateImpregnacionCosechas(ImpregnacionCosechasModel model, string userName)
         {
-            var result = _mapper.Map<ImpregnacionCosechas>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdImpregnacionCosechas);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<ImpregnacionCosechas>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeleteImpregnacionCosechas(int id, string userName)
+        public async Task<ApiResponse> DeleteImpregnacionCosechas(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<ImpregnacionCosechasModel> ReadImpregnacionCosechas(int id)
+        public async Task<ApiResponse> ReadImpregnacionCosechas(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<ImpregnacionCosechasModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<ImpregnacionCosechasModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
+
     }
 }
+

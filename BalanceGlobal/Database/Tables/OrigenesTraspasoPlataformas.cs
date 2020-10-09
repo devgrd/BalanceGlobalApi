@@ -5,7 +5,7 @@ namespace BalanceGlobal.Database.Tables
 {
     public partial class OrigenesTraspasoPlataformas
     {
-        public int IdIdOrigenesTraspasoPlataformas { get; set; }
+        public int IdOrigenesTraspasoPlataformas { get; set; }
         public int IdInfraestructuras { get; set; }
         public int IdTraspasosPlataformas { get; set; }
         public string UsuarioActualizacion { get; set; }

@@ -3,7 +3,12 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface IConsumoEnergeticoService
     {
-        Task<ConsumoEnergeticoModel> CreateConsumoEnergetico(ConsumoEnergeticoModel ConsumoEnergeticoModel, string userName);
-        Task<List<ConsumoEnergeticoModel>> ReadConsumoEnergetico();
-        Task UpdateConsumoEnergetico(ConsumoEnergeticoModel ConsumoEnergeticoModel, string userName);
-        Task DeleteConsumoEnergetico(int id, string userName);
-        Task<ConsumoEnergeticoModel> ReadConsumoEnergetico(int id);
+        Task<ApiResponse> CreateConsumoEnergetico(ConsumoEnergeticoModel ConsumoEnergeticoModel, string userName);
+        Task<ApiResponse> ReadConsumoEnergetico();
+        Task<ApiResponse> UpdateConsumoEnergetico(ConsumoEnergeticoModel ConsumoEnergeticoModel, string userName);
+        Task<ApiResponse> DeleteConsumoEnergetico(int id, string userName);
+        Task<ApiResponse> ReadConsumoEnergetico(int id);
     }
+
     public class ConsumoEnergeticoService : IConsumoEnergeticoService
     {
         private readonly IConsumoEnergeticoRepository _repository;
@@ -30,40 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ConsumoEnergeticoModel> CreateConsumoEnergetico(ConsumoEnergeticoModel model, string userName)
+        public async Task<ApiResponse> CreateConsumoEnergetico(ConsumoEnergeticoModel model, string userName)
         {
-            var result = _mapper.Map<ConsumoEnergetico>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdConsumoEnergetico = result.IdConsumoEnergetico;
-            return model;
+            try
+            {
+                var result = _mapper.Map<ConsumoEnergetico>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdConsumoEnergetico = result.IdConsumoEnergetico;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<ConsumoEnergeticoModel>> ReadConsumoEnergetico()
+        public async Task<ApiResponse> ReadConsumoEnergetico()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<ConsumoEnergeticoModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<ConsumoEnergeticoModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdateConsumoEnergetico(ConsumoEnergeticoModel model, string userName)
+        public async Task<ApiResponse> UpdateConsumoEnergetico(ConsumoEnergeticoModel model, string userName)
         {
-            var result = _mapper.Map<ConsumoEnergetico>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdConsumoEnergetico);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<ConsumoEnergetico>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeleteConsumoEnergetico(int id, string userName)
+        public async Task<ApiResponse> DeleteConsumoEnergetico(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<ConsumoEnergeticoModel> ReadConsumoEnergetico(int id)
+        public async Task<ApiResponse> ReadConsumoEnergetico(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<ConsumoEnergeticoModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<ConsumoEnergeticoModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
+
     }
 }
+

@@ -3,7 +3,12 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface IPciacopiosCliService
     {
-        Task<PciacopiosCliModel> CreatePciacopiosCli(PciacopiosCliModel PciacopiosCliModel, string userName);
-        Task<List<PciacopiosCliModel>> ReadPciacopiosCli();
-        Task UpdatePciacopiosCli(PciacopiosCliModel PciacopiosCliModel, string userName);
-        Task DeletePciacopiosCli(int id, string userName);
-        Task<PciacopiosCliModel> ReadPciacopiosCli(int id);
+        Task<ApiResponse> CreatePciacopiosCli(PciacopiosCliModel PciacopiosCliModel, string userName);
+        Task<ApiResponse> ReadPciacopiosCli();
+        Task<ApiResponse> UpdatePciacopiosCli(PciacopiosCliModel PciacopiosCliModel, string userName);
+        Task<ApiResponse> DeletePciacopiosCli(int id, string userName);
+        Task<ApiResponse> ReadPciacopiosCli(int id);
     }
+
     public class PciacopiosCliService : IPciacopiosCliService
     {
         private readonly IPciacopiosCliRepository _repository;
@@ -30,40 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<PciacopiosCliModel> CreatePciacopiosCli(PciacopiosCliModel model, string userName)
+        public async Task<ApiResponse> CreatePciacopiosCli(PciacopiosCliModel model, string userName)
         {
-            var result = _mapper.Map<PciacopiosCli>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdPciacopiosCli = result.IdPciacopiosCli;
-            return model;
+            try
+            {
+                var result = _mapper.Map<PciacopiosCli>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdPciacopiosCli = result.IdPciacopiosCli;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<PciacopiosCliModel>> ReadPciacopiosCli()
+        public async Task<ApiResponse> ReadPciacopiosCli()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<PciacopiosCliModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<PciacopiosCliModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdatePciacopiosCli(PciacopiosCliModel model, string userName)
+        public async Task<ApiResponse> UpdatePciacopiosCli(PciacopiosCliModel model, string userName)
         {
-            var result = _mapper.Map<PciacopiosCli>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdPciacopiosCli);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<PciacopiosCli>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeletePciacopiosCli(int id, string userName)
+        public async Task<ApiResponse> DeletePciacopiosCli(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<PciacopiosCliModel> ReadPciacopiosCli(int id)
+        public async Task<ApiResponse> ReadPciacopiosCli(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<PciacopiosCliModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<PciacopiosCliModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
+
     }
 }
+

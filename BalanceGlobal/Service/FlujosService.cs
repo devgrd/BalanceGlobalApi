@@ -3,7 +3,12 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface IFlujosService
     {
-        Task<FlujosModel> CreateFlujos(FlujosModel FlujosModel, string userName);
-        Task<List<FlujosModel>> ReadFlujos();
-        Task UpdateFlujos(FlujosModel FlujosModel, string userName);
-        Task DeleteFlujos(int id, string userName);
-        Task<FlujosModel> ReadFlujos(int id);
+        Task<ApiResponse> CreateFlujos(FlujosModel FlujosModel, string userName);
+        Task<ApiResponse> ReadFlujos();
+        Task<ApiResponse> UpdateFlujos(FlujosModel FlujosModel, string userName);
+        Task<ApiResponse> DeleteFlujos(int id, string userName);
+        Task<ApiResponse> ReadFlujos(int id);
     }
+
     public class FlujosService : IFlujosService
     {
         private readonly IFlujosRepository _repository;
@@ -30,40 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<FlujosModel> CreateFlujos(FlujosModel model, string userName)
+        public async Task<ApiResponse> CreateFlujos(FlujosModel model, string userName)
         {
-            var result = _mapper.Map<Flujos>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdFlujos = result.IdFlujos;
-            return model;
+            try
+            {
+                var result = _mapper.Map<Flujos>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdFlujos = result.IdFlujos;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<FlujosModel>> ReadFlujos()
+        public async Task<ApiResponse> ReadFlujos()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<FlujosModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<FlujosModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdateFlujos(FlujosModel model, string userName)
+        public async Task<ApiResponse> UpdateFlujos(FlujosModel model, string userName)
         {
-            var result = _mapper.Map<Flujos>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdFlujos);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<Flujos>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeleteFlujos(int id, string userName)
+        public async Task<ApiResponse> DeleteFlujos(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<FlujosModel> ReadFlujos(int id)
+        public async Task<ApiResponse> ReadFlujos(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<FlujosModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<FlujosModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
+
     }
 }
+

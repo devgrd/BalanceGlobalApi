@@ -39,7 +39,9 @@ namespace BalanceGlobal.Database.Context
         public virtual DbSet<DatosEnLista> DatosEnLista { get; set; }
         public virtual DbSet<DescargaInfraestructurasDestino> DescargaInfraestructurasDestino { get; set; }
         public virtual DbSet<DescargaPlataformas> DescargaPlataformas { get; set; }
+        public virtual DbSet<DetallePerfil> DetallePerfil { get; set; }
         public virtual DbSet<EvaporacionInfiltracion> EvaporacionInfiltracion { get; set; }
+        public virtual DbSet<Eventos> Eventos { get; set; }
         public virtual DbSet<Extraccion> Extraccion { get; set; }
         public virtual DbSet<ExtraccionAgua> ExtraccionAgua { get; set; }
         public virtual DbSet<FactoresImpregnacion> FactoresImpregnacion { get; set; }
@@ -54,8 +56,9 @@ namespace BalanceGlobal.Database.Context
         public virtual DbSet<ImpregnacionCosechas> ImpregnacionCosechas { get; set; }
         public virtual DbSet<ImpregnacionSistemaRef> ImpregnacionSistemaRef { get; set; }
         public virtual DbSet<Infraestructuras> Infraestructuras { get; set; }
-        public virtual DbSet<InfraestruturasReinyeccion> InfraestruturasReinyeccion { get; set; }
+        public virtual DbSet<InfraestructurasReinyeccion> InfraestructurasReinyeccion { get; set; }
         public virtual DbSet<InventariosAtacama> InventariosAtacama { get; set; }
+        public virtual DbSet<Mensajes> Mensajes { get; set; }
         public virtual DbSet<MensajesImportacion> MensajesImportacion { get; set; }
         public virtual DbSet<ModalidadPci> ModalidadPci { get; set; }
         public virtual DbSet<ModalidadPlantas> ModalidadPlantas { get; set; }
@@ -65,6 +68,7 @@ namespace BalanceGlobal.Database.Context
         public virtual DbSet<PciacopiosCli> PciacopiosCli { get; set; }
         public virtual DbSet<PciacopiosOrigen> PciacopiosOrigen { get; set; }
         public virtual DbSet<Pcimodos> Pcimodos { get; set; }
+        public virtual DbSet<PerfilesUsuario> PerfilesUsuario { get; set; }
         public virtual DbSet<Periodos> Periodos { get; set; }
         public virtual DbSet<PeriodosOperacionales> PeriodosOperacionales { get; set; }
         public virtual DbSet<Permeabilidad> Permeabilidad { get; set; }
@@ -83,6 +87,7 @@ namespace BalanceGlobal.Database.Context
         public virtual DbSet<Sistemas> Sistemas { get; set; }
         public virtual DbSet<SistemasSubSistemas> SistemasSubSistemas { get; set; }
         public virtual DbSet<SubSistemas> SubSistemas { get; set; }
+        public virtual DbSet<SuscripcionEventos> SuscripcionEventos { get; set; }
         public virtual DbSet<TasaEvaporacion> TasaEvaporacion { get; set; }
         public virtual DbSet<TipoInfraestructuras> TipoInfraestructuras { get; set; }
         public virtual DbSet<TipoPci> TipoPci { get; set; }
@@ -90,6 +95,9 @@ namespace BalanceGlobal.Database.Context
         public virtual DbSet<TiposInventario> TiposInventario { get; set; }
         public virtual DbSet<TransSistemasCosechas> TransSistemasCosechas { get; set; }
         public virtual DbSet<TraspasosPlataformas> TraspasosPlataformas { get; set; }
+        public virtual DbSet<Usuarios> Usuarios { get; set; }
+        public virtual DbSet<UsuariosPerfilesUsuario> UsuariosPerfilesUsuario { get; set; }
+        public virtual DbSet<WorkflowItem> WorkflowItem { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1234,6 +1242,24 @@ namespace BalanceGlobal.Database.Context
                     .HasConstraintName("FK_DescargaPlataformas_IdTipoSal");
             });
 
+            modelBuilder.Entity<DetallePerfil>(entity =>
+            {
+                entity.HasKey(e => e.IdDetallePerfil);
+
+                entity.ToTable("DetallePerfil", "internals");
+
+                entity.HasOne(d => d.IdPerfilUsuarioNavigation)
+                    .WithMany(p => p.DetallePerfil)
+                    .HasForeignKey(d => d.IdPerfilUsuario)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_DetallePerfil_PerfilesUsuario");
+
+                entity.HasOne(d => d.IdWorkflowItemNavigation)
+                    .WithMany(p => p.DetallePerfil)
+                    .HasForeignKey(d => d.IdWorkflowItem)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
             modelBuilder.Entity<EvaporacionInfiltracion>(entity =>
             {
                 entity.HasKey(e => e.IdEvaporacionInfiltracion)
@@ -1311,6 +1337,24 @@ namespace BalanceGlobal.Database.Context
                     .WithMany(p => p.EvaporacionInfiltracion)
                     .HasForeignKey(d => d.IdSistemas)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<Eventos>(entity =>
+            {
+                entity.HasKey(e => e.IdEventos)
+                    .HasName("PK_Eventos_IdEvento")
+                    .IsClustered(false);
+
+                entity.ToTable("Eventos", "internals");
+
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(4000)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Evento)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<Extraccion>(entity =>
@@ -1869,7 +1913,7 @@ namespace BalanceGlobal.Database.Context
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
-            modelBuilder.Entity<InfraestruturasReinyeccion>(entity =>
+            modelBuilder.Entity<InfraestructurasReinyeccion>(entity =>
             {
                 entity.HasKey(e => e.IdInfraestructurasReinyeccion)
                     .HasName("PK_InfraestruturasReinyeccion_IdInfraestructurasReinyeccion");
@@ -1889,13 +1933,13 @@ namespace BalanceGlobal.Database.Context
                     .IsUnicode(false);
 
                 entity.HasOne(d => d.IdInfraestructurasNavigation)
-                    .WithOne(p => p.InfraestruturasReinyeccion)
-                    .HasForeignKey<InfraestruturasReinyeccion>(d => d.IdInfraestructuras)
+                    .WithOne(p => p.InfraestructurasReinyeccion)
+                    .HasForeignKey<InfraestructurasReinyeccion>(d => d.IdInfraestructuras)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_InfraestruturasReinyeccion_IdInfraestructura");
 
                 entity.HasOne(d => d.IdSistemasSubsistemasNavigation)
-                    .WithMany(p => p.InfraestruturasReinyeccion)
+                    .WithMany(p => p.InfraestructurasReinyeccion)
                     .HasForeignKey(d => d.IdSistemasSubsistemas)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_InfraestruturasReinyeccion_IdSistema_Subsistema");
@@ -2022,6 +2066,36 @@ namespace BalanceGlobal.Database.Context
                     .WithMany(p => p.InventariosAtacama)
                     .HasForeignKey(d => d.IdTiposInventario)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<Mensajes>(entity =>
+            {
+                entity.HasKey(e => e.IdMensajes);
+
+                entity.ToTable("Mensajes", "internals");
+
+                entity.HasIndex(e => new { e.Tipo, e.Idioma, e.Codigo })
+                    .HasName("UQ_Mensajes_PK")
+                    .IsUnique();
+
+                entity.Property(e => e.Cuerpo)
+                    .IsRequired()
+                    .HasMaxLength(400)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Idioma)
+                    .IsRequired()
+                    .HasMaxLength(2)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Tipo)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Titulo)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<MensajesImportacion>(entity =>
@@ -2253,7 +2327,7 @@ namespace BalanceGlobal.Database.Context
 
             modelBuilder.Entity<OrigenesTraspasoPlataformas>(entity =>
             {
-                entity.HasKey(e => e.IdIdOrigenesTraspasoPlataformas)
+                entity.HasKey(e => e.IdOrigenesTraspasoPlataformas)
                     .HasName("PK_OrigenesTraspasoPlataformas_IdIdOrigenesTraspasoPlataformas");
 
                 entity.HasIndex(e => new { e.IdInfraestructuras, e.IdTraspasosPlataformas })
@@ -2437,6 +2511,23 @@ namespace BalanceGlobal.Database.Context
                     .WithMany(p => p.Pcimodos)
                     .HasForeignKey(d => d.IdTipoPci)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<PerfilesUsuario>(entity =>
+            {
+                entity.HasKey(e => e.IdPerfilUsuario)
+                    .HasName("PK_PerfilUsuario_IdPerfilUsuario");
+
+                entity.ToTable("PerfilesUsuario", "internals");
+
+                entity.Property(e => e.DescripcionPerfiles)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.NombrePerfilUsuario)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<Periodos>(entity =>
@@ -3006,6 +3097,10 @@ namespace BalanceGlobal.Database.Context
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Guide)
+                    .HasDefaultValueSql("((0))")
+                    .HasComment("Si no hay datos esta columna se saltara toda la fila");
+
                 entity.Property(e => e.NombreCol)
                     .IsRequired()
                     .HasMaxLength(100)
@@ -3191,6 +3286,24 @@ namespace BalanceGlobal.Database.Context
                 entity.Property(e => e.UsuarioActualizacion)
                     .HasMaxLength(50)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<SuscripcionEventos>(entity =>
+            {
+                entity.HasKey(e => e.IdSuscripcionEventos)
+                    .HasName("PK_SuscripcionEventos_IdSuscripcionEvento");
+
+                entity.ToTable("SuscripcionEventos", "internals");
+
+                entity.HasOne(d => d.IdEventosNavigation)
+                    .WithMany(p => p.SuscripcionEventos)
+                    .HasForeignKey(d => d.IdEventos)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.IdUsuariosNavigation)
+                    .WithMany(p => p.SuscripcionEventos)
+                    .HasForeignKey(d => d.IdUsuarios)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<TasaEvaporacion>(entity =>
@@ -3424,6 +3537,81 @@ namespace BalanceGlobal.Database.Context
                     .HasForeignKey(d => d.IdPlataforma)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TraspasosPlataformas_Infraestructuras_IdInfraestructuras");
+            });
+
+            modelBuilder.Entity<Usuarios>(entity =>
+            {
+                entity.HasKey(e => e.IdUsuarios)
+                    .HasName("PK_Usuarios_IdUsuarios");
+
+                entity.ToTable("Usuarios", "internals");
+
+                entity.HasIndex(e => e.Uid)
+                    .HasName("UK_Usuarios_uid")
+                    .IsUnique();
+
+                entity.Property(e => e.Apellido)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Nombre)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Uid)
+                    .HasColumnName("uid")
+                    .HasDefaultValueSql("(newid())");
+            });
+
+            modelBuilder.Entity<UsuariosPerfilesUsuario>(entity =>
+            {
+                entity.HasKey(e => e.IdUsuariosPerfilesUsuario)
+                    .HasName("PK_UsuariosPerfilesUsuario_IdUsuariosPerfilesUsuario");
+
+                entity.ToTable("UsuariosPerfilesUsuario", "internals");
+
+                entity.HasIndex(e => new { e.IdPerfilUsuario, e.IdUsuarios })
+                    .HasName("UK_UsuariosPerfilesUsuario")
+                    .IsUnique();
+
+                entity.HasOne(d => d.IdPerfilUsuarioNavigation)
+                    .WithMany(p => p.UsuariosPerfilesUsuario)
+                    .HasForeignKey(d => d.IdPerfilUsuario)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_UsuariosPerfilesUsuario_PerfilesUsuario");
+
+                entity.HasOne(d => d.IdUsuariosNavigation)
+                    .WithMany(p => p.UsuariosPerfilesUsuario)
+                    .HasForeignKey(d => d.IdUsuarios)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<WorkflowItem>(entity =>
+            {
+                entity.HasKey(e => e.IdWorkflowItem);
+
+                entity.ToTable("WorkflowItem", "internals");
+
+                entity.Property(e => e.Alias)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Icono)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.NombreCategoria)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             OnModelCreatingPartial(modelBuilder);

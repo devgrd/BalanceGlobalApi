@@ -3,7 +3,12 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface IPeriodosOperacionalesService
     {
-        Task<PeriodosOperacionalesModel> CreatePeriodosOperacionales(PeriodosOperacionalesModel PeriodosOperacionalesModel, string userName);
-        Task<List<PeriodosOperacionalesModel>> ReadPeriodosOperacionales();
-        Task UpdatePeriodosOperacionales(PeriodosOperacionalesModel PeriodosOperacionalesModel, string userName);
-        Task DeletePeriodosOperacionales(int id, string userName);
-        Task<PeriodosOperacionalesModel> ReadPeriodosOperacionales(int id);
+        Task<ApiResponse> CreatePeriodosOperacionales(PeriodosOperacionalesModel PeriodosOperacionalesModel, string userName);
+        Task<ApiResponse> ReadPeriodosOperacionales();
+        Task<ApiResponse> UpdatePeriodosOperacionales(PeriodosOperacionalesModel PeriodosOperacionalesModel, string userName);
+        Task<ApiResponse> DeletePeriodosOperacionales(int id, string userName);
+        Task<ApiResponse> ReadPeriodosOperacionales(int id);
     }
+
     public class PeriodosOperacionalesService : IPeriodosOperacionalesService
     {
         private readonly IPeriodosOperacionalesRepository _repository;
@@ -30,40 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<PeriodosOperacionalesModel> CreatePeriodosOperacionales(PeriodosOperacionalesModel model, string userName)
+        public async Task<ApiResponse> CreatePeriodosOperacionales(PeriodosOperacionalesModel model, string userName)
         {
-            var result = _mapper.Map<PeriodosOperacionales>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdPeriodosOperacionales = result.IdPeriodosOperacionales;
-            return model;
+            try
+            {
+                var result = _mapper.Map<PeriodosOperacionales>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdPeriodosOperacionales = result.IdPeriodosOperacionales;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<PeriodosOperacionalesModel>> ReadPeriodosOperacionales()
+        public async Task<ApiResponse> ReadPeriodosOperacionales()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<PeriodosOperacionalesModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<PeriodosOperacionalesModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdatePeriodosOperacionales(PeriodosOperacionalesModel model, string userName)
+        public async Task<ApiResponse> UpdatePeriodosOperacionales(PeriodosOperacionalesModel model, string userName)
         {
-            var result = _mapper.Map<PeriodosOperacionales>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdPeriodosOperacionales);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<PeriodosOperacionales>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeletePeriodosOperacionales(int id, string userName)
+        public async Task<ApiResponse> DeletePeriodosOperacionales(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<PeriodosOperacionalesModel> ReadPeriodosOperacionales(int id)
+        public async Task<ApiResponse> ReadPeriodosOperacionales(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<PeriodosOperacionalesModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<PeriodosOperacionalesModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
+
     }
 }
+

@@ -3,7 +3,12 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface ICkmopIiquimaPorteoService
     {
-        Task<CkmopIiquimaPorteoModel> CreateCkmopIiquimaPorteo(CkmopIiquimaPorteoModel CkmopIiquimaPorteoModel, string userName);
-        Task<List<CkmopIiquimaPorteoModel>> ReadCkmopIiquimaPorteo();
-        Task UpdateCkmopIiquimaPorteo(CkmopIiquimaPorteoModel CkmopIiquimaPorteoModel, string userName);
-        Task DeleteCkmopIiquimaPorteo(int id, string userName);
-        Task<CkmopIiquimaPorteoModel> ReadCkmopIiquimaPorteo(int id);
+        Task<ApiResponse> CreateCkmopIiquimaPorteo(CkmopIiquimaPorteoModel CkmopIiquimaPorteoModel, string userName);
+        Task<ApiResponse> ReadCkmopIiquimaPorteo();
+        Task<ApiResponse> UpdateCkmopIiquimaPorteo(CkmopIiquimaPorteoModel CkmopIiquimaPorteoModel, string userName);
+        Task<ApiResponse> DeleteCkmopIiquimaPorteo(int id, string userName);
+        Task<ApiResponse> ReadCkmopIiquimaPorteo(int id);
     }
+
     public class CkmopIiquimaPorteoService : ICkmopIiquimaPorteoService
     {
         private readonly ICkmopIiquimaPorteoRepository _repository;
@@ -30,40 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<CkmopIiquimaPorteoModel> CreateCkmopIiquimaPorteo(CkmopIiquimaPorteoModel model, string userName)
+        public async Task<ApiResponse> CreateCkmopIiquimaPorteo(CkmopIiquimaPorteoModel model, string userName)
         {
-            var result = _mapper.Map<CkmopIiquimaPorteo>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdCkmopIiquimaPorteo = result.IdCkmopIiquimaPorteo;
-            return model;
+            try
+            {
+                var result = _mapper.Map<CkmopIiquimaPorteo>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdCkmopIiquimaPorteo = result.IdCkmopIiquimaPorteo;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<CkmopIiquimaPorteoModel>> ReadCkmopIiquimaPorteo()
+        public async Task<ApiResponse> ReadCkmopIiquimaPorteo()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<CkmopIiquimaPorteoModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<CkmopIiquimaPorteoModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdateCkmopIiquimaPorteo(CkmopIiquimaPorteoModel model, string userName)
+        public async Task<ApiResponse> UpdateCkmopIiquimaPorteo(CkmopIiquimaPorteoModel model, string userName)
         {
-            var result = _mapper.Map<CkmopIiquimaPorteo>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdCkmopIiquimaPorteo);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<CkmopIiquimaPorteo>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeleteCkmopIiquimaPorteo(int id, string userName)
+        public async Task<ApiResponse> DeleteCkmopIiquimaPorteo(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<CkmopIiquimaPorteoModel> ReadCkmopIiquimaPorteo(int id)
+        public async Task<ApiResponse> ReadCkmopIiquimaPorteo(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<CkmopIiquimaPorteoModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<CkmopIiquimaPorteoModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
+
     }
 }
+

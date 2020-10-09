@@ -3,7 +3,12 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface ICargaPlataformasService
     {
-        Task<CargaPlataformasModel> CreateCargaPlataformas(CargaPlataformasModel CargaPlataformasModel, string userName);
-        Task<List<CargaPlataformasModel>> ReadCargaPlataformas();
-        Task UpdateCargaPlataformas(CargaPlataformasModel CargaPlataformasModel, string userName);
-        Task DeleteCargaPlataformas(int id, string userName);
-        Task<CargaPlataformasModel> ReadCargaPlataformas(int id);
+        Task<ApiResponse> CreateCargaPlataformas(CargaPlataformasModel CargaPlataformasModel, string userName);
+        Task<ApiResponse> ReadCargaPlataformas();
+        Task<ApiResponse> UpdateCargaPlataformas(CargaPlataformasModel CargaPlataformasModel, string userName);
+        Task<ApiResponse> DeleteCargaPlataformas(int id, string userName);
+        Task<ApiResponse> ReadCargaPlataformas(int id);
     }
+
     public class CargaPlataformasService : ICargaPlataformasService
     {
         private readonly ICargaPlataformasRepository _repository;
@@ -30,40 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<CargaPlataformasModel> CreateCargaPlataformas(CargaPlataformasModel model, string userName)
+        public async Task<ApiResponse> CreateCargaPlataformas(CargaPlataformasModel model, string userName)
         {
-            var result = _mapper.Map<CargaPlataformas>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdCargaPlataformas = result.IdCargaPlataformas;
-            return model;
+            try
+            {
+                var result = _mapper.Map<CargaPlataformas>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdCargaPlataformas = result.IdCargaPlataformas;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<CargaPlataformasModel>> ReadCargaPlataformas()
+        public async Task<ApiResponse> ReadCargaPlataformas()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<CargaPlataformasModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<CargaPlataformasModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdateCargaPlataformas(CargaPlataformasModel model, string userName)
+        public async Task<ApiResponse> UpdateCargaPlataformas(CargaPlataformasModel model, string userName)
         {
-            var result = _mapper.Map<CargaPlataformas>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdCargaPlataformas);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<CargaPlataformas>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeleteCargaPlataformas(int id, string userName)
+        public async Task<ApiResponse> DeleteCargaPlataformas(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<CargaPlataformasModel> ReadCargaPlataformas(int id)
+        public async Task<ApiResponse> ReadCargaPlataformas(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<CargaPlataformasModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<CargaPlataformasModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
+
     }
 }
+
