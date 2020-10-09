@@ -3,7 +3,12 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface ITraspasosPlataformasService
     {
-        Task<TraspasosPlataformasModel> CreateTraspasosPlataformas(TraspasosPlataformasModel TraspasosPlataformasModel, string userName);
-        Task<List<TraspasosPlataformasModel>> ReadTraspasosPlataformas();
-        Task UpdateTraspasosPlataformas(TraspasosPlataformasModel TraspasosPlataformasModel, string userName);
-        Task DeleteTraspasosPlataformas(int id, string userName);
-        Task<TraspasosPlataformasModel> ReadTraspasosPlataformas(int id);
+        Task<ApiResponse> CreateTraspasosPlataformas(TraspasosPlataformasModel TraspasosPlataformasModel, string userName);
+        Task<ApiResponse> ReadTraspasosPlataformas();
+        Task<ApiResponse> UpdateTraspasosPlataformas(TraspasosPlataformasModel TraspasosPlataformasModel, string userName);
+        Task<ApiResponse> DeleteTraspasosPlataformas(int id, string userName);
+        Task<ApiResponse> ReadTraspasosPlataformas(int id);
     }
+
     public class TraspasosPlataformasService : ITraspasosPlataformasService
     {
         private readonly ITraspasosPlataformasRepository _repository;
@@ -30,40 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<TraspasosPlataformasModel> CreateTraspasosPlataformas(TraspasosPlataformasModel model, string userName)
+        public async Task<ApiResponse> CreateTraspasosPlataformas(TraspasosPlataformasModel model, string userName)
         {
-            var result = _mapper.Map<TraspasosPlataformas>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdTraspasosPlataformas = result.IdTraspasosPlataformas;
-            return model;
+            try
+            {
+                var result = _mapper.Map<TraspasosPlataformas>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdTraspasosPlataformas = result.IdTraspasosPlataformas;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<TraspasosPlataformasModel>> ReadTraspasosPlataformas()
+        public async Task<ApiResponse> ReadTraspasosPlataformas()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<TraspasosPlataformasModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<TraspasosPlataformasModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdateTraspasosPlataformas(TraspasosPlataformasModel model, string userName)
+        public async Task<ApiResponse> UpdateTraspasosPlataformas(TraspasosPlataformasModel model, string userName)
         {
-            var result = _mapper.Map<TraspasosPlataformas>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdTraspasosPlataformas);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<TraspasosPlataformas>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeleteTraspasosPlataformas(int id, string userName)
+        public async Task<ApiResponse> DeleteTraspasosPlataformas(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<TraspasosPlataformasModel> ReadTraspasosPlataformas(int id)
+        public async Task<ApiResponse> ReadTraspasosPlataformas(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<TraspasosPlataformasModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<TraspasosPlataformasModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
+
     }
 }
+

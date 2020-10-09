@@ -3,7 +3,12 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface IConsDespachoService
     {
-        Task<ConsDespachoModel> CreateConsDespacho(ConsDespachoModel ConsDespachoModel, string userName);
-        Task<List<ConsDespachoModel>> ReadConsDespacho();
-        Task UpdateConsDespacho(ConsDespachoModel ConsDespachoModel, string userName);
-        Task DeleteConsDespacho(int id, string userName);
-        Task<ConsDespachoModel> ReadConsDespacho(int id);
+        Task<ApiResponse> CreateConsDespacho(ConsDespachoModel ConsDespachoModel, string userName);
+        Task<ApiResponse> ReadConsDespacho();
+        Task<ApiResponse> UpdateConsDespacho(ConsDespachoModel ConsDespachoModel, string userName);
+        Task<ApiResponse> DeleteConsDespacho(int id, string userName);
+        Task<ApiResponse> ReadConsDespacho(int id);
     }
+
     public class ConsDespachoService : IConsDespachoService
     {
         private readonly IConsDespachoRepository _repository;
@@ -30,40 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ConsDespachoModel> CreateConsDespacho(ConsDespachoModel model, string userName)
+        public async Task<ApiResponse> CreateConsDespacho(ConsDespachoModel model, string userName)
         {
-            var result = _mapper.Map<ConsDespacho>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdConsDespacho = result.IdConsDespacho;
-            return model;
+            try
+            {
+                var result = _mapper.Map<ConsDespacho>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdConsDespacho = result.IdConsDespacho;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<ConsDespachoModel>> ReadConsDespacho()
+        public async Task<ApiResponse> ReadConsDespacho()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<ConsDespachoModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<ConsDespachoModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdateConsDespacho(ConsDespachoModel model, string userName)
+        public async Task<ApiResponse> UpdateConsDespacho(ConsDespachoModel model, string userName)
         {
-            var result = _mapper.Map<ConsDespacho>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdConsDespacho);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<ConsDespacho>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeleteConsDespacho(int id, string userName)
+        public async Task<ApiResponse> DeleteConsDespacho(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<ConsDespachoModel> ReadConsDespacho(int id)
+        public async Task<ApiResponse> ReadConsDespacho(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<ConsDespachoModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<ConsDespachoModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
+
     }
 }
+

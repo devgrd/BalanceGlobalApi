@@ -3,7 +3,12 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface IExtraccionAguaService
     {
-        Task<ExtraccionAguaModel> CreateExtraccionAgua(ExtraccionAguaModel ExtraccionAguaModel, string userName);
-        Task<List<ExtraccionAguaModel>> ReadExtraccionAgua();
-        Task UpdateExtraccionAgua(ExtraccionAguaModel ExtraccionAguaModel, string userName);
-        Task DeleteExtraccionAgua(int id, string userName);
-        Task<ExtraccionAguaModel> ReadExtraccionAgua(int id);
+        Task<ApiResponse> CreateExtraccionAgua(ExtraccionAguaModel ExtraccionAguaModel, string userName);
+        Task<ApiResponse> ReadExtraccionAgua();
+        Task<ApiResponse> UpdateExtraccionAgua(ExtraccionAguaModel ExtraccionAguaModel, string userName);
+        Task<ApiResponse> DeleteExtraccionAgua(int id, string userName);
+        Task<ApiResponse> ReadExtraccionAgua(int id);
     }
+
     public class ExtraccionAguaService : IExtraccionAguaService
     {
         private readonly IExtraccionAguaRepository _repository;
@@ -30,40 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ExtraccionAguaModel> CreateExtraccionAgua(ExtraccionAguaModel model, string userName)
+        public async Task<ApiResponse> CreateExtraccionAgua(ExtraccionAguaModel model, string userName)
         {
-            var result = _mapper.Map<ExtraccionAgua>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdExtraccionAgua = result.IdExtraccionAgua;
-            return model;
+            try
+            {
+                var result = _mapper.Map<ExtraccionAgua>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdExtraccionAgua = result.IdExtraccionAgua;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<ExtraccionAguaModel>> ReadExtraccionAgua()
+        public async Task<ApiResponse> ReadExtraccionAgua()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<ExtraccionAguaModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<ExtraccionAguaModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdateExtraccionAgua(ExtraccionAguaModel model, string userName)
+        public async Task<ApiResponse> UpdateExtraccionAgua(ExtraccionAguaModel model, string userName)
         {
-            var result = _mapper.Map<ExtraccionAgua>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdExtraccionAgua);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<ExtraccionAgua>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeleteExtraccionAgua(int id, string userName)
+        public async Task<ApiResponse> DeleteExtraccionAgua(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<ExtraccionAguaModel> ReadExtraccionAgua(int id)
+        public async Task<ApiResponse> ReadExtraccionAgua(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<ExtraccionAguaModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<ExtraccionAguaModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
+
     }
 }
+

@@ -3,7 +3,12 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface ITasaEvaporacionService
     {
-        Task<TasaEvaporacionModel> CreateTasaEvaporacion(TasaEvaporacionModel TasaEvaporacionModel, string userName);
-        Task<List<TasaEvaporacionModel>> ReadTasaEvaporacion();
-        Task UpdateTasaEvaporacion(TasaEvaporacionModel TasaEvaporacionModel, string userName);
-        Task DeleteTasaEvaporacion(int id, string userName);
-        Task<TasaEvaporacionModel> ReadTasaEvaporacion(int id);
+        Task<ApiResponse> CreateTasaEvaporacion(TasaEvaporacionModel TasaEvaporacionModel, string userName);
+        Task<ApiResponse> ReadTasaEvaporacion();
+        Task<ApiResponse> UpdateTasaEvaporacion(TasaEvaporacionModel TasaEvaporacionModel, string userName);
+        Task<ApiResponse> DeleteTasaEvaporacion(int id, string userName);
+        Task<ApiResponse> ReadTasaEvaporacion(int id);
     }
+
     public class TasaEvaporacionService : ITasaEvaporacionService
     {
         private readonly ITasaEvaporacionRepository _repository;
@@ -30,40 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<TasaEvaporacionModel> CreateTasaEvaporacion(TasaEvaporacionModel model, string userName)
+        public async Task<ApiResponse> CreateTasaEvaporacion(TasaEvaporacionModel model, string userName)
         {
-            var result = _mapper.Map<TasaEvaporacion>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdTasaEvaporacion = result.IdTasaEvaporacion;
-            return model;
+            try
+            {
+                var result = _mapper.Map<TasaEvaporacion>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdTasaEvaporacion = result.IdTasaEvaporacion;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<TasaEvaporacionModel>> ReadTasaEvaporacion()
+        public async Task<ApiResponse> ReadTasaEvaporacion()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<TasaEvaporacionModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<TasaEvaporacionModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdateTasaEvaporacion(TasaEvaporacionModel model, string userName)
+        public async Task<ApiResponse> UpdateTasaEvaporacion(TasaEvaporacionModel model, string userName)
         {
-            var result = _mapper.Map<TasaEvaporacion>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdTasaEvaporacion);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<TasaEvaporacion>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeleteTasaEvaporacion(int id, string userName)
+        public async Task<ApiResponse> DeleteTasaEvaporacion(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<TasaEvaporacionModel> ReadTasaEvaporacion(int id)
+        public async Task<ApiResponse> ReadTasaEvaporacion(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<TasaEvaporacionModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<TasaEvaporacionModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
+
     }
 }
+

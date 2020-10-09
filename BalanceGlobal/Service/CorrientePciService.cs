@@ -3,7 +3,12 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface ICorrientePciService
     {
-        Task<CorrientePciModel> CreateCorrientePci(CorrientePciModel CorrientePciModel, string userName);
-        Task<List<CorrientePciModel>> ReadCorrientePci();
-        Task UpdateCorrientePci(CorrientePciModel CorrientePciModel, string userName);
-        Task DeleteCorrientePci(int id, string userName);
-        Task<CorrientePciModel> ReadCorrientePci(int id);
+        Task<ApiResponse> CreateCorrientePci(CorrientePciModel CorrientePciModel, string userName);
+        Task<ApiResponse> ReadCorrientePci();
+        Task<ApiResponse> UpdateCorrientePci(CorrientePciModel CorrientePciModel, string userName);
+        Task<ApiResponse> DeleteCorrientePci(int id, string userName);
+        Task<ApiResponse> ReadCorrientePci(int id);
     }
+
     public class CorrientePciService : ICorrientePciService
     {
         private readonly ICorrientePciRepository _repository;
@@ -30,40 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<CorrientePciModel> CreateCorrientePci(CorrientePciModel model, string userName)
+        public async Task<ApiResponse> CreateCorrientePci(CorrientePciModel model, string userName)
         {
-            var result = _mapper.Map<CorrientePci>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdCorrientePci = result.IdCorrientePci;
-            return model;
+            try
+            {
+                var result = _mapper.Map<CorrientePci>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdCorrientePci = result.IdCorrientePci;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<CorrientePciModel>> ReadCorrientePci()
+        public async Task<ApiResponse> ReadCorrientePci()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<CorrientePciModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<CorrientePciModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdateCorrientePci(CorrientePciModel model, string userName)
+        public async Task<ApiResponse> UpdateCorrientePci(CorrientePciModel model, string userName)
         {
-            var result = _mapper.Map<CorrientePci>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdCorrientePci);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<CorrientePci>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeleteCorrientePci(int id, string userName)
+        public async Task<ApiResponse> DeleteCorrientePci(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<CorrientePciModel> ReadCorrientePci(int id)
+        public async Task<ApiResponse> ReadCorrientePci(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<CorrientePciModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<CorrientePciModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
+
     }
 }
+

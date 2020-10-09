@@ -3,6 +3,7 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -15,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface IFaenasService
     {
-        Task<FaenasModel> CreateFaenas(FaenasModel FaenasModel, string userName);
-        Task<List<FaenasModel>> ReadFaenas();
-        Task UpdateFaenas(FaenasModel FaenasModel, string userName);
-        Task DeleteFaenas(int id, string userName);
-        Task<FaenasModel> ReadFaenas(int id);
+        Task<ApiResponse> CreateFaenas(FaenasModel FaenasModel, string userName);
+        Task<ApiResponse> ReadFaenas();
+        Task<ApiResponse> UpdateFaenas(FaenasModel FaenasModel, string userName);
+        Task<ApiResponse> DeleteFaenas(int id, string userName);
+        Task<ApiResponse> ReadFaenas(int id);
     }
+
     public class FaenasService : IFaenasService
     {
         private readonly IFaenasRepository _repository;
@@ -34,42 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<FaenasModel> CreateFaenas(FaenasModel model, string userName)
+        public async Task<ApiResponse> CreateFaenas(FaenasModel model, string userName)
         {
-            var result = _mapper.Map<Faenas>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdFaenas = result.IdFaenas;
-            return model;
+            try
+            {
+                var result = _mapper.Map<Faenas>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdFaenas = result.IdFaenas;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<FaenasModel>> ReadFaenas()
+        public async Task<ApiResponse> ReadFaenas()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<FaenasModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<FaenasModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdateFaenas(FaenasModel model, string userName)
+        public async Task<ApiResponse> UpdateFaenas(FaenasModel model, string userName)
         {
-            var result = _mapper.Map<Faenas>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdFaenas);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<Faenas>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeleteFaenas(int id, string userName)
+        public async Task<ApiResponse> DeleteFaenas(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);          
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<FaenasModel> ReadFaenas(int id)
+        public async Task<ApiResponse> ReadFaenas(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<FaenasModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<FaenasModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
 
-
     }
 }
+

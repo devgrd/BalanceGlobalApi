@@ -30,7 +30,7 @@ namespace BalanceGlobalApi
             .AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                //options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
             });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -44,9 +44,9 @@ namespace BalanceGlobalApi
 
             services.AddDbContext<BalanceGlobalContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BalanceGlobalContext")));
 
-
             #region Services
 
+            services.AddTransient<IBombasService, BombasService>();
             services.AddTransient<ICargaPlataformasService, CargaPlataformasService>();
             services.AddTransient<ICategoriaConsumoAguaService, CategoriaConsumoAguaService>();
             services.AddTransient<ICkmopIiquimaPorteoService, CkmopIiquimaPorteoService>();
@@ -78,7 +78,7 @@ namespace BalanceGlobalApi
             services.AddTransient<IImpregnacionCosechasService, ImpregnacionCosechasService>();
             services.AddTransient<IImpregnacionSistemaRefService, ImpregnacionSistemaRefService>();
             services.AddTransient<IInfraestructurasService, InfraestructurasService>();
-            services.AddTransient<IInfraestruturasReinyeccionService, InfraestruturasReinyeccionService>();
+            services.AddTransient<IInfraestructurasReinyeccionService, InfraestructurasReinyeccionService>();
             services.AddTransient<IInventariosAtacamaService, InventariosAtacamaService>();
             services.AddTransient<IModalidadPciService, ModalidadPciService>();
             services.AddTransient<IModalidadPlantasService, ModalidadPlantasService>();
@@ -121,10 +121,24 @@ namespace BalanceGlobalApi
             services.AddTransient<ISchemaColumnsWarningService, SchemaColumnsWarningService>();
             services.AddTransient<ISchemaDefService, SchemaDefService>();
 
+            services.AddTransient<ISchemaDefService, SchemaDefService>();
+            services.AddTransient<IDetallePerfilService, DetallePerfilService>();
+            services.AddTransient<IEventosService, EventosService>();
+            services.AddTransient<IDetallePerfilService, DetallePerfilService>();
+            services.AddTransient<IMensajesService, MensajesService>();
+            services.AddTransient<IPerfilesUsuarioService, PerfilesUsuarioService>();
+            services.AddTransient<ISuscripcionEventosService, SuscripcionEventosService>();
+            services.AddTransient<IUsuariosService, UsuariosService>();
+            services.AddTransient<IUsuariosPerfilesUsuarioService, UsuariosPerfilesUsuarioService>();
+            services.AddTransient<IWorkflowItemService, WorkflowItemService>();
+
+
             #endregion
 
             #region Repository
+
             services.AddTransient<ICargaPlataformasRepository, CargaPlataformasRepository>();
+            services.AddTransient<IBombasRepository, BombasRepository>();
             services.AddTransient<ICategoriaConsumoAguaRepository, CategoriaConsumoAguaRepository>();
             services.AddTransient<ICkmopIiquimaPorteoRepository, CkmopIiquimaPorteoRepository>();
             services.AddTransient<ICkmopIivolaPorteoRepository, CkmopIivolaPorteoRepository>();
@@ -155,7 +169,7 @@ namespace BalanceGlobalApi
             services.AddTransient<IImpregnacionCosechasRepository, ImpregnacionCosechasRepository>();
             services.AddTransient<IImpregnacionSistemaRefRepository, ImpregnacionSistemaRefRepository>();
             services.AddTransient<IInfraestructurasRepository, InfraestructurasRepository>();
-            services.AddTransient<IInfraestruturasReinyeccionRepository, InfraestruturasReinyeccionRepository>();
+            services.AddTransient<IInfraestructurasReinyeccionRepository, InfraestructurasReinyeccionRepository>();
             services.AddTransient<IInventariosAtacamaRepository, InventariosAtacamaRepository>();
             services.AddTransient<IModalidadPciRepository, ModalidadPciRepository>();
             services.AddTransient<IModalidadPlantasRepository, ModalidadPlantasRepository>();
@@ -197,6 +211,18 @@ namespace BalanceGlobalApi
             services.AddTransient<ISchemaColumnsRepository, SchemaColumnsRepository>();
             services.AddTransient<ISchemaColumnsWarningRepository, SchemaColumnsWarningRepository>();
             services.AddTransient<ISchemaDefRepository, SchemaDefRepository>();
+
+            services.AddTransient<ISchemaDefRepository, SchemaDefRepository>();
+            services.AddTransient<IDetallePerfilRepository, DetallePerfilRepository>();
+            services.AddTransient<IEventosRepository, EventosRepository>();
+            services.AddTransient<IDetallePerfilRepository, DetallePerfilRepository>();
+            services.AddTransient<IMensajesRepository, MensajesRepository>();
+            services.AddTransient<IPerfilesUsuarioRepository, PerfilesUsuarioRepository>();
+            services.AddTransient<ISuscripcionEventosRepository, SuscripcionEventosRepository>();
+            services.AddTransient<IUsuariosRepository, UsuariosRepository>();
+            services.AddTransient<IUsuariosPerfilesUsuarioRepository, UsuariosPerfilesUsuarioRepository>();
+            services.AddTransient<IWorkflowItemRepository, WorkflowItemRepository>();
+
 
             #endregion Repository
 

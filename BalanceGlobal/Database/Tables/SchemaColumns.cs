@@ -23,6 +23,7 @@ namespace BalanceGlobal.Database.Tables
         public int? IdDatosEnLista { get; set; }
         public bool? Requerido { get; set; }
         public bool? Unico { get; set; }
+        public bool? Guide { get; set; }
 
         public virtual DatosEnLista IdDatosEnListaNavigation { get; set; }
         public virtual SchemaDef IdSchemaDefNavigation { get; set; }

@@ -3,7 +3,12 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface IInfraestructurasService
     {
-        Task<InfraestructurasModel> CreateInfraestructuras(InfraestructurasModel InfraestructurasModel, string userName);
-        Task<List<InfraestructurasModel>> ReadInfraestructuras();
-        Task UpdateInfraestructuras(InfraestructurasModel InfraestructurasModel, string userName);
-        Task DeleteInfraestructuras(int id, string userName);
-        Task<InfraestructurasModel> ReadInfraestructuras(int id);
+        Task<ApiResponse> CreateInfraestructuras(InfraestructurasModel InfraestructurasModel, string userName);
+        Task<ApiResponse> ReadInfraestructuras();
+        Task<ApiResponse> UpdateInfraestructuras(InfraestructurasModel InfraestructurasModel, string userName);
+        Task<ApiResponse> DeleteInfraestructuras(int id, string userName);
+        Task<ApiResponse> ReadInfraestructuras(int id);
     }
+
     public class InfraestructurasService : IInfraestructurasService
     {
         private readonly IInfraestructurasRepository _repository;
@@ -30,40 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<InfraestructurasModel> CreateInfraestructuras(InfraestructurasModel model, string userName)
+        public async Task<ApiResponse> CreateInfraestructuras(InfraestructurasModel model, string userName)
         {
-            var result = _mapper.Map<Infraestructuras>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdInfraestructuras = result.IdInfraestructuras;
-            return model;
+            try
+            {
+                var result = _mapper.Map<Infraestructuras>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdInfraestructuras = result.IdInfraestructuras;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<InfraestructurasModel>> ReadInfraestructuras()
+        public async Task<ApiResponse> ReadInfraestructuras()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<InfraestructurasModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<InfraestructurasModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdateInfraestructuras(InfraestructurasModel model, string userName)
+        public async Task<ApiResponse> UpdateInfraestructuras(InfraestructurasModel model, string userName)
         {
-            var result = _mapper.Map<Infraestructuras>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdInfraestructuras);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<Infraestructuras>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeleteInfraestructuras(int id, string userName)
+        public async Task<ApiResponse> DeleteInfraestructuras(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<InfraestructurasModel> ReadInfraestructuras(int id)
+        public async Task<ApiResponse> ReadInfraestructuras(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<InfraestructurasModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<InfraestructurasModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
+
     }
 }
+

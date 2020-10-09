@@ -3,7 +3,12 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface IProdyDespSdeAvariablesNumService
     {
-        Task<ProdyDespSdeAvariablesNumModel> CreateProdyDespSdeAvariablesNum(ProdyDespSdeAvariablesNumModel ProdyDespSdeAvariablesNumModel, string userName);
-        Task<List<ProdyDespSdeAvariablesNumModel>> ReadProdyDespSdeAvariablesNum();
-        Task UpdateProdyDespSdeAvariablesNum(ProdyDespSdeAvariablesNumModel ProdyDespSdeAvariablesNumModel, string userName);
-        Task DeleteProdyDespSdeAvariablesNum(int id, string userName);
-        Task<ProdyDespSdeAvariablesNumModel> ReadProdyDespSdeAvariablesNum(int id);
+        Task<ApiResponse> CreateProdyDespSdeAvariablesNum(ProdyDespSdeAvariablesNumModel ProdyDespSdeAvariablesNumModel, string userName);
+        Task<ApiResponse> ReadProdyDespSdeAvariablesNum();
+        Task<ApiResponse> UpdateProdyDespSdeAvariablesNum(ProdyDespSdeAvariablesNumModel ProdyDespSdeAvariablesNumModel, string userName);
+        Task<ApiResponse> DeleteProdyDespSdeAvariablesNum(int id, string userName);
+        Task<ApiResponse> ReadProdyDespSdeAvariablesNum(int id);
     }
+
     public class ProdyDespSdeAvariablesNumService : IProdyDespSdeAvariablesNumService
     {
         private readonly IProdyDespSdeAvariablesNumRepository _repository;
@@ -30,40 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ProdyDespSdeAvariablesNumModel> CreateProdyDespSdeAvariablesNum(ProdyDespSdeAvariablesNumModel model, string userName)
+        public async Task<ApiResponse> CreateProdyDespSdeAvariablesNum(ProdyDespSdeAvariablesNumModel model, string userName)
         {
-            var result = _mapper.Map<ProdyDespSdeAvariablesNum>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdProdyDespSdeAvariablesNum = result.IdProdyDespSdeAvariablesNum;
-            return model;
+            try
+            {
+                var result = _mapper.Map<ProdyDespSdeAvariablesNum>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdProdyDespSdeAvariablesNum = result.IdProdyDespSdeAvariablesNum;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<ProdyDespSdeAvariablesNumModel>> ReadProdyDespSdeAvariablesNum()
+        public async Task<ApiResponse> ReadProdyDespSdeAvariablesNum()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<ProdyDespSdeAvariablesNumModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<ProdyDespSdeAvariablesNumModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdateProdyDespSdeAvariablesNum(ProdyDespSdeAvariablesNumModel model, string userName)
+        public async Task<ApiResponse> UpdateProdyDespSdeAvariablesNum(ProdyDespSdeAvariablesNumModel model, string userName)
         {
-            var result = _mapper.Map<ProdyDespSdeAvariablesNum>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdProdyDespSdeAvariablesNum);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<ProdyDespSdeAvariablesNum>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeleteProdyDespSdeAvariablesNum(int id, string userName)
+        public async Task<ApiResponse> DeleteProdyDespSdeAvariablesNum(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<ProdyDespSdeAvariablesNumModel> ReadProdyDespSdeAvariablesNum(int id)
+        public async Task<ApiResponse> ReadProdyDespSdeAvariablesNum(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<ProdyDespSdeAvariablesNumModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<ProdyDespSdeAvariablesNumModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
+
     }
 }
+

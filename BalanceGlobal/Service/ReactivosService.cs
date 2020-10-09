@@ -3,7 +3,12 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface IReactivosService
     {
-        Task<ReactivosModel> CreateReactivos(ReactivosModel ReactivosModel, string userName);
-        Task<List<ReactivosModel>> ReadReactivos();
-        Task UpdateReactivos(ReactivosModel ReactivosModel, string userName);
-        Task DeleteReactivos(int id, string userName);
-        Task<ReactivosModel> ReadReactivos(int id);
+        Task<ApiResponse> CreateReactivos(ReactivosModel ReactivosModel, string userName);
+        Task<ApiResponse> ReadReactivos();
+        Task<ApiResponse> UpdateReactivos(ReactivosModel ReactivosModel, string userName);
+        Task<ApiResponse> DeleteReactivos(int id, string userName);
+        Task<ApiResponse> ReadReactivos(int id);
     }
+
     public class ReactivosService : IReactivosService
     {
         private readonly IReactivosRepository _repository;
@@ -30,40 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ReactivosModel> CreateReactivos(ReactivosModel model, string userName)
+        public async Task<ApiResponse> CreateReactivos(ReactivosModel model, string userName)
         {
-            var result = _mapper.Map<Reactivos>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdReactivos = result.IdReactivos;
-            return model;
+            try
+            {
+                var result = _mapper.Map<Reactivos>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdReactivos = result.IdReactivos;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<ReactivosModel>> ReadReactivos()
+        public async Task<ApiResponse> ReadReactivos()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<ReactivosModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<ReactivosModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdateReactivos(ReactivosModel model, string userName)
+        public async Task<ApiResponse> UpdateReactivos(ReactivosModel model, string userName)
         {
-            var result = _mapper.Map<Reactivos>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdReactivos);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<Reactivos>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeleteReactivos(int id, string userName)
+        public async Task<ApiResponse> DeleteReactivos(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<ReactivosModel> ReadReactivos(int id)
+        public async Task<ApiResponse> ReadReactivos(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<ReactivosModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<ReactivosModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
+
     }
 }
+

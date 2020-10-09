@@ -3,7 +3,12 @@ using AutoMapper;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 using BalanceGlobal.Repository;
+using BalanceGlobal.Response;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BalanceGlobal.Service
@@ -11,12 +16,13 @@ namespace BalanceGlobal.Service
 
     public interface ICorrienteGlobalService
     {
-        Task<CorrienteGlobalModel> CreateCorrienteGlobal(CorrienteGlobalModel CorrienteGlobalModel, string userName);
-        Task<List<CorrienteGlobalModel>> ReadCorrienteGlobal();
-        Task UpdateCorrienteGlobal(CorrienteGlobalModel CorrienteGlobalModel, string userName);
-        Task DeleteCorrienteGlobal(int id, string userName);
-        Task<CorrienteGlobalModel> ReadCorrienteGlobal(int id);
+        Task<ApiResponse> CreateCorrienteGlobal(CorrienteGlobalModel CorrienteGlobalModel, string userName);
+        Task<ApiResponse> ReadCorrienteGlobal();
+        Task<ApiResponse> UpdateCorrienteGlobal(CorrienteGlobalModel CorrienteGlobalModel, string userName);
+        Task<ApiResponse> DeleteCorrienteGlobal(int id, string userName);
+        Task<ApiResponse> ReadCorrienteGlobal(int id);
     }
+
     public class CorrienteGlobalService : ICorrienteGlobalService
     {
         private readonly ICorrienteGlobalRepository _repository;
@@ -30,40 +36,104 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<CorrienteGlobalModel> CreateCorrienteGlobal(CorrienteGlobalModel model, string userName)
+        public async Task<ApiResponse> CreateCorrienteGlobal(CorrienteGlobalModel model, string userName)
         {
-            var result = _mapper.Map<CorrienteGlobal>(model);
-            await _repository.AddAsync(result, userName);
-            model.IdCorrienteGlobal = result.IdCorrienteGlobal;
-            return model;
+            try
+            {
+                var result = _mapper.Map<CorrienteGlobal>(model);
+                await _repository.AddAsync(result, userName);
+                model.IdCorrienteGlobal = result.IdCorrienteGlobal;
+
+                return new ApiResponse(model, 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<List<CorrienteGlobalModel>> ReadCorrienteGlobal()
+        public async Task<ApiResponse> ReadCorrienteGlobal()
         {
-            var data = await _repository.GetAllAsync();
-            var result = _mapper.Map<List<CorrienteGlobalModel>>(data);
+            try
+            {
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<CorrienteGlobalModel>>(data);
 
-            return result;
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task UpdateCorrienteGlobal(CorrienteGlobalModel model, string userName)
+        public async Task<ApiResponse> UpdateCorrienteGlobal(CorrienteGlobalModel model, string userName)
         {
-            var result = _mapper.Map<CorrienteGlobal>(model);
-            await _repository.UpdateAsync(result, userName);
+            try
+            {
+                var _model = await _repository.GetById(model.IdCorrienteGlobal);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<CorrienteGlobal>(model);
+                await _repository.UpdateAsync(result, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task DeleteCorrienteGlobal(int id, string userName)
+        public async Task<ApiResponse> DeleteCorrienteGlobal(int id, string userName)
         {
-            await _repository.RemoveAsync(id, userName);
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                await _repository.RemoveAsync(id, userName);
+
+                return new ApiResponse("Ok", 200);
+            }
+            catch (DbUpdateException ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
-        public async Task<CorrienteGlobalModel> ReadCorrienteGlobal(int id)
+        public async Task<ApiResponse> ReadCorrienteGlobal(int id)
         {
-            var model = await _repository.GetById(id);
-            var result = _mapper.Map<CorrienteGlobalModel>(model);
-            return result;
+            try
+            {
+                var model = await _repository.GetById(id);
+
+                if (model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var result = _mapper.Map<CorrienteGlobalModel>(model);
+
+                return new ApiResponse(result, 200);
+
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #endregion
+
     }
 }
+

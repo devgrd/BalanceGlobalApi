@@ -30,7 +30,10 @@ namespace BalanceGlobal.Infrastructure
 
         public virtual async Task<T> GetById(object id)
         {
-            return await dbset.FindAsync(id);
+            var entity = await dbset.FindAsync(id);
+            _dataContext.Entry(entity).State = EntityState.Detached;
+
+            return entity;
         }
 
         public virtual async Task<IEnumerable<T>> GetAllAsync()

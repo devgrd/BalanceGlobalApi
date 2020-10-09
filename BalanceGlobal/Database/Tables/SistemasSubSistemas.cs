@@ -14,7 +14,7 @@ namespace BalanceGlobal.Database.Tables
             Cosechas = new HashSet<Cosechas>();
             Flujos = new HashSet<Flujos>();
             ImpregnacionCosechas = new HashSet<ImpregnacionCosechas>();
-            InfraestruturasReinyeccion = new HashSet<InfraestruturasReinyeccion>();
+            InfraestructurasReinyeccion = new HashSet<InfraestructurasReinyeccion>();
             InventariosAtacama = new HashSet<InventariosAtacama>();
             Pcimodos = new HashSet<Pcimodos>();
             ProdyDespSdeAconsProdK = new HashSet<ProdyDespSdeAconsProdK>();
@@ -39,7 +39,7 @@ namespace BalanceGlobal.Database.Tables
         public virtual ICollection<Cosechas> Cosechas { get; set; }
         public virtual ICollection<Flujos> Flujos { get; set; }
         public virtual ICollection<ImpregnacionCosechas> ImpregnacionCosechas { get; set; }
-        public virtual ICollection<InfraestruturasReinyeccion> InfraestruturasReinyeccion { get; set; }
+        public virtual ICollection<InfraestructurasReinyeccion> InfraestructurasReinyeccion { get; set; }
         public virtual ICollection<InventariosAtacama> InventariosAtacama { get; set; }
         public virtual ICollection<Pcimodos> Pcimodos { get; set; }
         public virtual ICollection<ProdyDespSdeAconsProdK> ProdyDespSdeAconsProdK { get; set; }
