@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<ConsLi2Co3Model>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetConsLi2Co3()
+        public async Task<ActionResult<ApiResponse>> GetConsLi2Co3ByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadConsLi2Co3();
+            return await _service.ReadConsLi2Co3ByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

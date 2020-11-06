@@ -17,7 +17,7 @@ namespace BalanceGlobal.Service
     public interface ITasaEvaporacionService
     {
         Task<ApiResponse> CreateTasaEvaporacion(TasaEvaporacionModel TasaEvaporacionModel, string userName);
-        Task<ApiResponse> ReadTasaEvaporacion();
+        Task<ApiResponse> ReadTasaEvaporacionByPeriodos(int IdPeriodo);
         Task<ApiResponse> UpdateTasaEvaporacion(TasaEvaporacionModel TasaEvaporacionModel, string userName);
         Task<ApiResponse> DeleteTasaEvaporacion(int id, string userName);
         Task<ApiResponse> ReadTasaEvaporacion(int id);
@@ -52,12 +52,17 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadTasaEvaporacion()
+        public async Task<ApiResponse> ReadTasaEvaporacionByPeriodos(int IdPeriodo)
         {
             try
             {
-                var data = await _repository.GetAllAsync();
+                var data = await _repository.GetManyAsync(x => x.IdPeriodos == IdPeriodo);
                 var result = _mapper.Map<List<TasaEvaporacionModel>>(data);
+
+                if (result.Count == 0)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
 
                 return new ApiResponse(result, 200);
             }

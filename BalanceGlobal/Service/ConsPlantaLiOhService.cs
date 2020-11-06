@@ -17,7 +17,7 @@ namespace BalanceGlobal.Service
     public interface IConsPlantaLiOhService
     {
         Task<ApiResponse> CreateConsPlantaLiOh(ConsPlantaLiOhModel ConsPlantaLiOhModel, string userName);
-        Task<ApiResponse> ReadConsPlantaLiOh();
+        Task<ApiResponse> ReadConsPlantaLiOhByPeriodos(int IdPeriodo);
         Task<ApiResponse> UpdateConsPlantaLiOh(ConsPlantaLiOhModel ConsPlantaLiOhModel, string userName);
         Task<ApiResponse> DeleteConsPlantaLiOh(int id, string userName);
         Task<ApiResponse> ReadConsPlantaLiOh(int id);
@@ -52,12 +52,17 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadConsPlantaLiOh()
+        public async Task<ApiResponse> ReadConsPlantaLiOhByPeriodos(int IdPeriodo)
         {
             try
             {
-                var data = await _repository.GetAllAsync();
+                var data = await _repository.GetManyAsync(x => x.IdPeriodos == IdPeriodo);
                 var result = _mapper.Map<List<ConsPlantaLiOhModel>>(data);
+
+                if (result.Count == 0)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
 
                 return new ApiResponse(result, 200);
             }

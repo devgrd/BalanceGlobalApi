@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<ConsInvCarmenModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetConsInvCarmen()
+        public async Task<ActionResult<ApiResponse>> GetConsInvCarmenByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadConsInvCarmen();
+            return await _service.ReadConsInvCarmenByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

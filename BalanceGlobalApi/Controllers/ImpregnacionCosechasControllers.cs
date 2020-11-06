@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<ImpregnacionCosechasModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetImpregnacionCosechas()
+        public async Task<ActionResult<ApiResponse>> GetImpregnacionCosechasByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadImpregnacionCosechas();
+            return await _service.ReadImpregnacionCosechasByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

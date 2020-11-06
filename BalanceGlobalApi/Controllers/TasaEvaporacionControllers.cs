@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<TasaEvaporacionModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetTasaEvaporacion()
+        public async Task<ActionResult<ApiResponse>> GetTasaEvaporacionByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadTasaEvaporacion();
+            return await _service.ReadTasaEvaporacionByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

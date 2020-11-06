@@ -17,7 +17,7 @@ namespace BalanceGlobal.Service
     public interface IImpregnacionCosechasService
     {
         Task<ApiResponse> CreateImpregnacionCosechas(ImpregnacionCosechasModel ImpregnacionCosechasModel, string userName);
-        Task<ApiResponse> ReadImpregnacionCosechas();
+        Task<ApiResponse> ReadImpregnacionCosechasByPeriodos(int IdPeriodo);
         Task<ApiResponse> UpdateImpregnacionCosechas(ImpregnacionCosechasModel ImpregnacionCosechasModel, string userName);
         Task<ApiResponse> DeleteImpregnacionCosechas(int id, string userName);
         Task<ApiResponse> ReadImpregnacionCosechas(int id);
@@ -52,12 +52,17 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadImpregnacionCosechas()
+        public async Task<ApiResponse> ReadImpregnacionCosechasByPeriodos(int IdPeriodo)
         {
             try
             {
-                var data = await _repository.GetAllAsync();
+                var data = await _repository.GetManyAsync(x => x.IdPeriodos == IdPeriodo);
                 var result = _mapper.Map<List<ImpregnacionCosechasModel>>(data);
+
+                if (result.Count == 0)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
 
                 return new ApiResponse(result, 200);
             }

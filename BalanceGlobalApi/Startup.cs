@@ -46,6 +46,8 @@ namespace BalanceGlobalApi
 
             #region Services
 
+            services.AddTransient<IAliasesService, AliasesService>();
+            services.AddTransient<ITipoDatoColOrigenService , TipoDatoColOrigenService>();      
             services.AddTransient<IBombasService, BombasService>();
             services.AddTransient<ICargaPlataformasService, CargaPlataformasService>();
             services.AddTransient<ICategoriaConsumoAguaService, CategoriaConsumoAguaService>();
@@ -137,6 +139,8 @@ namespace BalanceGlobalApi
 
             #region Repository
 
+            services.AddTransient<IAliasesRepository, AliasesRepository>();
+            services.AddTransient<ITipoDatoColOrigenRepository, TipoDatoColOrigenRepository>();
             services.AddTransient<ICargaPlataformasRepository, CargaPlataformasRepository>();
             services.AddTransient<IBombasRepository, BombasRepository>();
             services.AddTransient<ICategoriaConsumoAguaRepository, CategoriaConsumoAguaRepository>();

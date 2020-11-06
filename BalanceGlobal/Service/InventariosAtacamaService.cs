@@ -17,10 +17,10 @@ namespace BalanceGlobal.Service
     public interface IInventariosAtacamaService
     {
         Task<ApiResponse> CreateInventariosAtacama(InventariosAtacamaModel InventariosAtacamaModel, string userName);
-        Task<ApiResponse> ReadInventariosAtacama();
         Task<ApiResponse> UpdateInventariosAtacama(InventariosAtacamaModel InventariosAtacamaModel, string userName);
         Task<ApiResponse> DeleteInventariosAtacama(int id, string userName);
         Task<ApiResponse> ReadInventariosAtacama(int id);
+        Task<ApiResponse> ReadInventariosAtacamaByPeriodos(int IdPeriodos);
     }
 
     public class InventariosAtacamaService : IInventariosAtacamaService
@@ -36,6 +36,26 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
+        public async Task<ApiResponse> ReadInventariosAtacamaByPeriodos(int IdPeriodo)
+        {
+            try
+            {
+                var data = await _repository.GetManyAsync(x => x.IdPeriodo == IdPeriodo);
+                var result = _mapper.Map<List<InventariosAtacamaModel>>(data);
+
+                if (result.Count == 0)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
+        }
+
         public async Task<ApiResponse> CreateInventariosAtacama(InventariosAtacamaModel model, string userName)
         {
             try
@@ -47,21 +67,6 @@ namespace BalanceGlobal.Service
                 return new ApiResponse(model, 200);
             }
             catch (DbUpdateException ex)
-            {
-                return new ApiResponse(ex.GetBaseException().Message, 409);
-            }
-        }
-
-        public async Task<ApiResponse> ReadInventariosAtacama()
-        {
-            try
-            {
-                var data = await _repository.GetAllAsync();
-                var result = _mapper.Map<List<InventariosAtacamaModel>>(data);
-
-                return new ApiResponse(result, 200);
-            }
-            catch (Exception ex)
             {
                 return new ApiResponse(ex.GetBaseException().Message, 409);
             }

@@ -17,7 +17,7 @@ namespace BalanceGlobal.Service
     public interface IRiegoPlataformasService
     {
         Task<ApiResponse> CreateRiegoPlataformas(RiegoPlataformasModel RiegoPlataformasModel, string userName);
-        Task<ApiResponse> ReadRiegoPlataformas();
+        Task<ApiResponse> ReadRiegoPlataformasByPeriodos(int IdPeriodo);
         Task<ApiResponse> UpdateRiegoPlataformas(RiegoPlataformasModel RiegoPlataformasModel, string userName);
         Task<ApiResponse> DeleteRiegoPlataformas(int id, string userName);
         Task<ApiResponse> ReadRiegoPlataformas(int id);
@@ -52,12 +52,17 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadRiegoPlataformas()
+        public async Task<ApiResponse> ReadRiegoPlataformasByPeriodos(int IdPeriodo)
         {
             try
             {
-                var data = await _repository.GetAllAsync();
+                var data = await _repository.GetManyAsync(x => x.IdPeriodos == IdPeriodo);
                 var result = _mapper.Map<List<RiegoPlataformasModel>>(data);
+
+                if (result.Count == 0)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
 
                 return new ApiResponse(result, 200);
             }

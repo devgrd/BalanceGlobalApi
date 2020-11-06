@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<ConsumoAguaModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetConsumoAgua()
+        public async Task<ActionResult<ApiResponse>> GetConsumoAguaByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadConsumoAgua();
+            return await _service.ReadConsumoAguaByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

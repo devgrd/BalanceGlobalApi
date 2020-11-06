@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<RiegoPlataformasModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetRiegoPlataformas()
+        public async Task<ActionResult<ApiResponse>> GetRiegoPlataformasByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadRiegoPlataformas();
+            return await _service.ReadRiegoPlataformasByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

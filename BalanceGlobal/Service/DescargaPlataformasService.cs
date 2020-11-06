@@ -17,7 +17,7 @@ namespace BalanceGlobal.Service
     public interface IDescargaPlataformasService
     {
         Task<ApiResponse> CreateDescargaPlataformas(DescargaPlataformasModel DescargaPlataformasModel, string userName);
-        Task<ApiResponse> ReadDescargaPlataformas();
+        Task<ApiResponse> ReadDescargaPlataformasByPeriodos(int IdPeriodo);
         Task<ApiResponse> UpdateDescargaPlataformas(DescargaPlataformasModel DescargaPlataformasModel, string userName);
         Task<ApiResponse> DeleteDescargaPlataformas(int id, string userName);
         Task<ApiResponse> ReadDescargaPlataformas(int id);
@@ -52,12 +52,17 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadDescargaPlataformas()
+        public async Task<ApiResponse> ReadDescargaPlataformasByPeriodos(int IdPeriodo)
         {
             try
             {
-                var data = await _repository.GetAllAsync();
+                var data = await _repository.GetManyAsync(x => x.IdPeriodos == IdPeriodo);
                 var result = _mapper.Map<List<DescargaPlataformasModel>>(data);
+
+                if (result.Count == 0)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
 
                 return new ApiResponse(result, 200);
             }

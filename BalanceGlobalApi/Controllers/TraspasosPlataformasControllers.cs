@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<TraspasosPlataformasModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetTraspasosPlataformas()
+        public async Task<ActionResult<ApiResponse>> GetTraspasosPlataformasByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadTraspasosPlataformas();
+            return await _service.ReadTraspasosPlataformasByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

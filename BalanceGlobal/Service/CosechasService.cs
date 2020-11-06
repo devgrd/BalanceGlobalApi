@@ -17,7 +17,7 @@ namespace BalanceGlobal.Service
     public interface ICosechasService
     {
         Task<ApiResponse> CreateCosechas(CosechasModel CosechasModel, string userName);
-        Task<ApiResponse> ReadCosechas();
+        Task<ApiResponse> ReadCosechasByPeriodos(int IdPeriodo);
         Task<ApiResponse> UpdateCosechas(CosechasModel CosechasModel, string userName);
         Task<ApiResponse> DeleteCosechas(int id, string userName);
         Task<ApiResponse> ReadCosechas(int id);
@@ -52,12 +52,17 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadCosechas()
+        public async Task<ApiResponse> ReadCosechasByPeriodos(int IdPeriodo)
         {
             try
             {
-                var data = await _repository.GetAllAsync();
+                var data = await _repository.GetManyAsync(x => x.IdPeriodos == IdPeriodo);
                 var result = _mapper.Map<List<CosechasModel>>(data);
+
+                if (result.Count == 0)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
 
                 return new ApiResponse(result, 200);
             }

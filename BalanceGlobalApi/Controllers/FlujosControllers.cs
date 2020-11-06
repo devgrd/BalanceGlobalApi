@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<FlujosModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetFlujos()
+        public async Task<ActionResult<ApiResponse>> GetFlujosByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadFlujos();
+            return await _service.ReadFlujosByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

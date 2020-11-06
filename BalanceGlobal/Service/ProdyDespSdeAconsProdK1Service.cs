@@ -17,7 +17,7 @@ namespace BalanceGlobal.Service
     public interface IProdyDespSdeAconsProdK1Service
     {
         Task<ApiResponse> CreateProdyDespSdeAconsProdK1(ProdyDespSdeAconsProdK1Model ProdyDespSdeAconsProdK1Model, string userName);
-        Task<ApiResponse> ReadProdyDespSdeAconsProdK1();
+        Task<ApiResponse> ReadProdyDespSdeAconsProdK1ByPeriodos(int IdPeriodo);
         Task<ApiResponse> UpdateProdyDespSdeAconsProdK1(ProdyDespSdeAconsProdK1Model ProdyDespSdeAconsProdK1Model, string userName);
         Task<ApiResponse> DeleteProdyDespSdeAconsProdK1(int id, string userName);
         Task<ApiResponse> ReadProdyDespSdeAconsProdK1(int id);
@@ -52,12 +52,17 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadProdyDespSdeAconsProdK1()
+        public async Task<ApiResponse> ReadProdyDespSdeAconsProdK1ByPeriodos(int IdPeriodo)
         {
             try
             {
-                var data = await _repository.GetAllAsync();
+                var data = await _repository.GetManyAsync(x => x.IdPeriodos == IdPeriodo);
                 var result = _mapper.Map<List<ProdyDespSdeAconsProdK1Model>>(data);
+
+                if (result.Count == 0)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
 
                 return new ApiResponse(result, 200);
             }

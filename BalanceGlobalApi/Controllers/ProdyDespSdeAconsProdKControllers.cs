@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<ProdyDespSdeAconsProdKModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetProdyDespSdeAconsProdK()
+        public async Task<ActionResult<ApiResponse>> GetProdyDespSdeAconsProdKByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadProdyDespSdeAconsProdK();
+            return await _service.ReadProdyDespSdeAconsProdKByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

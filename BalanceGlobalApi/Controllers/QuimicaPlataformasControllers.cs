@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<QuimicaPlataformasModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetQuimicaPlataformas()
+        public async Task<ActionResult<ApiResponse>> GetQuimicaPlataformasByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadQuimicaPlataformas();
+            return await _service.ReadQuimicaPlataformasByPeriodo(IdPeriodo);
         }
 
         [HttpGet("{id}")]

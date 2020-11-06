@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<PorteosModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetPorteos()
+        public async Task<ActionResult<ApiResponse>> GetPorteosByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadPorteos();
+            return await _service.ReadPorteosByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

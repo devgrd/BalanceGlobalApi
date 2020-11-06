@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<PciacopiosCliModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetPciacopiosCli()
+        public async Task<ActionResult<ApiResponse>> GetPciacopiosCliByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadPciacopiosCli();
+            return await _service.ReadPciacopiosCliByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

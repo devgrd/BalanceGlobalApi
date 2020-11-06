@@ -16,6 +16,8 @@ namespace BalanceGlobal.Database.Context
         {
         }
 
+        public virtual DbSet<Aliases> Aliases { get; set; }
+        public virtual DbSet<TipoDatoColOrigen> TipoDatoColOrigen { get; set; }
         public virtual DbSet<Bombas> Bombas { get; set; }
         public virtual DbSet<CargaPlataformas> CargaPlataformas { get; set; }
         public virtual DbSet<CategoriaConsumoAgua> CategoriaConsumoAgua { get; set; }
@@ -110,6 +112,69 @@ namespace BalanceGlobal.Database.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<Aliases>(entity =>
+            {
+                entity.HasKey(e => e.IdAliases)
+                    .HasName("PK_Aliases_IdAliases");
+
+                entity.ToTable("Aliases", "imports");
+
+                entity.HasIndex(e => new { e.Importador, e.Campo, e.ValorOriginal })
+                    .HasName("UK_Aliases")
+                    .IsUnique();
+
+                entity.Property(e => e.Campo)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Importador)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ValorAlias)
+                    .HasMaxLength(4000)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ValorOriginal)
+                    .IsRequired()
+                    .HasMaxLength(4000)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TipoDatoColOrigen>(entity =>
+            {
+                entity.HasKey(e => e.IdTipoDatoColOrigen)
+                    .HasName("PK_TipoDatoOrigen_IdTipoDatoOrigen");
+
+                entity.ToTable("TipoDatoColOrigen", "imports");
+
+                entity.HasIndex(e => e.TipoDatoColOrigen1)
+                    .HasName("UK_TipoDatoOrigen_TipoDatOrigen")
+                    .IsUnique();
+
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(254)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PyEquiv)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Sqlequiv)
+                    .HasColumnName("SQLEquiv")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TipoDatoColOrigen1)
+                    .IsRequired()
+                    .HasColumnName("TipoDatoColOrigen")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<Bombas>(entity =>
             {
                 entity.HasKey(e => e.IdBombas)

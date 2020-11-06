@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<OperaPozasModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetOperaPozas()
+        public async Task<ActionResult<ApiResponse>> GetOperaPozasByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadOperaPozas();
+            return await _service.ReadOperaPozasByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

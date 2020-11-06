@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<DescargaPlataformasModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetDescargaPlataformas()
+        public async Task<ActionResult<ApiResponse>> GetDescargaPlataformasByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadDescargaPlataformas();
+            return await _service.ReadDescargaPlataformasByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

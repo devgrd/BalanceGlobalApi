@@ -17,7 +17,7 @@ namespace BalanceGlobal.Service
     public interface ICargaPlataformasService
     {
         Task<ApiResponse> CreateCargaPlataformas(CargaPlataformasModel CargaPlataformasModel, string userName);
-        Task<ApiResponse> ReadCargaPlataformas();
+        Task<ApiResponse> ReadCargaPlataformasByPeriodos(int IdPeriodo);
         Task<ApiResponse> UpdateCargaPlataformas(CargaPlataformasModel CargaPlataformasModel, string userName);
         Task<ApiResponse> DeleteCargaPlataformas(int id, string userName);
         Task<ApiResponse> ReadCargaPlataformas(int id);
@@ -52,12 +52,17 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadCargaPlataformas()
+        public async Task<ApiResponse> ReadCargaPlataformasByPeriodos(int IdPeriodo)
         {
             try
             {
-                var data = await _repository.GetAllAsync();
+                var data = await _repository.GetManyAsync(x => x.IdPeriodos == IdPeriodo);
                 var result = _mapper.Map<List<CargaPlataformasModel>>(data);
+
+                if (result.Count == 0)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
 
                 return new ApiResponse(result, 200);
             }

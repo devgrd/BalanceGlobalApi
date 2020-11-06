@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<ConsumoEnergeticoModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetConsumoEnergetico()
+        public async Task<ActionResult<ApiResponse>> GetConsumoEnergeticoByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadConsumoEnergetico();
+            return await _service.ReadConsumoEnergeticoByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

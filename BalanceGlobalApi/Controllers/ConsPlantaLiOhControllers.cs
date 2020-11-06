@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<ConsPlantaLiOhModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetConsPlantaLiOh()
+        public async Task<ActionResult<ApiResponse>> GetConsPlantaLiOhByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadConsPlantaLiOh();
+            return await _service.ReadConsPlantaLiOhByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<ReinyeccionModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetReinyeccion()
+        public async Task<ActionResult<ApiResponse>> GetReinyeccionByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadReinyeccion();
+            return await _service.ReadReinyeccionByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

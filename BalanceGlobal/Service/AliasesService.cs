@@ -14,21 +14,21 @@ using System.Threading.Tasks;
 namespace BalanceGlobal.Service
 {
 
-    public interface IConsLitioLiCo3mensualService
+    public interface IAliasesService
     {
-        Task<ApiResponse> CreateConsLitioLiCo3mensual(ConsLitioLiCo3mensualModel ConsLitioLiCo3mensualModel, string userName);
-        Task<ApiResponse> ReadConsLitioLiCo3mensualByPeriodos(int IdPeriodo);
-        Task<ApiResponse> UpdateConsLitioLiCo3mensual(ConsLitioLiCo3mensualModel ConsLitioLiCo3mensualModel, string userName);
-        Task<ApiResponse> DeleteConsLitioLiCo3mensual(int id, string userName);
-        Task<ApiResponse> ReadConsLitioLiCo3mensual(int id);
+        Task<ApiResponse> CreateAliases(AliasesModel AliasesModel, string userName);
+        Task<ApiResponse> ReadAliases();
+        Task<ApiResponse> UpdateAliases(AliasesModel AliasesModel, string userName);
+        Task<ApiResponse> DeleteAliases(int id, string userName);
+        Task<ApiResponse> ReadAliases(int id);
     }
 
-    public class ConsLitioLiCo3mensualService : IConsLitioLiCo3mensualService
+    public class AliasesService : IAliasesService
     {
-        private readonly IConsLitioLiCo3mensualRepository _repository;
+        private readonly IAliasesRepository _repository;
         private readonly IMapper _mapper;
 
-        public ConsLitioLiCo3mensualService(IConsLitioLiCo3mensualRepository repository, IMapper mapper)
+        public AliasesService(IAliasesRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
@@ -36,13 +36,13 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ApiResponse> CreateConsLitioLiCo3mensual(ConsLitioLiCo3mensualModel model, string userName)
+        public async Task<ApiResponse> CreateAliases(AliasesModel model, string userName)
         {
             try
             {
-                var result = _mapper.Map<ConsLitioLiCo3mensual>(model);
+                var result = _mapper.Map<Aliases>(model);
                 await _repository.AddAsync(result, userName);
-                model.IdConsLitioLiCo3mensual = result.IdConsLitioLiCo3mensual;
+                model.IdAliases = result.IdAliases;
 
                 return new ApiResponse(model, 200);
             }
@@ -52,17 +52,12 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadConsLitioLiCo3mensualByPeriodos(int IdPeriodo)
+        public async Task<ApiResponse> ReadAliases()
         {
             try
             {
-                var data = await _repository.GetManyAsync(x => x.IdPeriodos == IdPeriodo);
-                var result = _mapper.Map<List<ConsLitioLiCo3mensualModel>>(data);
-
-                if (result.Count == 0)
-                {
-                    return new ApiResponse("Not Found", 404);
-                }
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<AliasesModel>>(data);
 
                 return new ApiResponse(result, 200);
             }
@@ -72,18 +67,18 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> UpdateConsLitioLiCo3mensual(ConsLitioLiCo3mensualModel model, string userName)
+        public async Task<ApiResponse> UpdateAliases(AliasesModel model, string userName)
         {
             try
             {
-                var _model = await _repository.GetById(model.IdConsLitioLiCo3mensual);
+                var _model = await _repository.GetById(model.IdAliases);
 
                 if (_model == null)
                 {
                     return new ApiResponse("Not Found", 404);
                 }
 
-                var result = _mapper.Map<ConsLitioLiCo3mensual>(model);
+                var result = _mapper.Map<Aliases>(model);
                 await _repository.UpdateAsync(result, userName);
 
                 return new ApiResponse("Ok", 200);
@@ -94,7 +89,7 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> DeleteConsLitioLiCo3mensual(int id, string userName)
+        public async Task<ApiResponse> DeleteAliases(int id, string userName)
         {
             try
             {
@@ -115,7 +110,7 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadConsLitioLiCo3mensual(int id)
+        public async Task<ApiResponse> ReadAliases(int id)
         {
             try
             {
@@ -126,7 +121,7 @@ namespace BalanceGlobal.Service
                     return new ApiResponse("Not Found", 404);
                 }
 
-                var result = _mapper.Map<ConsLitioLiCo3mensualModel>(model);
+                var result = _mapper.Map<AliasesModel>(model);
 
                 return new ApiResponse(result, 200);
 

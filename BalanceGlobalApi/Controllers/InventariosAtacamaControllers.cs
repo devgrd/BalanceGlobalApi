@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<InventariosAtacamaModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetInventariosAtacama()
+        public async Task<ActionResult<ApiResponse>> GetInventariosAtacamaByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadInventariosAtacama();
+            return await _service.ReadInventariosAtacamaByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

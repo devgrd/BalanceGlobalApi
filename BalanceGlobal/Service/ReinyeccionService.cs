@@ -17,7 +17,7 @@ namespace BalanceGlobal.Service
     public interface IReinyeccionService
     {
         Task<ApiResponse> CreateReinyeccion(ReinyeccionModel ReinyeccionModel, string userName);
-        Task<ApiResponse> ReadReinyeccion();
+        Task<ApiResponse> ReadReinyeccionByPeriodos(int IdPeriodo);
         Task<ApiResponse> UpdateReinyeccion(ReinyeccionModel ReinyeccionModel, string userName);
         Task<ApiResponse> DeleteReinyeccion(int id, string userName);
         Task<ApiResponse> ReadReinyeccion(int id);
@@ -52,12 +52,17 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadReinyeccion()
+        public async Task<ApiResponse> ReadReinyeccionByPeriodos(int IdPeriodo)
         {
             try
             {
-                var data = await _repository.GetAllAsync();
+                var data = await _repository.GetManyAsync(x => x.IdPeriodos == IdPeriodo);
                 var result = _mapper.Map<List<ReinyeccionModel>>(data);
+
+                if (result.Count == 0)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
 
                 return new ApiResponse(result, 200);
             }

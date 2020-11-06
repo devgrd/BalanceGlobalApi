@@ -17,7 +17,7 @@ namespace BalanceGlobal.Service
     public interface IConsRilesyRisesService
     {
         Task<ApiResponse> CreateConsRilesyRises(ConsRilesyRisesModel ConsRilesyRisesModel, string userName);
-        Task<ApiResponse> ReadConsRilesyRises();
+        Task<ApiResponse> ReadConsRilesyRisesByPeriodos(int IdPeriodo);
         Task<ApiResponse> UpdateConsRilesyRises(ConsRilesyRisesModel ConsRilesyRisesModel, string userName);
         Task<ApiResponse> DeleteConsRilesyRises(int id, string userName);
         Task<ApiResponse> ReadConsRilesyRises(int id);
@@ -52,12 +52,17 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadConsRilesyRises()
+        public async Task<ApiResponse> ReadConsRilesyRisesByPeriodos(int IdPeriodo)
         {
             try
             {
-                var data = await _repository.GetAllAsync();
+                var data = await _repository.GetManyAsync(x => x.IdPeriodos == IdPeriodo);
                 var result = _mapper.Map<List<ConsRilesyRisesModel>>(data);
+
+                if (result.Count == 0)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
 
                 return new ApiResponse(result, 200);
             }

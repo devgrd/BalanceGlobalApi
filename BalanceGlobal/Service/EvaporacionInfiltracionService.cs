@@ -17,10 +17,10 @@ namespace BalanceGlobal.Service
     public interface IEvaporacionInfiltracionService
     {
         Task<ApiResponse> CreateEvaporacionInfiltracion(EvaporacionInfiltracionModel EvaporacionInfiltracionModel, string userName);
-        Task<ApiResponse> ReadEvaporacionInfiltracion();
         Task<ApiResponse> UpdateEvaporacionInfiltracion(EvaporacionInfiltracionModel EvaporacionInfiltracionModel, string userName);
         Task<ApiResponse> DeleteEvaporacionInfiltracion(int id, string userName);
         Task<ApiResponse> ReadEvaporacionInfiltracion(int id);
+        Task<ApiResponse> ReadEvaporacionInfiltracionByPeriodos(int IdPeriodos);
     }
 
     public class EvaporacionInfiltracionService : IEvaporacionInfiltracionService
@@ -36,6 +36,26 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
+        public async Task<ApiResponse> ReadEvaporacionInfiltracionByPeriodos(int IdPeriodos)
+        {
+            try
+            {
+                var data = await _repository.GetManyAsync(x => x.IdPeriodos == IdPeriodos);
+                var result = _mapper.Map<List<EvaporacionInfiltracionModel>>(data);
+
+                if (result.Count == 0)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
+        }
+
         public async Task<ApiResponse> CreateEvaporacionInfiltracion(EvaporacionInfiltracionModel model, string userName)
         {
             try
@@ -47,21 +67,6 @@ namespace BalanceGlobal.Service
                 return new ApiResponse(model, 200);
             }
             catch (DbUpdateException ex)
-            {
-                return new ApiResponse(ex.GetBaseException().Message, 409);
-            }
-        }
-
-        public async Task<ApiResponse> ReadEvaporacionInfiltracion()
-        {
-            try
-            {
-                var data = await _repository.GetAllAsync();
-                var result = _mapper.Map<List<EvaporacionInfiltracionModel>>(data);
-
-                return new ApiResponse(result, 200);
-            }
-            catch (Exception ex)
             {
                 return new ApiResponse(ex.GetBaseException().Message, 409);
             }

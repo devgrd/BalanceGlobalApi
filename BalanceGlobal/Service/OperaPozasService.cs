@@ -17,7 +17,7 @@ namespace BalanceGlobal.Service
     public interface IOperaPozasService
     {
         Task<ApiResponse> CreateOperaPozas(OperaPozasModel OperaPozasModel, string userName);
-        Task<ApiResponse> ReadOperaPozas();
+        Task<ApiResponse> ReadOperaPozasByPeriodos(int IdPeriodo);
         Task<ApiResponse> UpdateOperaPozas(OperaPozasModel OperaPozasModel, string userName);
         Task<ApiResponse> DeleteOperaPozas(int id, string userName);
         Task<ApiResponse> ReadOperaPozas(int id);
@@ -52,12 +52,17 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadOperaPozas()
+        public async Task<ApiResponse> ReadOperaPozasByPeriodos(int IdPeriodo)
         {
             try
             {
-                var data = await _repository.GetAllAsync();
+                var data = await _repository.GetManyAsync(x => x.IdPeriodos == IdPeriodo);
                 var result = _mapper.Map<List<OperaPozasModel>>(data);
+
+                if (result.Count == 0)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
 
                 return new ApiResponse(result, 200);
             }

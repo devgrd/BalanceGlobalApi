@@ -21,6 +21,7 @@ namespace BalanceGlobal.Service
         Task<ApiResponse> UpdateExtraccion(ExtraccionModel ExtraccionModel, string userName);
         Task<ApiResponse> DeleteExtraccion(int id, string userName);
         Task<ApiResponse> ReadExtraccion(int id);
+        Task<ApiResponse> ReadExtraccionByPeriodos(int IdPeriodo);
     }
 
     public class ExtraccionService : IExtraccionService
@@ -32,6 +33,26 @@ namespace BalanceGlobal.Service
         {
             _repository = repository;
             _mapper = mapper;
+        }
+
+        public async Task<ApiResponse> ReadExtraccionByPeriodos(int IdPeriodo)
+        {
+            try
+            {
+                var data = await _repository.GetManyAsync(x => x.IdPeriodos == IdPeriodo);
+                var result = _mapper.Map<List<ExtraccionModel>>(data);
+
+                if (result.Count == 0)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
         }
 
         #region CRUD

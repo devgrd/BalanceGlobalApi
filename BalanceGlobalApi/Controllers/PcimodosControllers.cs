@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<PcimodosModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetPcimodos()
+        public async Task<ActionResult<ApiResponse>> GetPcimodosByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadPcimodos();
+            return await _service.ReadPcimodosByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

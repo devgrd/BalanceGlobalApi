@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<ConsRilesyRisesModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetConsRilesyRises()
+        public async Task<ActionResult<ApiResponse>> GetConsRilesyRisesByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadConsRilesyRises();
+            return await _service.ReadConsRilesyRisesByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

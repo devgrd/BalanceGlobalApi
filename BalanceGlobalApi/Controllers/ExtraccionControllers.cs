@@ -24,11 +24,11 @@ namespace BalanceGlobal.Api.Controllers
             _httpHelper = new HttpCodeHelper();
         }
 
-        [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<ExtraccionModel>>))]
+        [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<ExtraccionAguaModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetExtraccion()
+        public async Task<ActionResult<ApiResponse>> GetExtraccionByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadExtraccion();
+            return await _service.ReadExtraccionByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

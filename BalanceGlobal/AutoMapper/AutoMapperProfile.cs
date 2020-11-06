@@ -8,6 +8,9 @@ namespace BalanceGlobal.AutoMapper
     {
         public AutoMapperProfile()
         {
+            CreateMap<Aliases, AliasesModel>(); CreateMap<AliasesModel, Aliases>();
+            CreateMap<TipoDatoColOrigen, TipoDatoColOrigenModel>(); CreateMap<TipoDatoColOrigenModel, TipoDatoColOrigen>();
+
             CreateMap<Bombas, BombasModel>(); CreateMap<BombasModel, Bombas>();
             CreateMap<CargaPlataformas, CargaPlataformasModel>(); CreateMap<CargaPlataformasModel, CargaPlataformas>();
             CreateMap<CategoriaConsumoAgua, CategoriaConsumoAguaModel>(); CreateMap<CategoriaConsumoAguaModel, CategoriaConsumoAgua>();

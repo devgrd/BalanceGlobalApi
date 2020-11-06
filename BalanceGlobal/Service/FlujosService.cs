@@ -17,10 +17,10 @@ namespace BalanceGlobal.Service
     public interface IFlujosService
     {
         Task<ApiResponse> CreateFlujos(FlujosModel FlujosModel, string userName);
-        Task<ApiResponse> ReadFlujos();
         Task<ApiResponse> UpdateFlujos(FlujosModel FlujosModel, string userName);
         Task<ApiResponse> DeleteFlujos(int id, string userName);
         Task<ApiResponse> ReadFlujos(int id);
+        Task<ApiResponse> ReadFlujosByPeriodos(int IdPeriodos);
     }
 
     public class FlujosService : IFlujosService
@@ -35,6 +35,26 @@ namespace BalanceGlobal.Service
         }
 
         #region CRUD
+        
+        public async Task<ApiResponse> ReadFlujosByPeriodos(int IdPeriodos)
+        {
+            try
+            {
+                var data = await _repository.GetManyAsync(x => x.IdPeriodos == IdPeriodos);
+                var result = _mapper.Map<List<FlujosModel>>(data);
+
+                if (result.Count == 0)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
+        }
 
         public async Task<ApiResponse> CreateFlujos(FlujosModel model, string userName)
         {
@@ -47,21 +67,6 @@ namespace BalanceGlobal.Service
                 return new ApiResponse(model, 200);
             }
             catch (DbUpdateException ex)
-            {
-                return new ApiResponse(ex.GetBaseException().Message, 409);
-            }
-        }
-
-        public async Task<ApiResponse> ReadFlujos()
-        {
-            try
-            {
-                var data = await _repository.GetAllAsync();
-                var result = _mapper.Map<List<FlujosModel>>(data);
-
-                return new ApiResponse(result, 200);
-            }
-            catch (Exception ex)
             {
                 return new ApiResponse(ex.GetBaseException().Message, 409);
             }
@@ -133,7 +138,6 @@ namespace BalanceGlobal.Service
         }
 
         #endregion
-
     }
 }
 

@@ -17,10 +17,10 @@ namespace BalanceGlobal.Service
     public interface IConsumoAguaService
     {
         Task<ApiResponse> CreateConsumoAgua(ConsumoAguaModel ConsumoAguaModel, string userName);
-        Task<ApiResponse> ReadConsumoAgua();
         Task<ApiResponse> UpdateConsumoAgua(ConsumoAguaModel ConsumoAguaModel, string userName);
         Task<ApiResponse> DeleteConsumoAgua(int id, string userName);
         Task<ApiResponse> ReadConsumoAgua(int id);
+        Task<ApiResponse> ReadConsumoAguaByPeriodos(int IdPeriodo);
     }
 
     public class ConsumoAguaService : IConsumoAguaService
@@ -36,6 +36,26 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
+        public async Task<ApiResponse> ReadConsumoAguaByPeriodos(int IdPeriodo)
+        {
+            try
+            {
+                var data = await _repository.GetManyAsync(x => x.IdPeriodos == IdPeriodo);
+                var result = _mapper.Map<List<ConsumoAguaModel>>(data);
+
+                if (result.Count == 0)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
+        }
+
         public async Task<ApiResponse> CreateConsumoAgua(ConsumoAguaModel model, string userName)
         {
             try
@@ -47,21 +67,6 @@ namespace BalanceGlobal.Service
                 return new ApiResponse(model, 200);
             }
             catch (DbUpdateException ex)
-            {
-                return new ApiResponse(ex.GetBaseException().Message, 409);
-            }
-        }
-
-        public async Task<ApiResponse> ReadConsumoAgua()
-        {
-            try
-            {
-                var data = await _repository.GetAllAsync();
-                var result = _mapper.Map<List<ConsumoAguaModel>>(data);
-
-                return new ApiResponse(result, 200);
-            }
-            catch (Exception ex)
             {
                 return new ApiResponse(ex.GetBaseException().Message, 409);
             }

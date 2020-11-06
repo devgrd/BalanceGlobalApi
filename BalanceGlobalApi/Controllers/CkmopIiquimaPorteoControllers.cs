@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<CkmopIiquimaPorteoModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetCkmopIiquimaPorteo()
+        public async Task<ActionResult<ApiResponse>> GetCkmopIiquimaPorteoByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadCkmopIiquimaPorteo();
+            return await _service.ReadCkmopIiquimaPorteoByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

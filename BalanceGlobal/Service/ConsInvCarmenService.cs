@@ -17,7 +17,7 @@ namespace BalanceGlobal.Service
     public interface IConsInvCarmenService
     {
         Task<ApiResponse> CreateConsInvCarmen(ConsInvCarmenModel ConsInvCarmenModel, string userName);
-        Task<ApiResponse> ReadConsInvCarmen();
+        Task<ApiResponse> ReadConsInvCarmenByPeriodos(int IdPeriodo);
         Task<ApiResponse> UpdateConsInvCarmen(ConsInvCarmenModel ConsInvCarmenModel, string userName);
         Task<ApiResponse> DeleteConsInvCarmen(int id, string userName);
         Task<ApiResponse> ReadConsInvCarmen(int id);
@@ -52,12 +52,17 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadConsInvCarmen()
+        public async Task<ApiResponse> ReadConsInvCarmenByPeriodos(int IdPeriodo)
         {
             try
             {
-                var data = await _repository.GetAllAsync();
+                var data = await _repository.GetManyAsync(x => x.IdPeriodos == IdPeriodo);
                 var result = _mapper.Map<List<ConsInvCarmenModel>>(data);
+
+                if (result.Count == 0)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
 
                 return new ApiResponse(result, 200);
             }

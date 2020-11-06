@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<ConsReactivosModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetConsReactivos()
+        public async Task<ActionResult<ApiResponse>> GetConsReactivosByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadConsReactivos();
+            return await _service.ReadConsReactivosByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]

@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<ConsLitioLiCo3mensualModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetConsLitioLiCo3mensual()
+        public async Task<ActionResult<ApiResponse>> GetConsLitioLiCo3mensualByPeriodos([Required][FromQuery] int IdPeriodo)
         {
-            return await _service.ReadConsLitioLiCo3mensual();
+            return await _service.ReadConsLitioLiCo3mensualByPeriodos(IdPeriodo);
         }
 
         [HttpGet("{id}")]
