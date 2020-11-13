@@ -7,7 +7,7 @@ namespace BalanceGlobal.Database.Tables
     {
         public ImportadoresUserPar()
         {
-            ImportacionesUserParValues = new HashSet<ImportacionesUserParValues>();
+            SchemaColumns = new HashSet<SchemaColumns>();
         }
 
         public int IdImportadoresUserPar { get; set; }
@@ -16,7 +16,6 @@ namespace BalanceGlobal.Database.Tables
         public int IdTipoDatoControl { get; set; }
         public bool? Activa { get; set; }
 
-        public virtual Importadores IdImportadoresNavigation { get; set; }
-        public virtual ICollection<ImportacionesUserParValues> ImportacionesUserParValues { get; set; }
+        public virtual ICollection<SchemaColumns> SchemaColumns { get; set; }
     }
 }

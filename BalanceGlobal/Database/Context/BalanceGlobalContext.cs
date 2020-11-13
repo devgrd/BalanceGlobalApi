@@ -100,6 +100,8 @@ namespace BalanceGlobal.Database.Context
         public virtual DbSet<Usuarios> Usuarios { get; set; }
         public virtual DbSet<UsuariosPerfilesUsuario> UsuariosPerfilesUsuario { get; set; }
         public virtual DbSet<WorkflowItem> WorkflowItem { get; set; }
+        public virtual DbSet<ChangeTrackingDetail> ChangeTrackingDetail { get; set; }
+        public virtual DbSet<ChangeTrackingHeader> ChangeTrackingHeader { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -112,6 +114,139 @@ namespace BalanceGlobal.Database.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ImportadoresUserPar>(entity =>
+            {
+                entity.HasKey(e => e.IdImportadoresUserPar)
+                    .HasName("PK_ImportadoresUserPar_IdImportadoresUserPar");
+
+                entity.ToTable("ImportadoresUserPar", "imports");
+
+                entity.HasIndex(e => new { e.UserPar, e.IdImportadores })
+                    .HasName("UK_ImportadoresUserPar")
+                    .IsUnique();
+
+                entity.Property(e => e.Activa)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.UserPar)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<SchemaColumns>(entity =>
+            {
+                entity.HasKey(e => e.IdSchemaColumns)
+                    .HasName("PK_SchemaDefErrors_IdSchemaDefErrors");
+
+                entity.ToTable("SchemaColumns", "imports");
+
+                entity.HasIndex(e => new { e.IdSchemaDef, e.NombreCol })
+                    .HasName("UK_SchemaColumns")
+                    .IsUnique();
+
+                entity.HasIndex(e => new { e.IdSchemaDef, e.NombreCol, e.PosicionCol })
+                    .HasName("UK_SchemaColumns_Pos")
+                    .IsUnique();
+
+                entity.Property(e => e.FormatoFechaRegex)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FormatoTextoRegex)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Guide)
+                    .HasDefaultValueSql("((0))")
+                    .HasComment("Si no hay datos esta columna se saltara toda la fila");
+
+                entity.Property(e => e.NombreCol)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RangoFechaFin).HasColumnType("datetime2(3)");
+
+                entity.Property(e => e.RangoFechaInicio).HasColumnType("datetime2(3)");
+
+                entity.Property(e => e.RangoNumFin).HasColumnType("decimal(19, 7)");
+
+                entity.Property(e => e.RangoNumInicio).HasColumnType("decimal(19, 7)");
+
+                entity.Property(e => e.Requerido).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.Unico).HasDefaultValueSql("((0))");
+
+                entity.HasOne(d => d.IdFilteredByControlNavigation)
+                    .WithMany(p => p.SchemaColumns)
+                    .HasForeignKey(d => d.IdFilteredByControl)
+                    .HasConstraintName("FK_SchemaColumns_ImportadoresUserPar_IdImportadoresUserPar");
+            });
+
+
+            modelBuilder.Entity<ChangeTrackingDetail>(entity =>
+            {
+                entity.HasKey(e => e.IdChangeTrackingDetail)
+                    .HasName("PK__ChangeTr__E5A18A5D8B4FC093");
+
+                entity.ToTable("ChangeTrackingDetail", "AuditLog");
+
+                entity.Property(e => e.FieldName)
+                    .IsRequired()
+                    .HasMaxLength(128)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.NewValue)
+                    .HasMaxLength(2000)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.OldValue)
+                    .HasMaxLength(2000)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Pkvalue).HasColumnName("PKValue");
+
+                entity.HasOne(d => d.IdChangeTrackingHeaderNavigation)
+                    .WithMany(p => p.ChangeTrackingDetail)
+                    .HasForeignKey(d => d.IdChangeTrackingHeader)
+                    .HasConstraintName("FK_ChangeTrackingDetail_ChangeTrackingHeader");
+            });
+
+            modelBuilder.Entity<ChangeTrackingHeader>(entity =>
+            {
+                entity.HasKey(e => e.IdChangeTrackingHeader)
+                    .HasName("PK__ChangeTr__1638CDD0E9139A64");
+
+                entity.ToTable("ChangeTrackingHeader", "AuditLog");
+
+                entity.Property(e => e.IdChangeTrackingHeader).ValueGeneratedNever();
+
+                entity.Property(e => e.Pkname)
+                    .IsRequired()
+                    .HasColumnName("PKName")
+                    .HasMaxLength(128)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TableName)
+                    .IsRequired()
+                    .HasMaxLength(128)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TransactionDate).HasColumnType("datetime2(3)");
+
+                entity.Property(e => e.TransactionType)
+                    .IsRequired()
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.TransactionUser)
+                    .IsRequired()
+                    .HasMaxLength(128)
+                    .IsUnicode(false);
+            });
 
             modelBuilder.Entity<Aliases>(entity =>
             {
@@ -290,13 +425,12 @@ namespace BalanceGlobal.Database.Context
                 entity.HasKey(e => e.IdCategoriaConsumoAgua)
                     .HasName("PK_IdCategoriaConsumoAgua");
 
-                entity.HasIndex(e => e.CategoriaConsumoAgua1)
+                entity.HasIndex(e => e.CategoriasConsumoAgua)
                     .HasName("UK_CategoriaConsumoAgua")
                     .IsUnique();
 
-                entity.Property(e => e.CategoriaConsumoAgua1)
+                entity.Property(e => e.CategoriasConsumoAgua)
                     .IsRequired()
-                    .HasColumnName("CategoriaConsumoAgua")
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
@@ -321,21 +455,6 @@ namespace BalanceGlobal.Database.Context
                 entity.Property(e => e.UsuarioActualizacion)
                     .HasMaxLength(50)
                     .IsUnicode(false);
-
-                entity.HasOne(d => d.IdFaenasNavigation)
-                    .WithMany(p => p.CategoriaConsumoAgua)
-                    .HasForeignKey(d => d.IdFaenas)
-                    .HasConstraintName("FK_CategoriaConsumoAgua_IdFaenas");
-
-                entity.HasOne(d => d.IdSistemasNavigation)
-                    .WithMany(p => p.CategoriaConsumoAgua)
-                    .HasForeignKey(d => d.IdSistemas)
-                    .HasConstraintName("FK_CategoriaConsumoAgua_IdSistemas");
-
-                entity.HasOne(d => d.IdSistemasSubsistemasNavigation)
-                    .WithMany(p => p.CategoriaConsumoAgua)
-                    .HasForeignKey(d => d.IdSistemasSubsistemas)
-                    .HasConstraintName("FK_CategoriaConsumoAgua_IdSistemas_Subsistemas");
             });
 
             modelBuilder.Entity<CkmopIiquimaPorteo>(entity =>
@@ -874,17 +993,7 @@ namespace BalanceGlobal.Database.Context
 
                 entity.Property(e => e.VolAguaM3)
                     .HasColumnName("VolAgua_m3")
-                    .HasColumnType("decimal(19, 0)");
-
-                entity.HasOne(d => d.IdCategoriaConsumoAguaNavigation)
-                    .WithMany(p => p.ConsumoAgua)
-                    .HasForeignKey(d => d.IdCategoriaConsumoAgua)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-
-                entity.HasOne(d => d.IdPeriodosNavigation)
-                    .WithMany(p => p.ConsumoAgua)
-                    .HasForeignKey(d => d.IdPeriodos)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
+                    .HasColumnType("decimal(19, 4)");
             });
 
             modelBuilder.Entity<ConsumoEnergetico>(entity =>
@@ -1770,16 +1879,6 @@ namespace BalanceGlobal.Database.Context
                 entity.Property(e => e.Value)
                     .IsRequired()
                     .IsUnicode(false);
-
-                entity.HasOne(d => d.IdImportacionesNavigation)
-                    .WithMany(p => p.ImportacionesUserParValues)
-                    .HasForeignKey(d => d.IdImportaciones)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-
-                entity.HasOne(d => d.IdImportadoresUserParNavigation)
-                    .WithMany(p => p.ImportacionesUserParValues)
-                    .HasForeignKey(d => d.IdImportadoresUserPar)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<Importadores>(entity =>
@@ -1800,32 +1899,6 @@ namespace BalanceGlobal.Database.Context
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<ImportadoresUserPar>(entity =>
-            {
-                entity.HasKey(e => e.IdImportadoresUserPar)
-                    .HasName("PK_ImportadoresUserPar_IdImportadoresUserPar");
-
-                entity.ToTable("ImportadoresUserPar", "imports");
-
-                entity.HasIndex(e => new { e.UserPar, e.IdImportadores })
-                    .HasName("UK_ImportadoresUserPar")
-                    .IsUnique();
-
-                entity.Property(e => e.Activa)
-                    .IsRequired()
-                    .HasDefaultValueSql("((1))");
-
-                entity.Property(e => e.UserPar)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.HasOne(d => d.IdImportadoresNavigation)
-                    .WithMany(p => p.ImportadoresUserPar)
-                    .HasForeignKey(d => d.IdImportadores)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<ImpregnacionCosechas>(entity =>
@@ -3143,56 +3216,6 @@ namespace BalanceGlobal.Database.Context
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
-            modelBuilder.Entity<SchemaColumns>(entity =>
-            {
-                entity.HasKey(e => e.IdSchemaColumns)
-                    .HasName("PK_SchemaDefErrors_IdSchemaDefErrors");
-
-                entity.ToTable("SchemaColumns", "imports");
-
-                entity.HasIndex(e => new { e.IdSchemaDef, e.NombreCol })
-                    .HasName("UK_SchemaColumns")
-                    .IsUnique();
-
-                entity.Property(e => e.FormatoFechaRegex)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.FormatoTextoRegex)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Guide)
-                    .HasDefaultValueSql("((0))")
-                    .HasComment("Si no hay datos esta columna se saltara toda la fila");
-
-                entity.Property(e => e.NombreCol)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.RangoFechaFin).HasColumnType("datetime2(3)");
-
-                entity.Property(e => e.RangoFechaInicio).HasColumnType("datetime2(3)");
-
-                entity.Property(e => e.RangoNumFin).HasColumnType("decimal(19, 7)");
-
-                entity.Property(e => e.RangoNumInicio).HasColumnType("decimal(19, 7)");
-
-                entity.Property(e => e.Requerido).HasDefaultValueSql("((0))");
-
-                entity.Property(e => e.Unico).HasDefaultValueSql("((0))");
-
-                entity.HasOne(d => d.IdDatosEnListaNavigation)
-                    .WithMany(p => p.SchemaColumns)
-                    .HasForeignKey(d => d.IdDatosEnLista);
-
-                entity.HasOne(d => d.IdSchemaDefNavigation)
-                    .WithMany(p => p.SchemaColumns)
-                    .HasForeignKey(d => d.IdSchemaDef)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-            });
-
             modelBuilder.Entity<SchemaColumnsWarning>(entity =>
             {
                 entity.HasKey(e => e.IdSchemaColumnsWarning)
@@ -3678,6 +3701,8 @@ namespace BalanceGlobal.Database.Context
                     .HasMaxLength(50)
                     .IsUnicode(false);
             });
+
+            modelBuilder.HasSequence<int>("TrackingSeq", "AuditLog");
 
             OnModelCreatingPartial(modelBuilder);
         }

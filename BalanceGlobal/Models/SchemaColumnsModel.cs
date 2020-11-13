@@ -25,6 +25,7 @@ namespace BalanceGlobal.Models
         public bool? Requerido { get; set; }
         public bool? Unico { get; set; }
         public bool? Guide { get; set; }
+        public int? IdFilteredByControl { get; set; }
 
     }
 }

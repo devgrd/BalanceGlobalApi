@@ -24,8 +24,8 @@ namespace BalanceGlobal.Database.Tables
         public bool? Requerido { get; set; }
         public bool? Unico { get; set; }
         public bool? Guide { get; set; }
+        public int? IdFilteredByControl { get; set; }
 
-        public virtual DatosEnLista IdDatosEnListaNavigation { get; set; }
-        public virtual SchemaDef IdSchemaDefNavigation { get; set; }
+        public virtual ImportadoresUserPar IdFilteredByControlNavigation { get; set; }
     }
 }
