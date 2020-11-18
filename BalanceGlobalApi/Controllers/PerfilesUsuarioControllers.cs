@@ -57,6 +57,18 @@ namespace BalanceGlobal.Api.Controllers
             return _httpHelper.GetActionResult(_resp);
         }
 
+        [HttpPut("{id:int}/details")]
+        [SwaggerResponse(200, "Ok", typeof(ApiResponse<PerfilesUsuarioModel>))]
+        [SwaggerResponse(404, "Not Found", typeof(ApiResponse<string>))]
+        [SwaggerResponse(409, "Conflict", typeof(ApiResponse<string>))]
+        public async Task<ActionResult<ApiResponse>> PutPerfilesUsuarioDetalle(int id, List<DetallePerfilModel> model, [Required][FromHeader] string userName)
+        {
+
+            var _resp = await _service.UpdatePerfilesUsuarioDetalle(id, model, userName);
+
+            return _httpHelper.GetActionResult(_resp);
+        }
+
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<PerfilesUsuarioModel>))]
         [SwaggerResponse(409, "Conflict", typeof(ApiResponse<string>))]
         [HttpPost]

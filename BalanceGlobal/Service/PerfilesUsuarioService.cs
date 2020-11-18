@@ -19,6 +19,7 @@ namespace BalanceGlobal.Service
         Task<ApiResponse> CreatePerfilesUsuario(PerfilesUsuarioModel PerfilesUsuarioModel, string userName);
         Task<ApiResponse> ReadPerfilesUsuario();
         Task<ApiResponse> UpdatePerfilesUsuario(PerfilesUsuarioModel PerfilesUsuarioModel, string userName);
+        Task<ApiResponse> UpdatePerfilesUsuarioDetalle(int id, List<DetallePerfilModel> detallePerfilModel, string userName);
         Task<ApiResponse> DeletePerfilesUsuario(int id, string userName);
         Task<ApiResponse> ReadPerfilesUsuario(int id);
     }
@@ -125,6 +126,28 @@ namespace BalanceGlobal.Service
 
                 return new ApiResponse(result, 200);
 
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }
+        }
+
+        public async Task<ApiResponse> UpdatePerfilesUsuarioDetalle(int id, List<DetallePerfilModel> detallePerfilModel, string userName)
+        {
+            try
+            {
+                var _model = await _repository.GetById(id);
+
+                if (_model == null)
+                {
+                    return new ApiResponse("Not Found", 404);
+                }
+
+                var detallePerfil = _mapper.Map<List<DetallePerfil>>(detallePerfilModel);
+                await _repository.UpdatePerfilesUsuarioDetalle(id, detallePerfil, userName);
+
+                return new ApiResponse("OK", 200);
             }
             catch (Exception ex)
             {

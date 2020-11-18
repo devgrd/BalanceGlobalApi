@@ -18,6 +18,7 @@ namespace BalanceGlobal.Service
     {
         Task<ApiResponse> CreateWorkflowItem(WorkflowItemModel WorkflowItemModel, string userName);
         Task<ApiResponse> ReadWorkflowItem();
+        Task<ApiResponse> ReadWorkflowItemByUser(string email);
         Task<ApiResponse> UpdateWorkflowItem(WorkflowItemModel WorkflowItemModel, string userName);
         Task<ApiResponse> DeleteWorkflowItem(int id, string userName);
         Task<ApiResponse> ReadWorkflowItem(int id);
@@ -132,8 +133,20 @@ namespace BalanceGlobal.Service
             }
         }
 
-        #endregion
+        public async Task<ApiResponse> ReadWorkflowItemByUser(string email)
+        {
+            try
+            {
+                var result = await _repository.GetWithStoredProcedureAsync("internals.GspGetWorkFlowItemsByUser @p0", new SqlParameter("@p0", email));
+                return new ApiResponse(result, 200);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(ex.GetBaseException().Message, 409);
+            }          
+        }
 
+        #endregion
     }
 }
 

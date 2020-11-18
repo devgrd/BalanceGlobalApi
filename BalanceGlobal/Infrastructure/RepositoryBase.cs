@@ -11,14 +11,15 @@ namespace BalanceGlobal.Infrastructure
 {
     public abstract class RepositoryBase<T> : IRepository<T> where T : class
     {
-        private BalanceGlobalContext _dataContext;
+
+        protected BalanceGlobalContext DataContext { get; set; }
         //private readonly DbQuery<T> dbquery;
         private readonly DbSet<T> dbset;
 
         protected RepositoryBase(BalanceGlobalContext dataContext)
         {
-            _dataContext = dataContext;
-            dbset = _dataContext.Set<T>();
+            DataContext = dataContext;
+            dbset = DataContext.Set<T>();
         }
 
 
@@ -31,7 +32,7 @@ namespace BalanceGlobal.Infrastructure
         public virtual async Task<T> GetById(object id)
         {
             var entity = await dbset.FindAsync(id);
-            _dataContext.Entry(entity).State = EntityState.Detached;
+            DataContext.Entry(entity).State = EntityState.Detached;
 
             return entity;
         }
@@ -54,36 +55,36 @@ namespace BalanceGlobal.Infrastructure
         public async Task AddAsync(T entity, string userName)
         {
             await dbset.AddAsync(entity);
-            await _dataContext.SaveChangesAsync();
+            await DataContext.SaveChangesAsync();
         }
 
         public async Task RemoveAsync(object id, string userName)
         {
             var entity = await dbset.FindAsync(id);
             dbset.Remove(entity);
-            await _dataContext.SaveChangesAsync();
+            await DataContext.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(T entity, string userName)
         {
             dbset.Update(entity);
-            await _dataContext.SaveChangesAsync();
+            await DataContext.SaveChangesAsync();
         }
 
         public async Task SaveChangesAsync(string valorSesion)
         {
-            using (var scope = await _dataContext.Database.BeginTransactionAsync())
+            using (var scope = await DataContext.Database.BeginTransactionAsync())
             {
                 await SetUserContext(valorSesion);
-                await _dataContext.SaveChangesAsync();
+                await DataContext.SaveChangesAsync();
                 await scope.CommitAsync();
             }
         }
 
-        private async Task SetUserContext(string valorSesion)
+        protected async Task SetUserContext(string valorSesion)
         {
             var idParam = new SqlParameter("@valor_sesion ", valorSesion);
-            await _dataContext.Database.ExecuteSqlRawAsync("dbo.spSistema_ConfiguracionDeSesion_SetContextInfo @valor_sesion", idParam);
+            await DataContext.Database.ExecuteSqlRawAsync("dbo.spSistema_ConfiguracionDeSesion_SetContextInfo @valor_sesion", idParam);
         }
     }
 }

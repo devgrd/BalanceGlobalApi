@@ -40,6 +40,16 @@ namespace BalanceGlobal.Api.Controllers
 
             return _model;
         }
+        
+        [HttpGet("user/{email}")]
+        [SwaggerResponse(200, "Ok", typeof(ApiResponse<WorkflowItemModel>))]
+        //[SwaggerResponse(404, "Not Found", typeof(ApiResponse<string>))]
+        public async Task<ActionResult<ApiResponse>> GetWorkflowItemByUser([Required] string email)
+        {
+            var _model = await _service.ReadWorkflowItemByUser(email);
+
+            return _model;
+        }
 
         [HttpPut("{id}")]
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<WorkflowItemModel>))]
@@ -78,6 +88,8 @@ namespace BalanceGlobal.Api.Controllers
 
             return _httpHelper.GetActionResult(_resp);
         }
+
+
     }
 }
 
