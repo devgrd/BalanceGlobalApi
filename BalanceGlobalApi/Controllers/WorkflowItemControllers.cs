@@ -42,7 +42,7 @@ namespace BalanceGlobal.Api.Controllers
         }
         
         [HttpGet("user/{email}")]
-        [SwaggerResponse(200, "Ok", typeof(ApiResponse<WorkflowItemModel>))]
+        [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<WorkflowItemModel>>))]
         //[SwaggerResponse(404, "Not Found", typeof(ApiResponse<string>))]
         public async Task<ActionResult<ApiResponse>> GetWorkflowItemByUser([Required] string email)
         {

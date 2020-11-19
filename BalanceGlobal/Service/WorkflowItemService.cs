@@ -137,7 +137,8 @@ namespace BalanceGlobal.Service
         {
             try
             {
-                var result = await _repository.GetWithStoredProcedureAsync("internals.GspGetWorkFlowItemsByUser @p0", new SqlParameter("@p0", email));
+                var data = await _repository.GetWorkFlowItemByUser(email);
+                var result = _mapper.Map<List<WorkflowItemModel>>(data);
                 return new ApiResponse(result, 200);
             }
             catch (Exception ex)

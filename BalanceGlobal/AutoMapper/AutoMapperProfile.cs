@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BalanceGlobal.Database.Queries;
 using BalanceGlobal.Database.Tables;
 using BalanceGlobal.Models;
 
@@ -94,7 +95,10 @@ namespace BalanceGlobal.AutoMapper
             CreateMap<SuscripcionEventos, SuscripcionEventosModel>(); CreateMap<SuscripcionEventosModel, SuscripcionEventos>();
             CreateMap<Usuarios, UsuariosModel>(); CreateMap<UsuariosModel, Usuarios>();
             CreateMap<UsuariosPerfilesUsuario, UsuariosPerfilesUsuarioModel>(); CreateMap<UsuariosPerfilesUsuarioModel, UsuariosPerfilesUsuario>();
-            CreateMap<WorkflowItem, WorkflowItemModel>(); CreateMap<WorkflowItemModel, WorkflowItem>();
+            
+            CreateMap<WorkflowItem, WorkflowItemModel>(); 
+            CreateMap<WorkFlowItemQuery, WorkflowItemModel>(); 
+            CreateMap<WorkflowItemModel, WorkflowItem>();
 
         }
     }

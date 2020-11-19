@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using BalanceGlobal.Database.Tables;
+using BalanceGlobal.Database.Queries;
 
 namespace BalanceGlobal.Database.Context
 {
@@ -103,6 +104,10 @@ namespace BalanceGlobal.Database.Context
         public virtual DbSet<ChangeTrackingDetail> ChangeTrackingDetail { get; set; }
         public virtual DbSet<ChangeTrackingHeader> ChangeTrackingHeader { get; set; }
 
+
+        public virtual DbSet<WorkFlowItemQuery> WorkFlowItemQuery { get; set; }
+
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -114,6 +119,7 @@ namespace BalanceGlobal.Database.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             modelBuilder.Entity<ImportadoresUserPar>(entity =>
             {
                 entity.HasKey(e => e.IdImportadoresUserPar)
