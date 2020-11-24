@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -26,9 +27,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<ChangeTrackingHeaderModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetChangeTrackingHeader()
+        public async Task<ActionResult<ApiResponse>> GetChangeTrackingHeader([FromQuery][Required] string table, [FromQuery][Required] DateTime from, [FromQuery][Required] DateTime to)
         {
-            return await _service.ReadChangeTrackingHeader();
+            return await _service.ReadChangeTrackingHeader(table, from, to);
         }
 
         [HttpGet("{id}")]

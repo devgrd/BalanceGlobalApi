@@ -47,6 +47,9 @@ namespace BalanceGlobalApi
             #region Services
 
             services.AddTransient<IAliasesService, AliasesService>();
+            services.AddTransient<ICtcatalogService, CtcatalogService>();
+            services.AddTransient<IChangeTrackingDetailService, ChangeTrackingDetailService>();
+            services.AddTransient<IChangeTrackingHeaderService, ChangeTrackingHeaderService>();
             services.AddTransient<ITipoDatoColOrigenService , TipoDatoColOrigenService>();      
             services.AddTransient<IBombasService, BombasService>();
             services.AddTransient<ICargaPlataformasService, CargaPlataformasService>();
@@ -139,6 +142,9 @@ namespace BalanceGlobalApi
 
             #region Repository
 
+            services.AddTransient<IChangeTrackingDetailRepository, ChangeTrackingDetailRepository>();
+            services.AddTransient<IChangeTrackingHeaderRepository, ChangeTrackingHeaderRepository>();
+            services.AddTransient<ICtcatalogRepository, CtcatalogRepository>();
             services.AddTransient<IAliasesRepository, AliasesRepository>();
             services.AddTransient<ITipoDatoColOrigenRepository, TipoDatoColOrigenRepository>();
             services.AddTransient<ICargaPlataformasRepository, CargaPlataformasRepository>();

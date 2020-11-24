@@ -11,6 +11,15 @@ namespace BalanceGlobal.AutoMapper
         {
             CreateMap<Aliases, AliasesModel>(); CreateMap<AliasesModel, Aliases>();
             CreateMap<TipoDatoColOrigen, TipoDatoColOrigenModel>(); CreateMap<TipoDatoColOrigenModel, TipoDatoColOrigen>();
+            
+            CreateMap<Ctcatalog, CtcatalogModel>(); 
+            CreateMap<CtcatalogModel, Ctcatalog>();
+
+            CreateMap<ChangeTrackingDetail, ChangeTrackingDetailModel>(); 
+            CreateMap<ChangeTrackingDetailModel, ChangeTrackingDetail>();
+            
+            CreateMap<ChangeTrackingHeader, ChangeTrackingHeaderModel>(); 
+            CreateMap<ChangeTrackingHeaderModel, ChangeTrackingHeader>();
 
             CreateMap<Bombas, BombasModel>(); CreateMap<BombasModel, Bombas>();
             CreateMap<CargaPlataformas, CargaPlataformasModel>(); CreateMap<CargaPlataformasModel, CargaPlataformas>();

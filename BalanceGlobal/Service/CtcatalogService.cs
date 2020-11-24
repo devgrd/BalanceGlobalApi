@@ -14,21 +14,21 @@ using System.Threading.Tasks;
 namespace BalanceGlobal.Service
 {
 
-    public interface IChangeTrackingHeaderService
+    public interface ICtcatalogService
     {
-        Task<ApiResponse> CreateChangeTrackingHeader(ChangeTrackingHeaderModel ChangeTrackingHeaderModel, string userName);
-        Task<ApiResponse> ReadChangeTrackingHeader(string table, DateTime from, DateTime to);
-        Task<ApiResponse> UpdateChangeTrackingHeader(ChangeTrackingHeaderModel ChangeTrackingHeaderModel, string userName);
-        Task<ApiResponse> DeleteChangeTrackingHeader(int id, string userName);
-        Task<ApiResponse> ReadChangeTrackingHeader(int id);
+        Task<ApiResponse> CreateCtcatalog(CtcatalogModel CtcatalogModel, string userName);
+        Task<ApiResponse> ReadCtcatalog();
+        Task<ApiResponse> UpdateCtcatalog(CtcatalogModel CtcatalogModel, string userName);
+        Task<ApiResponse> DeleteCtcatalog(int id, string userName);
+        Task<ApiResponse> ReadCtcatalog(int id);
     }
 
-    public class ChangeTrackingHeaderService : IChangeTrackingHeaderService
+    public class CtcatalogService : ICtcatalogService
     {
-        private readonly IChangeTrackingHeaderRepository _repository;
+        private readonly ICtcatalogRepository _repository;
         private readonly IMapper _mapper;
 
-        public ChangeTrackingHeaderService(IChangeTrackingHeaderRepository repository, IMapper mapper)
+        public CtcatalogService(ICtcatalogRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
@@ -36,13 +36,13 @@ namespace BalanceGlobal.Service
 
         #region CRUD
 
-        public async Task<ApiResponse> CreateChangeTrackingHeader(ChangeTrackingHeaderModel model, string userName)
+        public async Task<ApiResponse> CreateCtcatalog(CtcatalogModel model, string userName)
         {
             try
             {
-                var result = _mapper.Map<ChangeTrackingHeader>(model);
+                var result = _mapper.Map<Ctcatalog>(model);
                 await _repository.AddAsync(result, userName);
-                model.IdChangeTrackingHeader = result.IdChangeTrackingHeader;
+                model.IdCtcatalog = result.IdCtcatalog;
 
                 return new ApiResponse(model, 200);
             }
@@ -52,12 +52,12 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadChangeTrackingHeader(string table, DateTime from, DateTime to)
+        public async Task<ApiResponse> ReadCtcatalog()
         {
             try
             {
-                var data = await _repository.GetChangeTrackingHeader(table, from , to);
-                var result = _mapper.Map<List<ChangeTrackingHeaderModel>>(data);
+                var data = await _repository.GetAllAsync();
+                var result = _mapper.Map<List<CtcatalogModel>>(data);
 
                 return new ApiResponse(result, 200);
             }
@@ -67,18 +67,18 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> UpdateChangeTrackingHeader(ChangeTrackingHeaderModel model, string userName)
+        public async Task<ApiResponse> UpdateCtcatalog(CtcatalogModel model, string userName)
         {
             try
             {
-                var _model = await _repository.GetById(model.IdChangeTrackingHeader);
+                var _model = await _repository.GetById(model.IdCtcatalog);
 
                 if (_model == null)
                 {
                     return new ApiResponse("Not Found", 404);
                 }
 
-                var result = _mapper.Map<ChangeTrackingHeader>(model);
+                var result = _mapper.Map<Ctcatalog>(model);
                 await _repository.UpdateAsync(result, userName);
 
                 return new ApiResponse("Ok", 200);
@@ -89,7 +89,7 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> DeleteChangeTrackingHeader(int id, string userName)
+        public async Task<ApiResponse> DeleteCtcatalog(int id, string userName)
         {
             try
             {
@@ -110,7 +110,7 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadChangeTrackingHeader(int id)
+        public async Task<ApiResponse> ReadCtcatalog(int id)
         {
             try
             {
@@ -121,7 +121,7 @@ namespace BalanceGlobal.Service
                     return new ApiResponse("Not Found", 404);
                 }
 
-                var result = _mapper.Map<ChangeTrackingHeaderModel>(model);
+                var result = _mapper.Map<CtcatalogModel>(model);
 
                 return new ApiResponse(result, 200);
 

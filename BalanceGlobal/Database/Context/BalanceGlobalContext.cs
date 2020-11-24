@@ -17,6 +17,7 @@ namespace BalanceGlobal.Database.Context
         {
         }
 
+        public virtual DbSet<Ctcatalog> Ctcatalog { get; set; }
         public virtual DbSet<Aliases> Aliases { get; set; }
         public virtual DbSet<TipoDatoColOrigen> TipoDatoColOrigen { get; set; }
         public virtual DbSet<Bombas> Bombas { get; set; }
@@ -119,6 +120,40 @@ namespace BalanceGlobal.Database.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Ctcatalog>(entity =>
+            {
+                entity.HasKey(e => e.IdCtcatalog)
+                    .HasName("PK__CTCatalo__E8844DA3FAC33553");
+
+                entity.ToTable("CTCatalog", "AuditLog");
+
+                entity.Property(e => e.IdCtcatalog).HasColumnName("IdCTCatalog");
+
+                entity.Property(e => e.Active)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.TableName)
+                    .IsRequired()
+                    .HasMaxLength(128)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TablePkfield)
+                    .IsRequired()
+                    .HasColumnName("TablePKField")
+                    .HasMaxLength(128)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TrackingFields)
+                    .IsRequired()
+                    .HasMaxLength(4000)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TrackingFrom)
+                    .IsRequired()
+                    .HasMaxLength(4000)
+                    .IsUnicode(false);
+            });
 
             modelBuilder.Entity<ImportadoresUserPar>(entity =>
             {

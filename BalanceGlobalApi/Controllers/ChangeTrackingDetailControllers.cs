@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
 
 namespace BalanceGlobal.Api.Controllers
 {
@@ -26,15 +27,15 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<ChangeTrackingDetailModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetChangeTrackingDetail()
-        {
-            return await _service.ReadChangeTrackingDetail();
+        public async Task<ActionResult<ApiResponse>> GetChangeTrackingDetail([Required][FromQuery] string table, [Required][FromQuery] DateTime from, [Required][FromQuery] DateTime to)
+         {
+            return await _service.ReadChangeTrackingDetail(table, from, to);
         }
 
         [HttpGet("{id}")]
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<ChangeTrackingDetailModel>))]
         [SwaggerResponse(404, "Not Found", typeof(ApiResponse<string>))]
-        public async Task<ActionResult<ApiResponse>> GetChangeTrackingDetail(int id)
+        public async Task<ActionResult<ApiResponse>> GetChangeTrackingDetail(long id)
         {
             var _model = await _service.ReadChangeTrackingDetail(id);
 
@@ -45,7 +46,7 @@ namespace BalanceGlobal.Api.Controllers
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<ChangeTrackingDetailModel>))]
         [SwaggerResponse(404, "Not Found", typeof(ApiResponse<string>))]
         [SwaggerResponse(409, "Conflict", typeof(ApiResponse<string>))]
-        public async Task<ActionResult<ApiResponse>> PutChangeTrackingDetail(int id, ChangeTrackingDetailModel model, [Required][FromHeader] string userName)
+        public async Task<ActionResult<ApiResponse>> PutChangeTrackingDetail(long id, ChangeTrackingDetailModel model, [Required][FromHeader] string userName)
         {
             if (id != model.IdChangeTrackingDetail)
             {
@@ -72,7 +73,7 @@ namespace BalanceGlobal.Api.Controllers
         [SwaggerResponse(404, "Not Found", typeof(ApiResponse<string>))]
         [SwaggerResponse(409, "Conflict", typeof(ApiResponse<string>))]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ApiResponse>> DeleteChangeTrackingDetail(int id, [Required][FromHeader] string userName)
+        public async Task<ActionResult<ApiResponse>> DeleteChangeTrackingDetail(long id, [Required][FromHeader] string userName)
         {
             var _resp = await _service.DeleteChangeTrackingDetail(id, userName);
 

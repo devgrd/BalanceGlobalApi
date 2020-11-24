@@ -17,10 +17,10 @@ namespace BalanceGlobal.Service
     public interface IChangeTrackingDetailService
     {
         Task<ApiResponse> CreateChangeTrackingDetail(ChangeTrackingDetailModel ChangeTrackingDetailModel, string userName);
-        Task<ApiResponse> ReadChangeTrackingDetail();
+        Task<ApiResponse> ReadChangeTrackingDetail(string table, DateTime from, DateTime to);
         Task<ApiResponse> UpdateChangeTrackingDetail(ChangeTrackingDetailModel ChangeTrackingDetailModel, string userName);
-        Task<ApiResponse> DeleteChangeTrackingDetail(int id, string userName);
-        Task<ApiResponse> ReadChangeTrackingDetail(int id);
+        Task<ApiResponse> DeleteChangeTrackingDetail(long id, string userName);
+        Task<ApiResponse> ReadChangeTrackingDetail(long id);
     }
 
     public class ChangeTrackingDetailService : IChangeTrackingDetailService
@@ -52,11 +52,11 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadChangeTrackingDetail()
+        public async Task<ApiResponse> ReadChangeTrackingDetail(string table, DateTime from, DateTime to)
         {
             try
             {
-                var data = await _repository.GetAllAsync();
+                var data = await _repository.GetChangeTrackingDetails(table, from, to);
                 var result = _mapper.Map<List<ChangeTrackingDetailModel>>(data);
 
                 return new ApiResponse(result, 200);
@@ -89,7 +89,7 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> DeleteChangeTrackingDetail(int id, string userName)
+        public async Task<ApiResponse> DeleteChangeTrackingDetail(long id, string userName)
         {
             try
             {
@@ -110,7 +110,7 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadChangeTrackingDetail(int id)
+        public async Task<ApiResponse> ReadChangeTrackingDetail(long id)
         {
             try
             {
