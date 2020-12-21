@@ -14,5 +14,6 @@ namespace BalanceGlobal.Database.Tables
         public DateTime Fecha { get; set; }
 
         public virtual Importaciones IdImportacionesNavigation { get; set; }
+        public virtual TipoMensaje IdTipoMensajeNavigation { get; set; }
     }
 }

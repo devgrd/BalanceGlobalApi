@@ -9,6 +9,7 @@ namespace BalanceGlobal.Database.Tables
         {
             ImportacionesUserParValues = new HashSet<ImportacionesUserParValues>();
             MensajesImportacion = new HashSet<MensajesImportacion>();
+            MensajesImportacionTemp = new HashSet<MensajesImportacionTemp>();
         }
 
         public int IdImportaciones { get; set; }
@@ -19,5 +20,6 @@ namespace BalanceGlobal.Database.Tables
         public virtual Importadores IdImportadoresNavigation { get; set; }
         public virtual ICollection<ImportacionesUserParValues> ImportacionesUserParValues { get; set; }
         public virtual ICollection<MensajesImportacion> MensajesImportacion { get; set; }
+        public virtual ICollection<MensajesImportacionTemp> MensajesImportacionTemp { get; set; }
     }
 }

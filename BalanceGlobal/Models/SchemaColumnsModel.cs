@@ -26,6 +26,9 @@ namespace BalanceGlobal.Models
         public bool? Unico { get; set; }
         public bool? Guide { get; set; }
         public int? IdFilteredByControl { get; set; }
+        public bool? Ffill { get; set; }
+        public bool? Pivoted { get; set; }
+        public int? RangoMovil { get; set; }
 
     }
 }

@@ -8,7 +8,7 @@ namespace BalanceGlobal.Models
     {
         [Required] public int IdImpregnacionSistemaRef { get; set; }
         [Required] public int IdSubSistemas { get; set; }
-        [Required] public decimal ImpregnacionTotal { get; set; }
+        public decimal? ImpregnacionTotal { get; set; }
         public string UsuarioActualizacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
 

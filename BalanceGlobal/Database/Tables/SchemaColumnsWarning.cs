@@ -25,6 +25,8 @@ namespace BalanceGlobal.Database.Tables
         public bool? Unico { get; set; }
 
         public virtual DatosEnLista IdDatosEnListaNavigation { get; set; }
+        public virtual IdiomaFecha IdIdiomaFechaNavigation { get; set; }
         public virtual SchemaDef IdSchemaDefNavigation { get; set; }
+        public virtual TipoDatoColOrigen IdTipoDatoColOrigenNavigation { get; set; }
     }
 }

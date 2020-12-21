@@ -26,9 +26,9 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<SchemaColumnsWarningModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetSchemaColumnsWarning()
+        public async Task<ActionResult<ApiResponse>> GetSchemaColumnsWarning([Required][FromQuery] string nombre)
         {
-            return await _service.ReadSchemaColumnsWarning();
+            return await _service.ReadSchemaColumnsWarning(nombre);
         }
 
         [HttpGet("{id}")]

@@ -13,6 +13,5 @@ namespace BalanceGlobal.Models
         [Required] public int IdTipoDatoControl { get; set; }
         public bool? Activa { get; set; }
 
-
     }
 }

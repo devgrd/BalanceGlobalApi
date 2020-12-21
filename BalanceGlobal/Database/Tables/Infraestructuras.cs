@@ -7,6 +7,7 @@ namespace BalanceGlobal.Database.Tables
     {
         public Infraestructuras()
         {
+            Bgajustes = new HashSet<Bgajustes>();
             CargaPlataformasIdInfraestructuraOrigenNavigation = new HashSet<CargaPlataformas>();
             CargaPlataformasIdPlataformaNavigation = new HashSet<CargaPlataformas>();
             CkmopIiquimaPorteo = new HashSet<CkmopIiquimaPorteo>();
@@ -47,6 +48,7 @@ namespace BalanceGlobal.Database.Tables
         public virtual Infraestructuras IdInfraestructuraPadreNavigation { get; set; }
         public virtual TipoInfraestructuras IdTipoInfraestructurasNavigation { get; set; }
         public virtual InfraestructurasReinyeccion InfraestructurasReinyeccion { get; set; }
+        public virtual ICollection<Bgajustes> Bgajustes { get; set; }
         public virtual ICollection<CargaPlataformas> CargaPlataformasIdInfraestructuraOrigenNavigation { get; set; }
         public virtual ICollection<CargaPlataformas> CargaPlataformasIdPlataformaNavigation { get; set; }
         public virtual ICollection<CkmopIiquimaPorteo> CkmopIiquimaPorteo { get; set; }

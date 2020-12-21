@@ -26,13 +26,13 @@ namespace BalanceGlobal.Api.Controllers
 
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<SchemaColumnsModel>>))]
         [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetSchemaColumns()
+        public async Task<ActionResult<ApiResponse>> GetSchemaColumns([Required][FromQuery] string nombre)
         {
-            return await _service.ReadSchemaColumns();
+            return await _service.ReadSchemaColumns(nombre);
         }
 
-        [HttpGet("{id}")]
-        [SwaggerResponse(200, "Ok", typeof(ApiResponse<SchemaColumnsModel>))]
+        [HttpGet("schemadef/{id}")]
+        [SwaggerResponse(200, "Ok", typeof(ApiResponse<List<SchemaColumnsModel>>))]
         [SwaggerResponse(404, "Not Found", typeof(ApiResponse<string>))]
         public async Task<ActionResult<ApiResponse>> GetSchemaColumns(int id)
         {

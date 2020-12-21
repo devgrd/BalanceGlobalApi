@@ -12,5 +12,8 @@ namespace BalanceGlobal.Database.Tables
         public decimal? VolAguaM3 { get; set; }
         public string UsuarioActualizacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
+
+        public virtual CategoriaConsumoAgua IdCategoriaConsumoAguaNavigation { get; set; }
+        public virtual Periodos IdPeriodosNavigation { get; set; }
     }
 }

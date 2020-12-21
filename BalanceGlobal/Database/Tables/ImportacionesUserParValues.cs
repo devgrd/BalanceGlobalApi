@@ -10,5 +10,8 @@ namespace BalanceGlobal.Database.Tables
         public int IdImportaciones { get; set; }
         public string Value { get; set; }
         public DateTime Fecha { get; set; }
+
+        public virtual Importaciones IdImportacionesNavigation { get; set; }
+        public virtual ImportadoresUserPar IdImportadoresUserParNavigation { get; set; }
     }
 }

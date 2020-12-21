@@ -25,7 +25,14 @@ namespace BalanceGlobal.Database.Tables
         public bool? Unico { get; set; }
         public bool? Guide { get; set; }
         public int? IdFilteredByControl { get; set; }
+        public bool? Ffill { get; set; }
+        public bool? Pivoted { get; set; }
+        public int? RangoMovil { get; set; }
 
+        public virtual DatosEnLista IdDatosEnListaNavigation { get; set; }
         public virtual ImportadoresUserPar IdFilteredByControlNavigation { get; set; }
+        public virtual IdiomaFecha IdIdiomaFechaNavigation { get; set; }
+        public virtual SchemaDef IdSchemaDefNavigation { get; set; }
+        public virtual TipoDatoColOrigen IdTipoDatoColOrigenNavigation { get; set; }
     }
 }

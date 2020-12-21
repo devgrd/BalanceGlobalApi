@@ -31,7 +31,7 @@ namespace BalanceGlobal.Api.Controllers
             return await _service.ReadPerfilesUsuario();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("schemadef/{id}")]
         [SwaggerResponse(200, "Ok", typeof(ApiResponse<PerfilesUsuarioModel>))]
         [SwaggerResponse(404, "Not Found", typeof(ApiResponse<string>))]
         public async Task<ActionResult<ApiResponse>> GetPerfilesUsuario(int id)

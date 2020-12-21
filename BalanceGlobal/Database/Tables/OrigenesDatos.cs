@@ -21,6 +21,8 @@ namespace BalanceGlobal.Database.Tables
         public bool? Activa { get; set; }
 
         public virtual Importadores IdImportadoresNavigation { get; set; }
+        public virtual TipoHeader IdTipoHeaderNavigation { get; set; }
+        public virtual TipoOrigen IdTipoOrigenNavigation { get; set; }
         public virtual ICollection<SchemaDef> SchemaDef { get; set; }
     }
 }

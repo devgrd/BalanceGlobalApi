@@ -46,6 +46,17 @@ namespace BalanceGlobalApi
 
             #region Services
 
+            services.AddTransient<ITipoDatoControlService, TipoDatoControlService>();
+            services.AddTransient<IBgajustesService, BgajustesService>();
+            services.AddTransient<IBgclasificacionService, BgclasificacionService>();
+            services.AddTransient<IBgcorrientesService, BgcorrientesService>();
+            services.AddTransient<IBgtiposService, BgtiposService>();
+            services.AddTransient<IProcedimientosService, ProcedimientosService>();
+            services.AddTransient<IPueblaTablaReporteBalanceLogEjecucionService, PueblaTablaReporteBalanceLogEjecucionService>();
+
+            services.AddTransient<ITipoHeaderService, TipoHeaderService>();
+            services.AddTransient<ITipoOrigenService, TipoOrigenService>();
+
             services.AddTransient<IAliasesService, AliasesService>();
             services.AddTransient<ICtcatalogService, CtcatalogService>();
             services.AddTransient<IChangeTrackingDetailService, ChangeTrackingDetailService>();
@@ -142,7 +153,21 @@ namespace BalanceGlobalApi
 
             #region Repository
 
+            services.AddTransient<IBgajustesRepository, BgajustesRepository>();
+            services.AddTransient<ITipoDatoControlRepository, TipoDatoControlRepository>();
+
+
+            services.AddTransient<IBgclasificacionRepository, BgclasificacionRepository>();
+            services.AddTransient<IBgcorrientesRepository, BgcorrientesRepository>();
+            services.AddTransient<IBgtiposRepository, BgtiposRepository>();
+            services.AddTransient<IProcedimientosRepository, ProcedimientosRepository>();
+            services.AddTransient<IPueblaTablaReporteBalanceLogEjecucionRepository, PueblaTablaReporteBalanceLogEjecucionRepository>();
+
+            services.AddTransient<ITipoHeaderRepository, TipoHeaderRepository>();
+            services.AddTransient<ITipoOrigenRepository, TipoOrigenRepository>();
+
             services.AddTransient<IChangeTrackingDetailRepository, ChangeTrackingDetailRepository>();
+
             services.AddTransient<IChangeTrackingHeaderRepository, ChangeTrackingHeaderRepository>();
             services.AddTransient<ICtcatalogRepository, CtcatalogRepository>();
             services.AddTransient<IAliasesRepository, AliasesRepository>();

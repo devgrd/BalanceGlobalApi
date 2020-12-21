@@ -7,7 +7,7 @@ namespace BalanceGlobal.Database.Tables
     {
         public int IdImpregnacionSistemaRef { get; set; }
         public int IdSubSistemas { get; set; }
-        public decimal ImpregnacionTotal { get; set; }
+        public decimal? ImpregnacionTotal { get; set; }
         public string UsuarioActualizacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
 

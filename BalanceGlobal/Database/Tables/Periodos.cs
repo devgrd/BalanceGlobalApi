@@ -7,6 +7,7 @@ namespace BalanceGlobal.Database.Tables
     {
         public Periodos()
         {
+            Bgajustes = new HashSet<Bgajustes>();
             CargaPlataformas = new HashSet<CargaPlataformas>();
             CkmopIiquimaPorteo = new HashSet<CkmopIiquimaPorteo>();
             CkmopIivolaPorteo = new HashSet<CkmopIivolaPorteo>();
@@ -48,6 +49,7 @@ namespace BalanceGlobal.Database.Tables
         public string UsuarioActualizacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
 
+        public virtual ICollection<Bgajustes> Bgajustes { get; set; }
         public virtual ICollection<CargaPlataformas> CargaPlataformas { get; set; }
         public virtual ICollection<CkmopIiquimaPorteo> CkmopIiquimaPorteo { get; set; }
         public virtual ICollection<CkmopIivolaPorteo> CkmopIivolaPorteo { get; set; }

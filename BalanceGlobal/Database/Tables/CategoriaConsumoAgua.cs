@@ -5,6 +5,11 @@ namespace BalanceGlobal.Database.Tables
 {
     public partial class CategoriaConsumoAgua
     {
+        public CategoriaConsumoAgua()
+        {
+            ConsumoAgua = new HashSet<ConsumoAgua>();
+        }
+
         public int IdCategoriaConsumoAgua { get; set; }
         public string CategoriasConsumoAgua { get; set; }
         public string Descripcion { get; set; }
@@ -15,5 +20,9 @@ namespace BalanceGlobal.Database.Tables
         public string SuperGrupoReporte { get; set; }
         public string UsuarioActualizacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
+
+        public virtual Faenas IdFaenasNavigation { get; set; }
+        public virtual SistemasSubSistemas IdSistemasSubsistemasNavigation { get; set; }
+        public virtual ICollection<ConsumoAgua> ConsumoAgua { get; set; }
     }
 }

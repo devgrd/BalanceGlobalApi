@@ -9,7 +9,9 @@ namespace BalanceGlobal.Models
         [Required] public int IdConsDespacho { get; set; }
         [Required] public int IdPeriodos { get; set; }
         [Required] public DateTime Fecha { get; set; }
+        public string String { get; set; }
         public decimal? MasaDespachadaTon { get; set; }
+        public decimal? Nrocam { get; set; }
         public decimal? DensTonm3 { get; set; }
         public decimal? LiPct { get; set; }
         public decimal? MgPct { get; set; }
@@ -18,6 +20,7 @@ namespace BalanceGlobal.Models
         public decimal? NaPct { get; set; }
         public decimal? CaPct { get; set; }
         public decimal? BPct { get; set; }
+        public decimal? SoldPct { get; set; }
         public string UsuarioActualizacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
 

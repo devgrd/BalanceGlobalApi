@@ -7,6 +7,7 @@ namespace BalanceGlobal.Database.Tables
     {
         public SistemasSubSistemas()
         {
+            Bgajustes = new HashSet<Bgajustes>();
             CategoriaConsumoAgua = new HashSet<CategoriaConsumoAgua>();
             ConsInvCarmen = new HashSet<ConsInvCarmen>();
             ConsLitioLiCo3mensual = new HashSet<ConsLitioLiCo3mensual>();
@@ -28,10 +29,12 @@ namespace BalanceGlobal.Database.Tables
         public int? IdSubSistemas { get; set; }
         public string UsuarioActualizacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
+        public string GrupoReporte { get; set; }
 
         public virtual Sistemas IdSistemasNavigation { get; set; }
         public virtual SubSistemas IdSubSistemasNavigation { get; set; }
         public virtual Permeabilidad Permeabilidad { get; set; }
+        public virtual ICollection<Bgajustes> Bgajustes { get; set; }
         public virtual ICollection<CategoriaConsumoAgua> CategoriaConsumoAgua { get; set; }
         public virtual ICollection<ConsInvCarmen> ConsInvCarmen { get; set; }
         public virtual ICollection<ConsLitioLiCo3mensual> ConsLitioLiCo3mensual { get; set; }

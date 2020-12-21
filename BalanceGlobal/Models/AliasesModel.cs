@@ -12,4 +12,6 @@ namespace BalanceGlobal.Models
         public string ValorOriginal { get; set; }
         public string ValorAlias { get; set; }
     }
+
+    
 }

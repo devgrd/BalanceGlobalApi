@@ -15,6 +15,7 @@ namespace BalanceGlobal.Database.Tables
         public string Comentario { get; set; }
         public bool? Activa { get; set; }
 
+        public virtual JobTipo IdJobTipoNavigation { get; set; }
         public virtual SchemaDef IdSchemaDefNavigation { get; set; }
     }
 }

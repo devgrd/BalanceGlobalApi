@@ -17,7 +17,7 @@ namespace BalanceGlobal.Service
     public interface ISchemaColumnsWarningService
     {
         Task<ApiResponse> CreateSchemaColumnsWarning(SchemaColumnsWarningModel SchemaColumnsWarningModel, string userName);
-        Task<ApiResponse> ReadSchemaColumnsWarning();
+        Task<ApiResponse> ReadSchemaColumnsWarning(string nombre);
         Task<ApiResponse> UpdateSchemaColumnsWarning(SchemaColumnsWarningModel SchemaColumnsWarningModel, string userName);
         Task<ApiResponse> DeleteSchemaColumnsWarning(int id, string userName);
         Task<ApiResponse> ReadSchemaColumnsWarning(int id);
@@ -52,11 +52,11 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadSchemaColumnsWarning()
+        public async Task<ApiResponse> ReadSchemaColumnsWarning(string nombre)
         {
             try
             {
-                var data = await _repository.GetAllAsync();
+                var data = await _repository.GetSchemaColumnsWarning(nombre);
                 var result = _mapper.Map<List<SchemaColumnsWarningModel>>(data);
 
                 return new ApiResponse(result, 200);

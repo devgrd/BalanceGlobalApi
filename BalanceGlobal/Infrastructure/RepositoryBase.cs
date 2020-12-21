@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using BalanceGlobal.Database.Context;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
+using System.Dynamic;
 
 namespace BalanceGlobal.Infrastructure
 {
@@ -85,6 +86,54 @@ namespace BalanceGlobal.Infrastructure
         {
             var idParam = new SqlParameter("@valor_sesion ", valorSesion);
             await DataContext.Database.ExecuteSqlRawAsync("dbo.spSistema_ConfiguracionDeSesion_SetContextInfo @valor_sesion", idParam);
+        }
+
+        public IEnumerable<dynamic> GetDynamicResult(string commandText, params SqlParameter[] parameters)
+        {
+
+            var connection = DataContext.Database.GetDbConnection();
+
+            if (connection.State != System.Data.ConnectionState.Open)
+                connection.Open();
+
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = commandText;
+                command.Connection = connection;
+
+                if (parameters?.Length > 0)
+                {
+                    foreach (var parameter in parameters)
+                    {
+                        command.Parameters.Add(parameter);
+                    }
+                }
+
+                using (var dataReader = command.ExecuteReader())
+                {
+                    var names = new List<string>();
+
+                    if (dataReader.HasRows)
+                    {
+                        for (var i = 0; i < dataReader.VisibleFieldCount; i++)
+                        {
+                            names.Add(dataReader.GetName(i));
+                        }
+
+                        while (dataReader.Read())
+                        {
+                            var result = new ExpandoObject() as IDictionary<string, object>;
+
+                            foreach (var name in names)
+                            {
+                                result.Add(name, dataReader[name]);
+                            }
+
+                            yield return result;
+                        }
+                    }
+                }
+            }
         }
     }
 }

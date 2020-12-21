@@ -17,10 +17,10 @@ namespace BalanceGlobal.Service
     public interface ISchemaColumnsService
     {
         Task<ApiResponse> CreateSchemaColumns(SchemaColumnsModel SchemaColumnsModel, string userName);
-        Task<ApiResponse> ReadSchemaColumns();
+        Task<ApiResponse> ReadSchemaColumns(string nombre);
         Task<ApiResponse> UpdateSchemaColumns(SchemaColumnsModel SchemaColumnsModel, string userName);
         Task<ApiResponse> DeleteSchemaColumns(int id, string userName);
-        Task<ApiResponse> ReadSchemaColumns(int id);
+        Task<ApiResponse> ReadSchemaColumns(int idSchemaDef);
     }
 
     public class SchemaColumnsService : ISchemaColumnsService
@@ -52,11 +52,11 @@ namespace BalanceGlobal.Service
             }
         }
 
-        public async Task<ApiResponse> ReadSchemaColumns()
+        public async Task<ApiResponse> ReadSchemaColumns(string nombre)
         {
             try
             {
-                var data = await _repository.GetAllAsync();
+                var data = await _repository.GetSchemaColumns(nombre);
                 var result = _mapper.Map<List<SchemaColumnsModel>>(data);
 
                 return new ApiResponse(result, 200);
@@ -114,14 +114,14 @@ namespace BalanceGlobal.Service
         {
             try
             {
-                var model = await _repository.GetById(id);
+                var model = await _repository.GetManyAsync(x => x.IdSchemaDef == id);
 
                 if (model == null)
                 {
                     return new ApiResponse("Not Found", 404);
                 }
 
-                var result = _mapper.Map<SchemaColumnsModel>(model);
+                var result = _mapper.Map<List<SchemaColumnsModel>>(model);
 
                 return new ApiResponse(result, 200);
 

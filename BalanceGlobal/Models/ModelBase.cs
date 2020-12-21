@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BalanceGlobal.Models
+﻿namespace BalanceGlobal.Models
 {
-    public abstract class ModelBase
+    public class ModelBase
     {
-        
     }
 }

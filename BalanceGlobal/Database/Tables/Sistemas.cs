@@ -7,7 +7,6 @@ namespace BalanceGlobal.Database.Tables
     {
         public Sistemas()
         {
-            CategoriaConsumoAgua = new HashSet<CategoriaConsumoAgua>();
             ConsRilesyRises = new HashSet<ConsRilesyRises>();
             EvaporacionInfiltracion = new HashSet<EvaporacionInfiltracion>();
             FaenasSistemas = new HashSet<FaenasSistemas>();
@@ -24,7 +23,6 @@ namespace BalanceGlobal.Database.Tables
         public string UsuarioActualizacion { get; set; }
         public DateTime? FechaActualizacion { get; set; }
 
-        public virtual ICollection<CategoriaConsumoAgua> CategoriaConsumoAgua { get; set; }
         public virtual ICollection<ConsRilesyRises> ConsRilesyRises { get; set; }
         public virtual ICollection<EvaporacionInfiltracion> EvaporacionInfiltracion { get; set; }
         public virtual ICollection<FaenasSistemas> FaenasSistemas { get; set; }

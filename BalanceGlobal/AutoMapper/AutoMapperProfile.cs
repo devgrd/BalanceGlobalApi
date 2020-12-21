@@ -11,15 +11,37 @@ namespace BalanceGlobal.AutoMapper
         {
             CreateMap<Aliases, AliasesModel>(); CreateMap<AliasesModel, Aliases>();
             CreateMap<TipoDatoColOrigen, TipoDatoColOrigenModel>(); CreateMap<TipoDatoColOrigenModel, TipoDatoColOrigen>();
-            
+
+            CreateMap<TipoDatoControl, TipoDatoControlModel>(); 
+            CreateMap<TipoDatoControlModel, TipoDatoControl>();
+
+
             CreateMap<Ctcatalog, CtcatalogModel>(); 
             CreateMap<CtcatalogModel, Ctcatalog>();
 
             CreateMap<ChangeTrackingDetail, ChangeTrackingDetailModel>(); 
             CreateMap<ChangeTrackingDetailModel, ChangeTrackingDetail>();
             
-            CreateMap<ChangeTrackingHeader, ChangeTrackingHeaderModel>(); 
-            CreateMap<ChangeTrackingHeaderModel, ChangeTrackingHeader>();
+            CreateMap<Bgajustes, BgajustesModel>(); 
+            CreateMap<BgajustesModel, Bgajustes>();
+
+            CreateMap<Bgclasificacion, BgclasificacionModel>();
+            CreateMap<BgclasificacionModel, Bgclasificacion>();
+
+            CreateMap<Bgcorrientes, BgcorrientesModel>();
+            CreateMap<BgcorrientesModel, Bgcorrientes>();
+
+            CreateMap<Bgtipos, BgtiposModel>();
+            CreateMap<BgtiposModel, Bgtipos>();
+
+            CreateMap<TipoOrigen, TipoOrigenModel>();
+            CreateMap<TipoOrigenModel, TipoOrigen>();
+
+            CreateMap<TipoHeader, TipoHeaderModel>();
+            CreateMap<TipoHeaderModel, TipoHeader>();
+
+            CreateMap<PueblaTablaReporteBalanceLogEjecucion, PueblaTablaReporteBalanceLogEjecucionModel>();
+            CreateMap<PueblaTablaReporteBalanceLogEjecucionModel, PueblaTablaReporteBalanceLogEjecucion>();
 
             CreateMap<Bombas, BombasModel>(); CreateMap<BombasModel, Bombas>();
             CreateMap<CargaPlataformas, CargaPlataformasModel>(); CreateMap<CargaPlataformasModel, CargaPlataformas>();
